@@ -34,7 +34,7 @@ const AppContent: React.FC = () => {
   }, [openAddExpenseModal]);
 
   return (
-    <div className="min-h-screen bg-[#F2F2F7] dark:bg-[#000000] text-[#1C1C1E] dark:text-white flex flex-col antialiased selection:bg-[#007AFF] selection:text-white pb-24 md:pb-12 transition-colors duration-200">
+    <div className="min-h-screen bg-[#F2F2F7] dark:bg-[#000000] text-[#1C1C1E] dark:text-white flex flex-col antialiased selection:bg-[#007AFF] selection:text-white pb-24 md:pb-12 transition-colors duration-200 overflow-x-hidden">
       {/* Toast Feedback */}
       <ToastContainer />
 
