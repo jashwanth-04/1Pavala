@@ -1,0 +1,8 @@
+<resources>
+    <!-- Base application theme — Compose handles everything, this just hides the action bar -->
+    <style name="Theme.OnePavala" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>

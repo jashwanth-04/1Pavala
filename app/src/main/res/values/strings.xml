@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">1Pavala</string>
+    <string name="tagline">Know where your money goes.</string>
+    <string name="privacy_note">Your data stays on your device. Always.</string>
+    <string name="add_expense">Add Expense</string>
+    <string name="save_expense">Save Expense</string>
+    <string name="how_much">How much did you spend?</string>
+    <string name="what_for">What was it for?</string>
+    <string name="channel_budget_alerts">Budget Alerts</string>
+    <string name="channel_expense_reminders">Expense Reminders</string>
+</resources>

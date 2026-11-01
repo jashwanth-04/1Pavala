@@ -1,0 +1,336 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --apple-system-background: #F2F2F7;
+    --apple-system-grouped-background: #F2F2F7;
+    --apple-secondary-grouped-background: #FFFFFF;
+    --apple-label: #000000;
+    --apple-secondary-label: #8E8E93;
+    --apple-tertiary-label: #C7C7CC;
+    --apple-separator: rgba(60, 60, 67, 0.12);
+    --apple-blue: #007AFF;
+    --apple-green: #34C759;
+    --apple-orange: #FF9500;
+    --apple-red: #FF3B30;
+  }
+
+  /* Dark mode overrides */
+  .dark {
+    --apple-system-background: #000000;
+    --apple-system-grouped-background: #1C1C1E;
+    --apple-secondary-grouped-background: #2C2C2E;
+    --apple-label: #FFFFFF;
+    --apple-secondary-label: #8E8E93;
+    --apple-tertiary-label: #48484A;
+    --apple-separator: rgba(255, 255, 255, 0.08);
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "SF Pro", "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #F2F2F7;
+    color: #1C1C1E;
+    letter-spacing: -0.011em;
+  }
+
+  .dark body {
+    background-color: #000000;
+    color: #FFFFFF;
+  }
+}
+
+/* Tabular figures for numbers alignment */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Apple Liquid Glass functional layer */
+.apple-glass {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+.dark .apple-glass {
+  background: rgba(28, 28, 30, 0.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+.apple-glass-card {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.dark .apple-glass-card {
+  background: rgba(44, 44, 46, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* Apple Inset Grouped Card */
+.apple-card {
+  background-color: #FFFFFF;
+  border-radius: 1.25rem; /* 20px */
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03), 0 1px 2px -1px rgba(0, 0, 0, 0.02);
+}
+
+.dark .apple-card {
+  background-color: #1C1C1E;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+}
+
+.apple-card-elevated {
+  background-color: #FFFFFF;
+  border-radius: 1.5rem; /* 24px */
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.dark .apple-card-elevated {
+  background-color: #1C1C1E;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6), 0 2px 6px -1px rgba(0, 0, 0, 0.4);
+}
+
+/* ========================================================
+   COMPREHENSIVE DARK MODE ADAPTATION (APPLE HIG ALIGNED)
+   ======================================================== */
+.dark {
+  color-scheme: dark;
+}
+
+/* 1. Global Text Readability in Dark Mode */
+.dark .text-\[\#1C1C1E\],
+.dark .text-slate-900,
+.dark .text-black {
+  color: #FFFFFF !important;
+}
+
+.dark .text-slate-800 {
+  color: #F2F2F7 !important;
+}
+
+.dark .text-slate-700 {
+  color: #E5E5EA !important;
+}
+
+.dark .text-slate-600 {
+  color: #D1D1D6 !important;
+}
+
+.dark .text-slate-500 {
+  color: #AEAEB2 !important;
+}
+
+.dark .text-slate-400 {
+  color: #8E8E93 !important;
+}
+
+/* 2. Surfaces & Cards */
+.dark .bg-white {
+  background-color: #1C1C1E !important;
+}
+
+.dark .bg-white\/50 {
+  background-color: rgba(28, 28, 30, 0.5) !important;
+}
+
+.dark .bg-white\/70,
+.dark .bg-white\/80 {
+  background-color: rgba(28, 28, 30, 0.8) !important;
+}
+
+.dark .bg-white\/90 {
+  background-color: rgba(28, 28, 30, 0.9) !important;
+}
+
+.dark .bg-slate-50,
+.dark .bg-slate-50\/50,
+.dark .bg-slate-50\/70,
+.dark .bg-slate-50\/80,
+.dark .bg-slate-100 {
+  background-color: #2C2C2E !important;
+}
+
+.dark .hover\:bg-slate-50:hover,
+.dark .hover\:bg-slate-50\/70:hover,
+.dark .hover\:bg-slate-100:hover,
+.dark .hover\:bg-slate-200:hover,
+.dark .hover\:bg-black\/\[0\.02\]:hover,
+.dark .hover\:bg-black\/\[0\.04\]:hover,
+.dark .hover\:bg-black\/\[0\.07\]:hover,
+.dark .hover\:bg-black\/\[0\.08\]:hover {
+  background-color: #3A3A3C !important;
+}
+
+.dark .bg-black\/\[0\.02\],
+.dark .bg-black\/\[0\.04\],
+.dark .bg-black\/\[0\.05\],
+.dark .bg-black\/\[0\.06\],
+.dark .bg-black\/\[0\.07\],
+.dark .bg-black\/\[0\.1\] {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 3. Borders & Dividers */
+.dark .border-slate-100,
+.dark .border-slate-200,
+.dark .border-slate-200\/70,
+.dark .border-slate-200\/80,
+.dark .border-black\/\[0\.03\],
+.dark .border-black\/\[0\.04\],
+.dark .border-black\/\[0\.05\],
+.dark .border-black\/\[0\.06\],
+.dark .border-black\/\[0\.07\] {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dark .divide-slate-100 > * + *,
+.dark .divide-slate-200 > * + *,
+.dark .divide-black\/\[0\.05\] > * + * {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 4. Inputs, Selects, and Textareas */
+.dark input[type="text"],
+.dark input[type="number"],
+.dark input[type="date"],
+.dark input[type="password"],
+.dark select,
+.dark textarea {
+  background-color: #2C2C2E !important;
+  color: #FFFFFF !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.dark input:focus,
+.dark select:focus,
+.dark textarea:focus {
+  background-color: #2C2C2E !important;
+  border-color: #007AFF !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #8E8E93 !important;
+}
+
+.dark select option {
+  background-color: #1C1C1E !important;
+  color: #FFFFFF !important;
+}
+
+/* 5. Charts, Progress Bars & SVG Adaptation */
+.dark circle[stroke="#f1f5f9"] {
+  stroke: #2C2C2E !important;
+}
+
+.dark .category-icon-box {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .bg-slate-200\/40,
+.dark .bg-slate-300 {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* 6. Colored Pill & Badge Dark Mode Accents */
+.dark .text-yellow-700,
+.dark .text-amber-700 {
+  color: #FFD60A !important;
+}
+
+.dark .text-red-700 {
+  color: #FF453A !important;
+}
+
+.dark .text-blue-700,
+.dark .text-blue-600 {
+  color: #0A84FF !important;
+}
+
+.dark .text-emerald-700,
+.dark .text-emerald-600 {
+  color: #30D158 !important;
+}
+
+.dark .text-purple-700,
+.dark .text-purple-600 {
+  color: #BF5AF2 !important;
+}
+
+.dark .bg-blue-100\/70,
+.dark .bg-emerald-100\/70,
+.dark .bg-purple-100\/70 {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark .bg-red-50 {
+  background-color: rgba(255, 59, 48, 0.18) !important;
+  color: #FF453A !important;
+}
+
+.dark .bg-emerald-50,
+.dark .bg-green-50 {
+  background-color: rgba(52, 199, 89, 0.18) !important;
+  color: #30D158 !important;
+}
+
+.dark .bg-blue-50,
+.dark .bg-brand-50 {
+  background-color: rgba(0, 122, 255, 0.18) !important;
+  color: #0A84FF !important;
+}
+
+.dark .bg-purple-50 {
+  background-color: rgba(175, 82, 222, 0.18) !important;
+  color: #BF5AF2 !important;
+}
+
+.dark .bg-amber-50,
+.dark .bg-yellow-50 {
+  background-color: rgba(255, 149, 0, 0.18) !important;
+  color: #FF9F0A !important;
+}
+
+.dark .bg-indigo-50 {
+  background-color: rgba(94, 92, 230, 0.18) !important;
+  color: #5E5CE6 !important;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D1D1D6;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #AEAEB2;
+}
+
+/* Interactive touch haptics simulation */
+.apple-pressable {
+  transition: transform 0.12s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.12s ease;
+}
+
+.apple-pressable:active {
+  transform: scale(0.98);
+  opacity: 0.85;
+}

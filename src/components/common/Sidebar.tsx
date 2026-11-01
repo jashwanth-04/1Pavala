@@ -1,0 +1,156 @@
+import React, { useEffect, useRef } from 'react';
+import { useApp } from '../../context/AppContext';
+import { ActiveTab } from '../../types';
+import {
+  LayoutDashboard,
+  ReceiptText,
+  PieChart,
+  Target,
+  CalendarDays,
+  Settings,
+  X,
+  ShieldCheck,
+} from 'lucide-react';
+
+interface NavItem {
+  id: ActiveTab;
+  label: string;
+  icon: React.ReactNode;
+  description: string;
+}
+
+const navItems: NavItem[] = [
+  { id: 'dashboard',    label: 'Overview',  icon: <LayoutDashboard size={20} />, description: 'Monthly summary' },
+  { id: 'transactions', label: 'Expenses',  icon: <ReceiptText    size={20} />, description: 'All transactions' },
+  { id: 'insights',     label: 'Insights',  icon: <PieChart       size={20} />, description: 'Spending patterns' },
+  { id: 'budgeting',    label: 'Budget',    icon: <Target         size={20} />, description: 'Budget goals' },
+  { id: 'summary',      label: 'Summary',   icon: <CalendarDays   size={20} />, description: 'Monthly reports' },
+  { id: 'settings',     label: 'Settings',  icon: <Settings       size={20} />, description: 'Preferences' },
+];
+
+export const Sidebar: React.FC = () => {
+  const { activeTab, setActiveTab, isSidebarOpen, closeSidebar } = useApp();
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isSidebarOpen) closeSidebar();
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [isSidebarOpen, closeSidebar]);
+
+  // Trap scroll when open on mobile
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isSidebarOpen]);
+
+  const handleNavClick = (tab: ActiveTab) => {
+    setActiveTab(tab);
+    closeSidebar();
+  };
+
+  return (
+    <>
+      {/* Backdrop overlay */}
+      <div
+        className={`fixed inset-0 z-50 bg-black/30 backdrop-blur-[2px] transition-opacity duration-300 ${
+          isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        onClick={closeSidebar}
+        aria-hidden="true"
+      />
+
+      {/* Sidebar panel */}
+      <aside
+        ref={sidebarRef}
+        className={`fixed top-0 left-0 h-full z-50 w-72 flex flex-col
+          apple-glass dark:bg-[#1C1C1E]/95 border-r border-black/[0.06] dark:border-white/[0.08]
+          shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]
+          ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        aria-label="Navigation sidebar"
+      >
+        {/* Sidebar header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-black/[0.06] dark:border-white/[0.08]">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-[12px] bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center font-semibold text-base shadow-sm">
+              <span>1P</span>
+            </div>
+            <div>
+              <p className="text-[15px] font-bold tracking-tight text-[#1C1C1E] dark:text-white leading-tight">
+                1Pavala
+              </p>
+              <p className="text-[11px] text-[#8E8E93] font-medium">Personal Finance</p>
+            </div>
+          </div>
+
+          {/* Close button */}
+          <button
+            onClick={closeSidebar}
+            className="w-8 h-8 rounded-full bg-black/[0.06] dark:bg-white/[0.1] flex items-center justify-center text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-white transition-colors apple-pressable"
+            aria-label="Close sidebar"
+          >
+            <X size={16} />
+          </button>
+        </div>
+
+        {/* Navigation items */}
+        <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-1" aria-label="Main navigation">
+          {navItems.map((item) => {
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleNavClick(item.id)}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[14px] text-left transition-all duration-150 apple-pressable group ${
+                  isActive
+                    ? 'bg-[#007AFF] text-white shadow-[0_2px_8px_rgba(0,122,255,0.3)]'
+                    : 'text-[#1C1C1E] dark:text-white hover:bg-black/[0.06] dark:hover:bg-white/[0.08]'
+                }`}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {/* Icon */}
+                <span
+                  className={`flex-shrink-0 transition-colors ${
+                    isActive ? 'text-white' : 'text-[#8E8E93] group-hover:text-[#007AFF] dark:group-hover:text-[#007AFF]'
+                  }`}
+                >
+                  {item.icon}
+                </span>
+
+                {/* Label + description */}
+                <div className="flex flex-col min-w-0">
+                  <span className={`text-[14px] font-semibold leading-tight ${isActive ? 'text-white' : ''}`}>
+                    {item.label}
+                  </span>
+                  <span className={`text-[11px] leading-tight mt-0.5 ${
+                    isActive ? 'text-blue-100' : 'text-[#8E8E93]'
+                  }`}>
+                    {item.description}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Footer privacy badge */}
+        <div className="px-5 py-4 border-t border-black/[0.06] dark:border-white/[0.08]">
+          <div className="flex items-center gap-2 text-[11px] text-[#8E8E93]">
+            <ShieldCheck size={14} className="text-emerald-500 flex-shrink-0" />
+            <span className="font-medium">100% Private &amp; On-Device Storage</span>
+          </div>
+          <p className="text-[10px] text-[#C7C7CC] dark:text-[#48484A] mt-1">
+            Your data never leaves this device
+          </p>
+        </div>
+      </aside>
+    </>
+  );
+};

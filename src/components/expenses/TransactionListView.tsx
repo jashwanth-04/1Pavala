@@ -1,0 +1,387 @@
+import React, { useState, useMemo } from 'react';
+import { useApp } from '../../context/AppContext';
+import { CategoryIcon } from '../common/CategoryIcon';
+import { formatCurrency, formatDateDisplay, getMonthLabel, getPreviousMonthKey } from '../../utils/formatters';
+import { PAYMENT_METHODS } from '../../constants/categories';
+import {
+  Search,
+  Filter,
+  ArrowUpDown,
+  Plus,
+  Trash2,
+  Edit2,
+  Download,
+  Receipt,
+  X,
+} from 'lucide-react';
+import { Expense, SortField, SortOrder } from '../../types';
+
+export const TransactionListView: React.FC = () => {
+  const {
+    expenses,
+    categories,
+    categoryMap,
+    settings,
+    openAddExpenseModal,
+    openEditExpenseModal,
+    deleteExpense,
+    exportData,
+    currentMonthKey,
+  } = useApp();
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
+  const [selectedMonth, setSelectedMonth] = useState<string>('ALL');
+  const [selectedMethod, setSelectedMethod] = useState<string>('ALL');
+  const [sortBy, setSortBy] = useState<SortField>('date');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+
+  // Month options
+  const availableMonths = useMemo(() => {
+    const set = new Set<string>();
+    expenses.forEach((e) => {
+      if (e.date?.length >= 7) set.add(e.date.substring(0, 7));
+    });
+    set.add(currentMonthKey);
+    return Array.from(set).sort().reverse();
+  }, [expenses, currentMonthKey]);
+
+  // Filter & Sort
+  const filteredExpenses = useMemo(() => {
+    return expenses.filter((exp) => {
+      // Month
+      if (selectedMonth !== 'ALL' && !exp.date.startsWith(selectedMonth)) {
+        return false;
+      }
+      // Category
+      if (selectedCategory !== 'ALL' && exp.categoryId !== selectedCategory) {
+        return false;
+      }
+      // Payment Method
+      if (selectedMethod !== 'ALL' && exp.paymentMethod !== selectedMethod) {
+        return false;
+      }
+      // Search Note or Category Name
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const catName = categoryMap.get(exp.categoryId)?.name?.toLowerCase() || '';
+        const note = (exp.note || '').toLowerCase();
+        const method = (exp.paymentMethod || '').toLowerCase();
+        if (!catName.includes(q) && !note.includes(q) && !method.includes(q)) {
+          return false;
+        }
+      }
+      return true;
+    }).sort((a, b) => {
+      if (sortBy === 'date') {
+        const timeA = new Date(a.date).getTime();
+        const timeB = new Date(b.date).getTime();
+        return sortOrder === 'asc' ? timeA - timeB : timeB - timeA;
+      } else if (sortBy === 'amount') {
+        return sortOrder === 'asc' ? a.amount - b.amount : b.amount - a.amount;
+      } else if (sortBy === 'category') {
+        const catA = categoryMap.get(a.categoryId)?.name || '';
+        const catB = categoryMap.get(b.categoryId)?.name || '';
+        return sortOrder === 'asc' ? catA.localeCompare(catB) : catB.localeCompare(catA);
+      }
+      return 0;
+    });
+  }, [expenses, selectedMonth, selectedCategory, selectedMethod, searchQuery, sortBy, sortOrder, categoryMap]);
+
+  const totalFilteredAmount = useMemo(() => {
+    return filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
+  }, [filteredExpenses]);
+
+  const hasActiveFilters =
+    searchQuery !== '' || selectedCategory !== 'ALL' || selectedMonth !== 'ALL' || selectedMethod !== 'ALL';
+
+  const resetFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory('ALL');
+    setSelectedMonth('ALL');
+    setSelectedMethod('ALL');
+  };
+
+  const toggleSort = (field: SortField) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(field);
+      setSortOrder('desc');
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header & Actions */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+            Transaction History
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+            Manage, filter, and review all recorded expenses
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={() => exportData('csv')}
+            className="flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 shadow-xs transition-colors"
+            title="Download CSV"
+          >
+            <Download size={14} />
+            <span>Export CSV</span>
+          </button>
+          <button
+            onClick={openAddExpenseModal}
+            className="flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl shadow-md shadow-brand-600/25 transition-all"
+          >
+            <Plus size={16} strokeWidth={2.5} />
+            <span>Add Expense</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Filter and Search Bar Card */}
+      <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* Search box */}
+          <div className="relative">
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search note, category..."
+              className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-100 focus:border-brand-500"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
+
+          {/* Month selector filter */}
+          <div>
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-700 font-medium focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-100 focus:border-brand-500 cursor-pointer"
+            >
+              <option value="ALL">All Months</option>
+              {availableMonths.map((m) => (
+                <option key={m} value={m}>
+                  {getMonthLabel(m)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Category filter */}
+          <div>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-700 font-medium focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-100 focus:border-brand-500 cursor-pointer"
+            >
+              <option value="ALL">All Categories</option>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Payment method filter */}
+          <div>
+            <select
+              value={selectedMethod}
+              onChange={(e) => setSelectedMethod(e.target.value)}
+              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-700 font-medium focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-100 focus:border-brand-500 cursor-pointer"
+            >
+              <option value="ALL">All Payment Methods</option>
+              {PAYMENT_METHODS.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Active Filter stats and Sort buttons */}
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs">
+          <div className="flex items-center gap-2 text-slate-600">
+            <span className="font-semibold text-slate-900">{filteredExpenses.length}</span> expenses found
+            <span className="text-slate-300">•</span>
+            <span>Total: </span>
+            <span className="font-bold text-slate-900">
+              {formatCurrency(totalFilteredAmount, settings.currencySymbol)}
+            </span>
+
+            {hasActiveFilters && (
+              <button
+                onClick={resetFilters}
+                className="ml-2 inline-flex items-center gap-1 text-brand-600 hover:text-brand-700 font-semibold underline"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+
+          {/* Sort toggles */}
+          <div className="flex items-center gap-1 text-slate-500">
+            <span className="mr-1 text-[11px] uppercase tracking-wider font-semibold text-slate-400">
+              Sort by:
+            </span>
+            <button
+              onClick={() => toggleSort('date')}
+              className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+                sortBy === 'date'
+                  ? 'bg-slate-900 dark:bg-[#007AFF] text-white'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              Date {sortBy === 'date' && (sortOrder === 'asc' ? '↑' : '↓')}
+            </button>
+            <button
+              onClick={() => toggleSort('amount')}
+              className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+                sortBy === 'amount'
+                  ? 'bg-slate-900 dark:bg-[#007AFF] text-white'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              Amount {sortBy === 'amount' && (sortOrder === 'asc' ? '↑' : '↓')}
+            </button>
+            <button
+              onClick={() => toggleSort('category')}
+              className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
+                sortBy === 'category'
+                  ? 'bg-slate-900 dark:bg-[#007AFF] text-white'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
+            >
+              Category {sortBy === 'category' && (sortOrder === 'asc' ? '↑' : '↓')}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Transaction List */}
+      <div className="bg-white rounded-2xl shadow-xs border border-slate-200/80 overflow-hidden">
+        {filteredExpenses.length === 0 ? (
+          <div className="py-14 px-4 text-center flex flex-col items-center">
+            <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+              <Receipt size={28} />
+            </div>
+            <h3 className="text-base font-bold text-slate-800">No expenses found</h3>
+            <p className="text-xs text-slate-400 mt-1 max-w-sm">
+              {hasActiveFilters
+                ? 'Try adjusting your search query, month, or category filters.'
+                : 'Get started by recording your first transaction.'}
+            </p>
+            {hasActiveFilters ? (
+              <button
+                onClick={resetFilters}
+                className="mt-4 px-4 py-2 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl"
+              >
+                Reset Filters
+              </button>
+            ) : (
+              <button
+                onClick={openAddExpenseModal}
+                className="mt-4 flex items-center gap-1.5 px-4 py-2 text-xs font-bold bg-brand-600 hover:bg-brand-700 text-white rounded-xl shadow-xs"
+              >
+                <Plus size={16} />
+                <span>Add First Expense</span>
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="divide-y divide-slate-100">
+            {filteredExpenses.map((exp) => {
+              const cat = categoryMap.get(exp.categoryId);
+
+              return (
+                <div
+                  key={exp.id}
+                  className="p-4 sm:px-6 hover:bg-slate-50/70 transition-colors flex items-center justify-between gap-4 group"
+                >
+                  {/* Left: Icon & Details */}
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <CategoryIcon category={cat} size="lg" />
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-slate-900 text-sm sm:text-base truncate">
+                          {cat?.name || exp.categoryId}
+                        </span>
+                        {exp.paymentMethod && (
+                          <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-semibold text-[10px]">
+                            {exp.paymentMethod}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 mt-0.5">
+                        <span className="font-medium text-slate-600">
+                          {formatDateDisplay(exp.date)}
+                        </span>
+                        {exp.note && (
+                          <>
+                            <span>•</span>
+                            <span className="truncate max-w-[280px] text-slate-500 italic">
+                              "{exp.note}"
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right: Amount & Action buttons */}
+                  <div className="flex items-center gap-4 shrink-0">
+                    <span className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
+                      {formatCurrency(exp.amount, settings.currencySymbol)}
+                    </span>
+
+                    <div className="flex items-center gap-1 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        onClick={() => openEditExpenseModal(exp)}
+                        className="p-2 rounded-xl text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"
+                        title="Edit expense"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (
+                            window.confirm(
+                              `Delete expense of ${settings.currencySymbol}${exp.amount}?`
+                            )
+                          ) {
+                            deleteExpense(exp.id);
+                          }
+                        }}
+                        className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                        title="Delete expense"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};

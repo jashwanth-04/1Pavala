@@ -1,0 +1,4 @@
+<resources>
+    <!-- App icon background — brand blue -->
+    <color name="ic_launcher_background">#1565C0</color>
+</resources>
