@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ActiveTab } from '../../types';
+import { AppLogo } from './AppLogo';
 import {
   LayoutDashboard,
   ReceiptText,
@@ -78,17 +79,7 @@ export const Sidebar: React.FC = () => {
       >
         {/* Sidebar header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-black/[0.06] dark:border-white/[0.08]">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-[12px] bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center font-semibold text-base shadow-sm">
-              <span>1P</span>
-            </div>
-            <div>
-              <p className="text-[15px] font-bold tracking-tight text-[#1C1C1E] dark:text-white leading-tight">
-                1Pavala
-              </p>
-              <p className="text-[11px] text-[#8E8E93] font-medium">Personal Finance</p>
-            </div>
-          </div>
+          <AppLogo size="sm" showText={true} subtitle="Personal Finance" />
 
           {/* Close button */}
           <button
@@ -110,15 +101,15 @@ export const Sidebar: React.FC = () => {
                 onClick={() => handleNavClick(item.id)}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-[14px] text-left transition-all duration-150 apple-pressable group ${
                   isActive
-                    ? 'bg-[#007AFF] text-white shadow-[0_2px_8px_rgba(0,122,255,0.3)]'
-                    : 'text-[#1C1C1E] dark:text-white hover:bg-black/[0.06] dark:hover:bg-white/[0.08]'
+                    ? 'bg-[#214B30] text-white shadow-[0_3px_12px_rgba(33,75,48,0.28)] border border-brand-600/30 dark:border-white/10'
+                    : 'text-[#1C1C1E] dark:text-white hover:bg-black/[0.05] dark:hover:bg-white/[0.08]'
                 }`}
                 aria-current={isActive ? 'page' : undefined}
               >
                 {/* Icon */}
                 <span
                   className={`flex-shrink-0 transition-colors ${
-                    isActive ? 'text-white' : 'text-[#8E8E93] group-hover:text-[#007AFF] dark:group-hover:text-[#007AFF]'
+                    isActive ? 'text-white' : 'text-[#8E8E93] group-hover:text-[#214B30] dark:group-hover:text-emerald-400'
                   }`}
                 >
                   {item.icon}
@@ -130,7 +121,7 @@ export const Sidebar: React.FC = () => {
                     {item.label}
                   </span>
                   <span className={`text-[11px] leading-tight mt-0.5 ${
-                    isActive ? 'text-blue-100' : 'text-[#8E8E93]'
+                    isActive ? 'text-emerald-100/80' : 'text-[#8E8E93]'
                   }`}>
                     {item.description}
                   </span>

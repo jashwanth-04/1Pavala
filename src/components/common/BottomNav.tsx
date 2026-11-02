@@ -35,7 +35,7 @@ export const BottomNav: React.FC = () => {
               onClick={() => setActiveTab(item.id)}
               className={`flex-1 flex flex-col items-center justify-center py-1 transition-all apple-pressable ${
                 isActive
-                  ? 'text-[#007AFF]'
+                  ? 'text-[#214B30] dark:text-[#34C759]'
                   : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-white'
               }`}
               aria-current={isActive ? 'page' : undefined}
@@ -49,7 +49,7 @@ export const BottomNav: React.FC = () => {
               </div>
               <span
                 className={`text-[10px] mt-0.5 tracking-tight ${
-                  isActive ? 'font-semibold text-[#007AFF]' : 'font-normal text-[#8E8E93]'
+                  isActive ? 'font-semibold text-[#214B30] dark:text-[#34C759]' : 'font-normal text-[#8E8E93]'
                 }`}
               >
                 {item.label}

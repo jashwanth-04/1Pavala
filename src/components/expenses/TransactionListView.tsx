@@ -244,8 +244,8 @@ export const TransactionListView: React.FC = () => {
               onClick={() => toggleSort('date')}
               className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
                 sortBy === 'date'
-                  ? 'bg-slate-900 dark:bg-[#007AFF] text-white'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? 'bg-[#214B30] text-white shadow-xs'
+                  : 'bg-slate-100 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/[0.12]'
               }`}
             >
               Date {sortBy === 'date' && (sortOrder === 'asc' ? '↑' : '↓')}
@@ -254,8 +254,8 @@ export const TransactionListView: React.FC = () => {
               onClick={() => toggleSort('amount')}
               className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
                 sortBy === 'amount'
-                  ? 'bg-slate-900 dark:bg-[#007AFF] text-white'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? 'bg-[#214B30] text-white shadow-xs'
+                  : 'bg-slate-100 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/[0.12]'
               }`}
             >
               Amount {sortBy === 'amount' && (sortOrder === 'asc' ? '↑' : '↓')}
@@ -264,8 +264,8 @@ export const TransactionListView: React.FC = () => {
               onClick={() => toggleSort('category')}
               className={`px-2.5 py-1 rounded-lg font-medium transition-colors ${
                 sortBy === 'category'
-                  ? 'bg-slate-900 dark:bg-[#007AFF] text-white'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? 'bg-[#214B30] text-white shadow-xs'
+                  : 'bg-slate-100 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/[0.12]'
               }`}
             >
               Category {sortBy === 'category' && (sortOrder === 'asc' ? '↑' : '↓')}

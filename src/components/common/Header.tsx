@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../../context/AppContext';
+import { AppLogo } from './AppLogo';
 import {
   Plus,
   Calendar,
@@ -59,9 +60,7 @@ export const Header: React.FC = () => {
               className="flex items-center gap-2 group text-left apple-pressable focus:outline-hidden shrink-0"
               aria-label="1Pavala"
             >
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-[10px] sm:rounded-[12px] bg-slate-900 dark:bg-white text-white dark:text-slate-900 flex items-center justify-center shadow-xs font-semibold tracking-tight text-sm sm:text-base transition-transform group-hover:scale-[1.03]">
-                <span>1P</span>
-              </div>
+              <AppLogo size="sm" showText={false} className="transition-transform group-hover:scale-[1.03]" />
               <span className="text-[17px] sm:text-lg font-bold tracking-tight text-[#1C1C1E] dark:text-white hidden md:block">
                 1Pavala
               </span>
@@ -72,7 +71,7 @@ export const Header: React.FC = () => {
           <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 shrink-0">
             {/* Sleek Apple-style Month Capsule (Compact on mobile, expanded on desktop) */}
             <div className="relative inline-flex items-center">
-              <div className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.07] dark:hover:bg-white/[0.12] text-[#1C1C1E] dark:text-white rounded-full text-xs font-semibold transition-colors pointer-events-none">
+              <div className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black/[0.03] dark:bg-white/[0.08] hover:bg-black/[0.06] dark:hover:bg-white/[0.12] border border-black/[0.05] dark:border-white/[0.06] text-[#1C1C1E] dark:text-white rounded-full text-xs font-semibold transition-colors pointer-events-none shadow-2xs">
                 <Calendar size={12} className="text-[#8E8E93] shrink-0" />
                 {/* On mobile: compact 'Nov 2026' */}
                 <span className="sm:hidden whitespace-nowrap">
@@ -103,17 +102,17 @@ export const Header: React.FC = () => {
             {/* Dark / Light Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-black/[0.05] dark:bg-white/[0.08] hover:bg-black/[0.09] dark:hover:bg-white/[0.14] text-[#1C1C1E] dark:text-white transition-colors apple-pressable shrink-0"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.14] border border-black/[0.04] dark:border-white/[0.06] text-[#1C1C1E] dark:text-white transition-colors apple-pressable shrink-0"
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
             >
               {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
             </button>
 
-            {/* Add Expense CTA button - Guaranteed full visibility without clipping */}
+            {/* Add Expense CTA button - 1Pavala Sovereign Green & Silver */}
             <button
               onClick={openAddExpenseModal}
-              className="flex items-center justify-center gap-1 bg-[#007AFF] hover:bg-[#0071E3] active:bg-[#0062C4] text-white text-xs sm:text-sm font-semibold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-[0_2px_8px_rgba(0,122,255,0.25)] transition-all apple-pressable shrink-0"
+              className="flex items-center justify-center gap-1 bg-[#214B30] hover:bg-[#1A3B26] active:bg-[#132B1C] text-white text-xs sm:text-sm font-semibold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-[0_2px_10px_rgba(33,75,48,0.30)] dark:shadow-[0_2px_12px_rgba(33,75,48,0.40)] border border-white/10 transition-all apple-pressable shrink-0"
               aria-label="Add new expense"
             >
               <Plus size={14} strokeWidth={2.4} className="shrink-0" />
