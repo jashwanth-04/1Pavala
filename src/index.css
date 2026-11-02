@@ -15,6 +15,10 @@
     --apple-green: #34C759;
     --apple-orange: #FF9500;
     --apple-red: #FF3B30;
+    --pavala-green: #214B30;
+    --pavala-green-hover: #1A3B26;
+    --pavala-silver: #E2E8F0;
+    --pavala-silver-dark: #94A3B8;
   }
 
   /* Dark mode overrides */
@@ -26,6 +30,10 @@
     --apple-secondary-label: #8E8E93;
     --apple-tertiary-label: #48484A;
     --apple-separator: rgba(255, 255, 255, 0.08);
+    --pavala-green: #2B6244;
+    --pavala-green-hover: #3D7D5E;
+    --pavala-silver: #CBD5E1;
+    --pavala-silver-dark: #64748B;
   }
 
   body {
@@ -215,7 +223,8 @@
 .dark select:focus,
 .dark textarea:focus {
   background-color: #2C2C2E !important;
-  border-color: #007AFF !important;
+  border-color: #34C759 !important;
+  box-shadow: 0 0 0 2px rgba(52, 199, 89, 0.25) !important;
 }
 
 .dark input::placeholder,
@@ -284,10 +293,19 @@
   color: #30D158 !important;
 }
 
-.dark .bg-blue-50,
 .dark .bg-brand-50 {
-  background-color: rgba(0, 122, 255, 0.18) !important;
-  color: #0A84FF !important;
+  background-color: rgba(33, 75, 48, 0.35) !important;
+  color: #34C759 !important;
+}
+
+.dark .text-brand-600,
+.dark .text-brand-700 {
+  color: #34C759 !important;
+}
+
+.dark .border-brand-500,
+.dark .border-brand-600 {
+  border-color: #34C759 !important;
 }
 
 .dark .bg-purple-50 {

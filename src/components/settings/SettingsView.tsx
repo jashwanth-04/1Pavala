@@ -16,6 +16,7 @@ import {
   Check,
 } from 'lucide-react';
 import { CategoryIcon } from '../common/CategoryIcon';
+import { AppLogo } from '../common/AppLogo';
 
 export const SettingsView: React.FC = () => {
   const {
@@ -380,6 +381,24 @@ export const SettingsView: React.FC = () => {
             <Trash2 size={15} />
             <span>Clear All Data</span>
           </button>
+        </div>
+      </div>
+
+      {/* 5. Official App Branding & About */}
+      <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl p-6 shadow-xs border border-slate-200/80 dark:border-white/[0.08] flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+        <AppLogo size="xl" className="shrink-0" />
+        <div className="space-y-1">
+          <h4 className="text-base font-bold text-slate-900 dark:text-white">1Pavala</h4>
+          <p className="text-xs text-slate-500 dark:text-[#8E8E93] leading-relaxed">
+            Privacy-first personal expense tracking and budgeting. Inspired by the classic Pavala coin, engineered for simplicity, clarity, and complete financial sovereignty.
+          </p>
+          <div className="pt-2 flex items-center justify-center sm:justify-start gap-3 text-[11px] text-slate-400 dark:text-[#636366]">
+            <span>Version 1.0.0</span>
+            <span>•</span>
+            <span>Zero Cloud Tracking</span>
+            <span>•</span>
+            <span>100% On-Device</span>
+          </div>
         </div>
       </div>
     </div>

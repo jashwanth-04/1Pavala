@@ -1,4 +1,4 @@
 <resources>
-    <!-- App icon background — brand blue -->
-    <color name="ic_launcher_background">#1565C0</color>
+    <!-- App icon background — official 1Pavala dark green -->
+    <color name="ic_launcher_background">#214B30</color>
 </resources>

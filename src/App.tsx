@@ -3,6 +3,7 @@ import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/common/Header';
 import { BottomNav } from './components/common/BottomNav';
 import { Sidebar } from './components/common/Sidebar';
+import { AppLogo } from './components/common/AppLogo';
 import { ToastContainer } from './components/common/Toast';
 import { DashboardView } from './components/dashboard/DashboardView';
 import { TransactionListView } from './components/expenses/TransactionListView';
@@ -34,7 +35,7 @@ const AppContent: React.FC = () => {
   }, [openAddExpenseModal]);
 
   return (
-    <div className="min-h-screen bg-[#F2F2F7] dark:bg-[#000000] text-[#1C1C1E] dark:text-white flex flex-col antialiased selection:bg-[#007AFF] selection:text-white pb-24 md:pb-12 transition-colors duration-200 overflow-x-hidden">
+    <div className="min-h-screen bg-[#F2F2F7] dark:bg-[#000000] text-[#1C1C1E] dark:text-white flex flex-col antialiased selection:bg-[#214B30] selection:text-white dark:selection:bg-[#34C759] dark:selection:text-[#0A170F] pb-24 md:pb-12 transition-colors duration-200 overflow-x-hidden">
       {/* Toast Feedback */}
       <ToastContainer />
 
@@ -64,7 +65,8 @@ const AppContent: React.FC = () => {
       <footer className="hidden md:block border-t border-slate-200/70 dark:border-white/[0.06] mt-auto py-5 bg-white/50 dark:bg-[#1C1C1E]/50 text-xs text-slate-500 dark:text-[#8E8E93]">
         <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           {/* Left: brand name */}
-          <div className="flex items-center gap-1.5 font-medium text-slate-600 dark:text-[#8E8E93]">
+          <div className="flex items-center gap-2 font-medium text-slate-600 dark:text-[#8E8E93]">
+            <AppLogo size="xs" showText={false} />
             <span>1Pavala — Personal Expense Tracker</span>
           </div>
 
