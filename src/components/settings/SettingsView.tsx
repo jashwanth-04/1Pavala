@@ -93,9 +93,6 @@ export const SettingsView: React.FC = () => {
         <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
           Application Settings &amp; Data
         </h2>
-        <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-          Manage your personal preferences, budget alert thresholds, and device storage
-        </p>
       </div>
 
       {/* 1. Privacy Pledge (PRD Requirement 5.9) */}

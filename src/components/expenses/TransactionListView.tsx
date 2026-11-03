@@ -9,7 +9,6 @@ import {
   ArrowUpDown,
   Plus,
   Trash2,
-  Edit2,
   Download,
   Receipt,
   X,
@@ -114,66 +113,64 @@ export const TransactionListView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header & Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
           <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
             Transaction History
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-            Manage, filter, and review all recorded expenses
-          </p>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1.5 sm:gap-2.5 shrink-0">
           <button
             onClick={() => exportData('csv')}
-            className="flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 shadow-xs transition-colors"
+            className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-1.5 sm:py-2 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 shadow-xs transition-colors whitespace-nowrap"
             title="Download CSV"
           >
-            <Download size={14} />
+            <Download size={13} />
             <span>Export CSV</span>
           </button>
           <button
             onClick={openAddExpenseModal}
-            className="flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-xl shadow-md shadow-brand-600/25 transition-all"
+            className="w-full sm:w-auto flex items-center justify-center gap-1.5 bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-bold px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl shadow-md shadow-brand-600/25 transition-all whitespace-nowrap"
           >
-            <Plus size={16} strokeWidth={2.5} />
+            <Plus size={15} strokeWidth={2.5} />
             <span>Add Expense</span>
           </button>
         </div>
       </div>
 
       {/* Filter and Search Bar Card */}
-      <div className="bg-white rounded-2xl p-4 sm:p-5 shadow-xs border border-slate-200/80 space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {/* Search box */}
-          <div className="relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search note, category..."
-              className="w-full pl-9 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-100 focus:border-brand-500"
-            />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-              >
-                <X size={14} />
-              </button>
-            )}
-          </div>
+      <div className="bg-white rounded-2xl p-3.5 sm:p-5 shadow-xs border border-slate-200/80 space-y-3 sm:space-y-4">
+        {/* Search box - full width */}
+        <div className="relative">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search note, category..."
+            className="w-full pl-9 pr-8 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-100 focus:border-brand-500"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+            >
+              <X size={14} />
+            </button>
+          )}
+        </div>
 
+        {/* 3 Filters placed beside each other in a line */}
+        <div className="grid grid-cols-3 gap-2">
           {/* Month selector filter */}
           <div>
             <select
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-700 font-medium focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-100 focus:border-brand-500 cursor-pointer"
+              className="w-full px-2 sm:px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-700 font-medium focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-100 focus:border-brand-500 cursor-pointer truncate"
             >
-              <option value="ALL">All Months</option>
+              <option value="ALL">Month</option>
               {availableMonths.map((m) => (
                 <option key={m} value={m}>
                   {getMonthLabel(m)}
@@ -187,9 +184,9 @@ export const TransactionListView: React.FC = () => {
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-700 font-medium focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-100 focus:border-brand-500 cursor-pointer"
+              className="w-full px-2 sm:px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-700 font-medium focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-100 focus:border-brand-500 cursor-pointer truncate"
             >
-              <option value="ALL">All Categories</option>
+              <option value="ALL">Category</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -203,9 +200,9 @@ export const TransactionListView: React.FC = () => {
             <select
               value={selectedMethod}
               onChange={(e) => setSelectedMethod(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-700 font-medium focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-100 focus:border-brand-500 cursor-pointer"
+              className="w-full px-2 sm:px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-700 font-medium focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-100 focus:border-brand-500 cursor-pointer truncate"
             >
-              <option value="ALL">All Payment Methods</option>
+              <option value="ALL">Payment</option>
               {PAYMENT_METHODS.map((m) => (
                 <option key={m} value={m}>
                   {m}
@@ -215,29 +212,11 @@ export const TransactionListView: React.FC = () => {
           </div>
         </div>
 
-        {/* Active Filter stats and Sort buttons */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 text-xs">
-          <div className="flex items-center gap-2 text-slate-600">
-            <span className="font-semibold text-slate-900">{filteredExpenses.length}</span> expenses found
-            <span className="text-slate-300">•</span>
-            <span>Total: </span>
-            <span className="font-bold text-slate-900">
-              {formatCurrency(totalFilteredAmount, settings.currencySymbol)}
-            </span>
-
-            {hasActiveFilters && (
-              <button
-                onClick={resetFilters}
-                className="ml-2 inline-flex items-center gap-1 text-brand-600 hover:text-brand-700 font-semibold underline"
-              >
-                Clear Filters
-              </button>
-            )}
-          </div>
-
-          {/* Sort toggles */}
-          <div className="flex items-center gap-1 text-slate-500">
-            <span className="mr-1 text-[11px] uppercase tracking-wider font-semibold text-slate-400">
+        {/* Active Filter stats and Sort buttons - Swapped order */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-3 border-t border-slate-100 text-xs">
+          {/* Sort toggles (First) */}
+          <div className="flex items-center gap-1.5 text-slate-500 overflow-x-auto pb-0.5 sm:pb-0">
+            <span className="mr-1 text-[11px] uppercase tracking-wider font-semibold text-slate-400 shrink-0">
               Sort by:
             </span>
             <button
@@ -270,6 +249,25 @@ export const TransactionListView: React.FC = () => {
             >
               Category {sortBy === 'category' && (sortOrder === 'asc' ? '↑' : '↓')}
             </button>
+          </div>
+
+          {/* Expenses found & Total (Second) */}
+          <div className="flex items-center gap-2 text-slate-600 flex-wrap">
+            <span className="font-semibold text-slate-900">{filteredExpenses.length}</span> expenses found
+            <span className="text-slate-300">•</span>
+            <span>Total: </span>
+            <span className="font-bold text-slate-900">
+              {formatCurrency(totalFilteredAmount, settings.currencySymbol)}
+            </span>
+
+            {hasActiveFilters && (
+              <button
+                onClick={resetFilters}
+                className="ml-2 inline-flex items-center gap-1 text-brand-600 hover:text-brand-700 font-semibold underline"
+              >
+                Clear Filters
+              </button>
+            )}
           </div>
         </div>
       </div>
@@ -312,31 +310,42 @@ export const TransactionListView: React.FC = () => {
               return (
                 <div
                   key={exp.id}
-                  className="p-4 sm:px-6 hover:bg-slate-50/70 transition-colors flex items-center justify-between gap-4 group"
+                  onClick={() => openEditExpenseModal(exp)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      openEditExpenseModal(exp);
+                    }
+                  }}
+                  className="p-3.5 sm:p-4 sm:px-6 hover:bg-slate-50/80 active:bg-slate-100/80 transition-colors flex items-center justify-between gap-3 cursor-pointer group select-none"
                 >
                   {/* Left: Icon & Details */}
-                  <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
                     <CategoryIcon category={cat} size="lg" />
                     <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-slate-900 text-sm sm:text-base truncate">
-                          {cat?.name || exp.categoryId}
-                        </span>
-                        {exp.paymentMethod && (
-                          <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-semibold text-[10px]">
-                            {exp.paymentMethod}
-                          </span>
-                        )}
+                      <div className="font-bold text-slate-900 text-sm sm:text-base truncate">
+                        {cat?.name || exp.categoryId}
                       </div>
 
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 mt-0.5">
+                      {/* Description: Date and payment type beside each other */}
+                      <div className="flex flex-wrap items-center gap-1.5 text-xs text-slate-500 mt-0.5">
                         <span className="font-medium text-slate-600">
                           {formatDateDisplay(exp.date)}
                         </span>
+                        {exp.paymentMethod && (
+                          <>
+                            <span className="text-slate-300">•</span>
+                            <span className="px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-600 font-semibold text-[10px]">
+                              {exp.paymentMethod}
+                            </span>
+                          </>
+                        )}
                         {exp.note && (
                           <>
-                            <span>•</span>
-                            <span className="truncate max-w-[280px] text-slate-500 italic">
+                            <span className="text-slate-300">•</span>
+                            <span className="truncate max-w-[150px] sm:max-w-[280px] text-slate-500 italic">
                               "{exp.note}"
                             </span>
                           </>
@@ -345,36 +354,30 @@ export const TransactionListView: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Right: Amount & Action buttons */}
-                  <div className="flex items-center gap-4 shrink-0">
+                  {/* Right: Amount & Delete button (Row click opens edit modal) */}
+                  <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
                     <span className="text-base sm:text-lg font-black text-slate-900 tracking-tight">
                       {formatCurrency(exp.amount, settings.currencySymbol)}
                     </span>
 
-                    <div className="flex items-center gap-1 sm:opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button
-                        onClick={() => openEditExpenseModal(exp)}
-                        className="p-2 rounded-xl text-slate-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"
-                        title="Edit expense"
-                      >
-                        <Edit2 size={16} />
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (
-                            window.confirm(
-                              `Delete expense of ${settings.currencySymbol}${exp.amount}?`
-                            )
-                          ) {
-                            deleteExpense(exp.id);
-                          }
-                        }}
-                        className="p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
-                        title="Delete expense"
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (
+                          window.confirm(
+                            `Delete expense of ${settings.currencySymbol}${exp.amount}?`
+                          )
+                        ) {
+                          deleteExpense(exp.id);
+                        }
+                      }}
+                      className="p-1.5 sm:p-2 rounded-xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                      title="Delete expense"
+                      aria-label="Delete expense"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                 </div>
               );

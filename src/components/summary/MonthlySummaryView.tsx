@@ -74,15 +74,11 @@ export const MonthlySummaryView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header and Print/Export action */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div>
           <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
             Monthly Financial Summary
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-            Comprehensive audit and statistical breakdown for{' '}
-            <span className="font-semibold text-slate-700">{getMonthLabel(selectedMonth)}</span>
-          </p>
         </div>
 
         <div className="flex items-center gap-2">
