@@ -101,10 +101,6 @@ export const InsightsView: React.FC = () => {
         <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
           Financial Insights
         </h2>
-        <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-          Visualize patterns, category proportions, and month-over-month performance for{' '}
-          <span className="font-semibold text-slate-700">{getMonthLabel(selectedMonth)}</span>
-        </p>
       </div>
 
       {/* Grid 1: Category Breakdown & Spending Trend */}
