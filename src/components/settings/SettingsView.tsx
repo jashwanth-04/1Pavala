@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import {
   ShieldCheck,
-  Database,
   Download,
   Upload,
   RefreshCw,
@@ -11,9 +10,11 @@ import {
   User,
   Sliders,
   Plus,
-  Lock,
-  ExternalLink,
   Check,
+  ChevronRight,
+  Shield,
+  Coins,
+  Sparkles,
 } from 'lucide-react';
 import { CategoryIcon } from '../common/CategoryIcon';
 import { AppLogo } from '../common/AppLogo';
@@ -28,7 +29,6 @@ export const SettingsView: React.FC = () => {
     resetAllData,
     exportData,
     importData,
-    showToast,
   } = useApp();
 
   const [userName, setUserName] = useState(settings.userName || '');
@@ -86,274 +86,310 @@ export const SettingsView: React.FC = () => {
     e.target.value = '';
   };
 
+  const userInitial = userName.trim() ? userName.trim().charAt(0).toUpperCase() : 'P';
+
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
-      {/* Page Title */}
-      <div>
-        <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-          Application Settings &amp; Data
-        </h2>
+    <div className="space-y-6 max-w-3xl mx-auto pb-10">
+      {/* Title */}
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Settings
+          </h2>
+        </div>
       </div>
 
-      {/* 1. Privacy Pledge (PRD Requirement 5.9) */}
-      <div className="bg-gradient-to-br from-emerald-900 to-slate-900 text-white rounded-3xl p-6 sm:p-7 shadow-lg relative overflow-hidden">
-        <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-400 shrink-0">
-            <Lock size={24} />
+      {/* 1. Apple Account / Identity Card */}
+      <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/[0.08] shadow-xs flex items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5 min-w-0">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 aspect-square rounded-full bg-gradient-to-br from-[#214B30] to-[#3D7D5E] text-white flex items-center justify-center font-black text-lg sm:text-2xl shadow-sm shrink-0">
+            {userInitial}
           </div>
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <h3 className="text-base sm:text-lg font-bold text-white">
-                100% Privacy-First Architecture
-              </h3>
-              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-300 border border-emerald-500/40">
-                Verified Local
-              </span>
-            </div>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              <strong>1Pavala</strong> never asks for your bank credentials, UPI accounts, or credit card feeds.
-              We do not track or transmit financial data to external cloud services or third-party brokers.
-              All expense records, budget ceilings, and categories are stored strictly inside your browser's local sandbox.
+          <div className="min-w-0">
+            <h3 className="font-bold text-slate-900 dark:text-white text-base sm:text-lg truncate">
+              {userName.trim() ? userName : 'Personal Ledger'}
+            </h3>
+            <p className="text-xs text-slate-500 dark:text-[#8E8E93] truncate">
+              Local Browser Storage • Sovereign Ledger
             </p>
           </div>
         </div>
+        <div className="shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 border border-emerald-200/60 dark:border-emerald-800/40 text-[11px] font-semibold">
+          <Shield size={12} className="stroke-[2.5]" />
+          <span>Private</span>
+        </div>
       </div>
 
-      {/* 2. Preferences & Alert Thresholds */}
-      <div className="bg-white rounded-2xl p-6 shadow-xs border border-slate-200/80">
-        <div className="flex items-center gap-2.5 mb-5 pb-3 border-b border-slate-100">
-          <Sliders size={20} className="text-brand-600" />
-          <h3 className="text-base font-bold text-slate-900">Preferences &amp; Thresholds</h3>
-        </div>
+      {/* 2. Grouped Section: PREFERENCES */}
+      <div>
+        <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-[#8E8E93] px-3.5 mb-2">
+          Preferences
+        </p>
 
-        <form onSubmit={handleSaveProfile} className="space-y-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Display Name
-              </label>
-              <div className="relative">
-                <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  type="text"
-                  value={userName}
-                  onChange={(e) => setUserName(e.target.value)}
-                  placeholder="e.g. Pavala"
-                  className="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-100 focus:border-brand-500"
-                />
+        <form onSubmit={handleSaveProfile} className="bg-white dark:bg-[#1C1C1E] rounded-2xl border border-slate-200/80 dark:border-white/[0.08] shadow-xs divide-y divide-slate-100 dark:divide-white/[0.06] overflow-hidden">
+          {/* Row: Display Name */}
+          <div className="flex items-center justify-between gap-4 px-4 py-3 sm:py-3.5">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-7 h-7 rounded-lg bg-[#007AFF] text-white flex items-center justify-center shrink-0 shadow-xs">
+                <User size={15} />
               </div>
+              <span className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">
+                Display Name
+              </span>
             </div>
+            <div className="shrink-0">
+              <input
+                type="text"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                placeholder="Pavala"
+                className="text-right text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-100 bg-transparent focus:outline-hidden placeholder:text-slate-400 w-32 sm:w-48"
+              />
+            </div>
+          </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-                Currency Symbol
-              </label>
+          {/* Row: Currency Symbol */}
+          <div className="flex items-center justify-between gap-4 px-4 py-3 sm:py-3.5">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-7 h-7 rounded-lg bg-[#34C759] text-white flex items-center justify-center shrink-0 shadow-xs">
+                <DollarSign size={15} />
+              </div>
+              <span className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">
+                Currency
+              </span>
+            </div>
+            <div className="shrink-0">
               <select
                 value={currencySymbol}
                 onChange={(e) => setCurrencySymbol(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-100 focus:border-brand-500 cursor-pointer"
+                className="text-right text-xs sm:text-sm font-bold text-slate-800 dark:text-slate-200 bg-transparent cursor-pointer focus:outline-hidden"
               >
                 <option value="₹">₹ (INR - Indian Rupee)</option>
                 <option value="$">$ (USD - US Dollar)</option>
                 <option value="€">€ (EUR - Euro)</option>
                 <option value="£">£ (GBP - British Pound)</option>
                 <option value="¥">¥ (JPY - Japanese Yen)</option>
-                <option value="₨">₨ (PKR/NPR/LKR - Rupee)</option>
+                <option value="₨">₨ (PKR / NPR - Rupee)</option>
                 <option value="AED">AED (UAE Dirham)</option>
               </select>
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
-              Budget Warning Thresholds (%)
-            </label>
-            <div className="grid grid-cols-3 gap-3">
+          {/* Row: Budget Warning Thresholds */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-4 py-3 sm:py-3.5">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-7 h-7 rounded-lg bg-[#FF9500] text-white flex items-center justify-center shrink-0 shadow-xs">
+                <Sliders size={15} />
+              </div>
               <div>
-                <span className="text-[11px] text-yellow-700 font-semibold">Alert 1 (%)</span>
+                <span className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">
+                  Warning Thresholds (%)
+                </span>
+                <p className="text-[10px] text-slate-400 dark:text-[#8E8E93]">
+                  Budget pacing alerts at 3 percentage tiers
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 self-end sm:self-center">
+              <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-yellow-50 dark:bg-yellow-950/30 border border-yellow-200/70 dark:border-yellow-800/40 text-yellow-800 dark:text-yellow-400">
+                <span className="text-[10px] font-bold">T1:</span>
                 <input
                   type="number"
                   min="50"
                   max="90"
                   value={t1}
                   onChange={(e) => setT1(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 text-center"
+                  className="w-8 text-center text-xs font-bold bg-transparent focus:outline-hidden"
                 />
+                <span className="text-[10px]">%</span>
               </div>
-              <div>
-                <span className="text-[11px] text-amber-700 font-semibold">Alert 2 (%)</span>
+
+              <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200/70 dark:border-amber-800/40 text-amber-800 dark:text-amber-400">
+                <span className="text-[10px] font-bold">T2:</span>
                 <input
                   type="number"
                   min="70"
                   max="99"
                   value={t2}
                   onChange={(e) => setT2(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 text-center"
+                  className="w-8 text-center text-xs font-bold bg-transparent focus:outline-hidden"
                 />
+                <span className="text-[10px]">%</span>
               </div>
-              <div>
-                <span className="text-[11px] text-red-700 font-semibold">Exhaustion (%)</span>
+
+              <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200/70 dark:border-red-800/40 text-red-800 dark:text-red-400">
+                <span className="text-[10px] font-bold">Max:</span>
                 <input
                   type="number"
                   min="90"
                   max="120"
                   value={t3}
                   onChange={(e) => setT3(e.target.value)}
-                  className="w-full mt-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 text-center"
+                  className="w-8 text-center text-xs font-bold bg-transparent focus:outline-hidden"
                 />
+                <span className="text-[10px]">%</span>
               </div>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1.5">
-              Warning badges and advice banners appear when your monthly spend reaches these thresholds.
-            </p>
           </div>
 
-          <div className="flex justify-end">
+          {/* Save Action Footer */}
+          <div className="px-4 py-2.5 bg-slate-50/50 dark:bg-white/[0.02] flex justify-end">
             <button
               type="submit"
-              className="flex items-center gap-1.5 px-5 py-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs sm:text-sm rounded-xl shadow-md shadow-brand-600/25 transition-all"
+              className="flex items-center gap-1.5 px-4 py-1.5 bg-[#214B30] hover:bg-[#1A3B26] text-white font-bold text-xs rounded-xl shadow-xs transition-colors"
             >
-              <Check size={16} strokeWidth={2.5} />
+              <Check size={14} strokeWidth={2.5} />
               <span>Save Preferences</span>
             </button>
           </div>
         </form>
+        <p className="text-[11px] text-slate-400 dark:text-[#8E8E93] px-3.5 mt-1.5">
+          Changes will apply instantly across all dashboard calculations and charts.
+        </p>
       </div>
 
-      {/* 3. Category Management */}
-      <div className="bg-white rounded-2xl p-6 shadow-xs border border-slate-200/80">
-        <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-          <div>
-            <h3 className="text-base font-bold text-slate-900">Expense Categories</h3>
-            <p className="text-xs text-slate-500">Available classification tags for your spending</p>
-          </div>
+      {/* 3. Grouped Section: CATEGORIES */}
+      <div>
+        <div className="flex items-center justify-between px-3.5 mb-2">
+          <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-[#8E8E93]">
+            Categories ({categories.length})
+          </p>
           <button
             onClick={() => setIsAddingCategory(!isAddingCategory)}
-            className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition-colors"
+            className="flex items-center gap-1 text-[11px] font-bold text-[#214B30] dark:text-[#34C759] hover:underline"
           >
-            <Plus size={14} />
-            <span>Add Custom</span>
+            <Plus size={13} strokeWidth={2.5} />
+            <span>{isAddingCategory ? 'Close' : 'Add Category'}</span>
           </button>
         </div>
 
-        {isAddingCategory && (
-          <form
-            onSubmit={handleCreateCategory}
-            className="p-4 bg-slate-50 rounded-2xl border border-slate-200 mb-4 space-y-3"
-          >
-            <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider">
-              Create New Category
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div>
-                <label className="block text-[11px] font-semibold text-slate-600 mb-1">Name</label>
-                <input
-                  type="text"
-                  value={newCatName}
-                  onChange={(e) => setNewCatName(e.target.value)}
-                  placeholder="e.g. Pet Care, Fitness"
-                  className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-800"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-semibold text-slate-600 mb-1">Color</label>
-                <div className="flex items-center gap-2">
+        <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl border border-slate-200/80 dark:border-white/[0.08] shadow-xs p-3.5 sm:p-4 space-y-3">
+          {/* Add Category Form Sheet */}
+          {isAddingCategory && (
+            <form
+              onSubmit={handleCreateCategory}
+              className="p-3.5 bg-slate-50 dark:bg-white/[0.04] rounded-xl border border-slate-200/80 dark:border-white/[0.08] space-y-3"
+            >
+              <p className="text-xs font-bold text-slate-800 dark:text-slate-100">
+                New Custom Category
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <div>
+                  <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                    Category Name
+                  </label>
                   <input
-                    type="color"
-                    value={newCatColor}
-                    onChange={(e) => setNewCatColor(e.target.value)}
-                    className="w-8 h-8 rounded-lg cursor-pointer border-none"
+                    type="text"
+                    value={newCatName}
+                    onChange={(e) => setNewCatName(e.target.value)}
+                    placeholder="e.g. Subscriptions, Hobbies"
+                    className="w-full px-3 py-1.5 bg-white dark:bg-[#1C1C1E] border border-slate-200 dark:border-slate-700 rounded-lg text-xs font-medium text-slate-800 dark:text-slate-100 focus:outline-hidden"
+                    required
                   />
-                  <span className="text-xs font-mono text-slate-500">{newCatColor}</span>
+                </div>
+                <div>
+                  <label className="block text-[10px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                    Accent Color
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={newCatColor}
+                      onChange={(e) => setNewCatColor(e.target.value)}
+                      className="w-8 h-8 rounded-lg cursor-pointer border-none bg-transparent"
+                    />
+                    <span className="text-xs font-mono text-slate-500">{newCatColor}</span>
+                  </div>
+                </div>
+                <div className="flex items-end gap-2">
+                  <button
+                    type="submit"
+                    className="px-3.5 py-1.5 bg-[#214B30] hover:bg-[#1A3B26] text-white font-bold text-xs rounded-lg shadow-xs"
+                  >
+                    Add
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingCategory(false)}
+                    className="px-3 py-1.5 bg-slate-200 dark:bg-white/[0.1] text-slate-700 dark:text-slate-200 font-semibold text-xs rounded-lg"
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
+            </form>
+          )}
 
-              <div className="flex items-end gap-2">
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs rounded-xl shadow-xs"
-                >
-                  Create
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsAddingCategory(false)}
-                  className="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold text-xs rounded-xl"
-                >
-                  Cancel
-                </button>
+          {/* Categories Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+            {categories.map((cat) => (
+              <div
+                key={cat.id}
+                className="flex items-center gap-2 p-2 rounded-xl bg-slate-50/70 dark:bg-white/[0.04] border border-slate-100 dark:border-white/[0.04]"
+              >
+                <CategoryIcon category={cat} size="sm" />
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">
+                    {cat.name}
+                  </p>
+                  {cat.isCustom && (
+                    <span className="text-[9px] uppercase font-bold text-[#214B30] dark:text-[#34C759]">
+                      Custom
+                    </span>
+                  )}
+                </div>
               </div>
-            </div>
-          </form>
-        )}
-
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          {categories.map((cat) => (
-            <div
-              key={cat.id}
-              className="flex items-center gap-2.5 p-2.5 rounded-xl border border-slate-100 bg-slate-50/50"
-            >
-              <CategoryIcon category={cat} size="sm" />
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-slate-800 truncate">{cat.name}</p>
-                {cat.isCustom && (
-                  <span className="text-[9px] uppercase font-semibold text-brand-600">Custom</span>
-                )}
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* 4. Data Management & Storage Operations (PRD Requirement 5.8) */}
-      <div className="bg-white rounded-2xl p-6 shadow-xs border border-slate-200/80 space-y-4">
-        <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
-          <Database size={20} className="text-brand-600" />
-          <div>
-            <h3 className="text-base font-bold text-slate-900">Data Management &amp; Storage</h3>
-            <p className="text-xs text-slate-500">
-              LocalStorage Browser Sandbox • No synchronization to external servers
-            </p>
-          </div>
-        </div>
+      {/* 4. Grouped Section: DATA & STORAGE */}
+      <div>
+        <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-[#8E8E93] px-3.5 mb-2">
+          Data &amp; Storage
+        </p>
 
-        <div className="bg-amber-50/60 border border-amber-200/80 rounded-2xl p-4 text-xs text-amber-900 leading-relaxed">
-          <p className="font-bold">Important Notice About Local Storage:</p>
-          <p className="mt-0.5 text-amber-800">
-            Your expense records reside exclusively inside your current web browser. Clearing your browser cache or site data will erase these records.
-            Use the <strong>Export JSON / CSV</strong> buttons below periodically to back up your data or transfer it to another device.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2">
-          {/* Load Demo Data */}
+        <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl border border-slate-200/80 dark:border-white/[0.08] shadow-xs divide-y divide-slate-100 dark:divide-white/[0.06] overflow-hidden">
+          {/* Row: Export Backup (JSON) */}
           <button
-            onClick={() => {
-              if (window.confirm('Reset current records and load realistic sample demo data?')) {
-                loadSampleData();
-              }
-            }}
-            className="flex items-center justify-center gap-2 p-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors"
-          >
-            <RefreshCw size={15} />
-            <span>Load Sample Data</span>
-          </button>
-
-          {/* Export JSON */}
-          <button
+            type="button"
             onClick={() => exportData('json')}
-            className="flex items-center justify-center gap-2 p-3 bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold text-xs rounded-xl transition-colors"
+            className="w-full flex items-center justify-between gap-3 px-4 py-3 sm:py-3.5 hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors text-left"
           >
-            <Download size={15} />
-            <span>Export Backup (JSON)</span>
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-7 h-7 rounded-lg bg-teal-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                <Download size={15} />
+              </div>
+              <div>
+                <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">
+                  Export JSON Backup
+                </p>
+                <p className="text-[10px] text-slate-400 dark:text-[#8E8E93]">
+                  Download a full offline JSON snapshot of your data
+                </p>
+              </div>
+            </div>
+            <ChevronRight size={16} className="text-slate-400 shrink-0" />
           </button>
 
-          {/* Import JSON */}
-          <label className="flex items-center justify-center gap-2 p-3 bg-brand-50 hover:bg-brand-100 text-brand-700 font-bold text-xs rounded-xl transition-colors cursor-pointer">
-            <Upload size={15} />
-            <span>Restore Backup (JSON)</span>
+          {/* Row: Restore Backup (JSON) */}
+          <label className="w-full flex items-center justify-between gap-3 px-4 py-3 sm:py-3.5 hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors cursor-pointer text-left">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                <Upload size={15} />
+              </div>
+              <div>
+                <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">
+                  Restore from JSON Backup
+                </p>
+                <p className="text-[10px] text-slate-400 dark:text-[#8E8E93]">
+                  Import expenses and category data from a backup file
+                </p>
+              </div>
+            </div>
+            <ChevronRight size={16} className="text-slate-400 shrink-0" />
             <input
               type="file"
               accept=".json"
@@ -362,8 +398,35 @@ export const SettingsView: React.FC = () => {
             />
           </label>
 
-          {/* Clear All Data */}
+          {/* Row: Load Sample Data */}
           <button
+            type="button"
+            onClick={() => {
+              if (window.confirm('Reset current records and load realistic sample demo data?')) {
+                loadSampleData();
+              }
+            }}
+            className="w-full flex items-center justify-between gap-3 px-4 py-3 sm:py-3.5 hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors text-left"
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-7 h-7 rounded-lg bg-slate-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                <RefreshCw size={15} />
+              </div>
+              <div>
+                <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">
+                  Load Demo Data
+                </p>
+                <p className="text-[10px] text-slate-400 dark:text-[#8E8E93]">
+                  Populate realistic expenses across several categories
+                </p>
+              </div>
+            </div>
+            <ChevronRight size={16} className="text-slate-400 shrink-0" />
+          </button>
+
+          {/* Row: Clear All Data */}
+          <button
+            type="button"
             onClick={() => {
               if (
                 window.confirm(
@@ -373,29 +436,57 @@ export const SettingsView: React.FC = () => {
                 resetAllData();
               }
             }}
-            className="flex items-center justify-center gap-2 p-3 bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs rounded-xl transition-colors"
+            className="w-full flex items-center justify-between gap-3 px-4 py-3 sm:py-3.5 hover:bg-red-50/50 dark:hover:bg-red-950/20 transition-colors text-left group"
           >
-            <Trash2 size={15} />
-            <span>Clear All Data</span>
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-7 h-7 rounded-lg bg-[#FF3B30] text-white flex items-center justify-center shrink-0 shadow-xs">
+                <Trash2 size={15} />
+              </div>
+              <div>
+                <p className="text-xs sm:text-sm font-semibold text-[#FF3B30]">
+                  Erase All Data
+                </p>
+                <p className="text-[10px] text-slate-400 dark:text-[#8E8E93]">
+                  Permanently delete all expenses, custom categories, and budgets
+                </p>
+              </div>
+            </div>
+            <ChevronRight size={16} className="text-red-400 shrink-0" />
           </button>
+        </div>
+        <p className="text-[11px] text-slate-400 dark:text-[#8E8E93] px-3.5 mt-1.5">
+          Your data lives strictly inside your browser's local sandbox. Keep periodic JSON exports to prevent data loss.
+        </p>
+      </div>
+
+      {/* 5. Grouped Section: PRIVACY PLEDGE */}
+      <div>
+        <p className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-[#8E8E93] px-3.5 mb-2">
+          Privacy
+        </p>
+        <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/[0.08] shadow-xs space-y-2">
+          <div className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+              <ShieldCheck size={16} />
+            </div>
+            <span className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+              100% On-Device &amp; Private
+            </span>
+          </div>
+          <p className="text-xs text-slate-500 dark:text-[#8E8E93] leading-relaxed">
+            1Pavala operates entirely offline. No tracking telemetry, no third-party cloud brokers, and no bank credential requests. Financial data never leaves your device.
+          </p>
         </div>
       </div>
 
-      {/* 5. Official App Branding & About */}
-      <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl p-6 shadow-xs border border-slate-200/80 dark:border-white/[0.08] flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
-        <AppLogo size="xl" className="shrink-0" />
-        <div className="space-y-1">
-          <h4 className="text-base font-bold text-slate-900 dark:text-white">1Pavala</h4>
-          <p className="text-xs text-slate-500 dark:text-[#8E8E93] leading-relaxed">
-            Privacy-first personal expense tracking and budgeting. Inspired by the classic Pavala coin, engineered for simplicity, clarity, and complete financial sovereignty.
+      {/* 6. Apple About Card */}
+      <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl p-4 sm:p-5 border border-slate-200/80 dark:border-white/[0.08] shadow-xs flex items-center gap-3.5">
+        <AppLogo size="md" className="shrink-0" />
+        <div className="min-w-0">
+          <h4 className="text-sm font-bold text-slate-900 dark:text-white">1Pavala</h4>
+          <p className="text-[11px] text-slate-500 dark:text-[#8E8E93] truncate">
+            Version 1.0.0 • Sovereign Personal Expense Tracker
           </p>
-          <div className="pt-2 flex items-center justify-center sm:justify-start gap-3 text-[11px] text-slate-400 dark:text-[#636366]">
-            <span>Version 1.0.0</span>
-            <span>•</span>
-            <span>Zero Cloud Tracking</span>
-            <span>•</span>
-            <span>100% On-Device</span>
-          </div>
         </div>
       </div>
     </div>
