@@ -15,6 +15,7 @@ import {
   Shield,
   Coins,
   Sparkles,
+  Smartphone,
 } from 'lucide-react';
 import { CategoryIcon } from '../common/CategoryIcon';
 import { AppLogo } from '../common/AppLogo';
@@ -42,6 +43,39 @@ export const SettingsView: React.FC = () => {
   const [newCatName, setNewCatName] = useState('');
   const [newCatColor, setNewCatColor] = useState('#3b82f6');
   const [newCatIcon, setNewCatIcon] = useState('Tag');
+
+  // PWA install state
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isStandalone, setIsStandalone] = useState(false);
+
+  React.useEffect(() => {
+    const isStandaloneMode =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      (window.navigator as any).standalone === true;
+    setIsStandalone(isStandaloneMode);
+
+    const handleBeforeInstall = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+  }, []);
+
+  const handleInstallApp = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    } else {
+      alert(
+        'To install 1Pavala:\n• iOS: Tap the Share button in Safari, then choose "Add to Home Screen".\n• Android / Chrome / Edge: Click the Install icon in the browser address bar or menu.'
+      );
+    }
+  };
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
@@ -352,6 +386,49 @@ export const SettingsView: React.FC = () => {
         </p>
 
         <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl border border-slate-200/80 dark:border-white/[0.08] shadow-xs divide-y divide-slate-100 dark:divide-white/[0.06] overflow-hidden">
+          {/* Row: PWA Installation / Standalone Status */}
+          {isStandalone ? (
+            <div className="flex items-center justify-between gap-3 px-4 py-3 sm:py-3.5 bg-emerald-50/50 dark:bg-emerald-950/20">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <Smartphone size={15} />
+                </div>
+                <div>
+                  <p className="text-xs sm:text-sm font-semibold text-emerald-900 dark:text-emerald-300">
+                    Standalone PWA Active
+                  </p>
+                  <p className="text-[10px] text-emerald-700 dark:text-emerald-400">
+                    Full offline support enabled with instant native launch
+                  </p>
+                </div>
+              </div>
+              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 shrink-0">
+                Installed
+              </span>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleInstallApp}
+              className="w-full flex items-center justify-between gap-3 px-4 py-3 sm:py-3.5 hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors text-left"
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-7 h-7 rounded-lg bg-[#214B30] text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <Smartphone size={15} />
+                </div>
+                <div>
+                  <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">
+                    Install 1Pavala App
+                  </p>
+                  <p className="text-[10px] text-slate-400 dark:text-[#8E8E93]">
+                    Add to your Home Screen or Desktop for offline-first experience
+                  </p>
+                </div>
+              </div>
+              <ChevronRight size={16} className="text-slate-400 shrink-0" />
+            </button>
+          )}
+
           {/* Row: Export Backup (JSON) */}
           <button
             type="button"

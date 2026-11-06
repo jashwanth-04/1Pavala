@@ -17,6 +17,15 @@ import { ShieldCheck } from 'lucide-react';
 const AppContent: React.FC = () => {
   const { activeTab, openAddExpenseModal } = useApp();
 
+  // PWA shortcut listener: If app is opened with ?action=add, immediately launch Add Expense
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('action') === 'add') {
+      openAddExpenseModal();
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, [openAddExpenseModal]);
+
   // Keyboard shortcut: Pressing 'n' or '+' opens Add Expense modal if not in an input
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
