@@ -80,29 +80,29 @@ export const BudgetView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Title */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-        <div>
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
           <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
             Monthly Budget Plan
           </h2>
         </div>
 
-        <div>
+        <div className="shrink-0">
           {!isEditingBudget ? (
             <button
               onClick={() => {
                 setNewBudgetAmount(String(currentMonthStats.budget));
                 setIsEditingBudget(true);
               }}
-              className="flex items-center gap-1.5 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-brand-600/25 transition-all"
+              className="flex items-center justify-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md shadow-brand-600/25 transition-all whitespace-nowrap"
             >
-              <Edit3 size={15} />
+              <Edit3 size={14} />
               <span>Adjust Budget Limit</span>
             </button>
           ) : (
-            <form onSubmit={handleSaveBudget} className="flex items-center gap-2">
+            <form onSubmit={handleSaveBudget} className="flex items-center gap-1.5 sm:gap-2">
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">
+                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-xs sm:text-sm">
                   {settings.currencySymbol}
                 </span>
                 <input
@@ -111,21 +111,21 @@ export const BudgetView: React.FC = () => {
                   step="500"
                   value={newBudgetAmount}
                   onChange={(e) => setNewBudgetAmount(e.target.value)}
-                  className="w-36 pl-7 pr-3 py-1.5 bg-white border border-brand-500 rounded-xl text-sm font-extrabold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-brand-200"
+                  className="w-24 sm:w-36 pl-6 sm:pl-7 pr-2 py-1 sm:py-1.5 bg-white border border-brand-500 rounded-xl text-xs sm:text-sm font-extrabold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-brand-200"
                   autoFocus
                 />
               </div>
               <button
                 type="submit"
-                className="flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs"
+                className="flex items-center gap-1 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs"
               >
-                <Save size={14} />
+                <Save size={13} />
                 <span>Save</span>
               </button>
               <button
                 type="button"
                 onClick={() => setIsEditingBudget(false)}
-                className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-xl"
+                className="px-2 sm:px-2.5 py-1 sm:py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-xl"
               >
                 Cancel
               </button>

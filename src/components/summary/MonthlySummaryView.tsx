@@ -74,26 +74,26 @@ export const MonthlySummaryView: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header and Print/Export action */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-        <div>
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
           <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
             Monthly Financial Summary
           </h2>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-end sm:items-center gap-1.5 sm:gap-2.5 shrink-0">
           <button
             onClick={handlePrint}
-            className="flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 shadow-xs transition-colors"
+            className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-1.5 sm:py-2 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-xl border border-slate-200 shadow-xs transition-colors whitespace-nowrap"
           >
-            <Printer size={15} />
+            <Printer size={13} />
             <span>Print Report</span>
           </button>
           <button
             onClick={() => exportData('csv')}
-            className="flex items-center gap-1.5 px-3 py-2 bg-brand-50 hover:bg-brand-100 text-brand-700 text-xs font-bold rounded-xl border border-brand-200 shadow-xs transition-colors"
+            className="w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-1.5 sm:py-2 bg-brand-50 hover:bg-brand-100 text-brand-700 text-xs font-bold rounded-xl border border-brand-200 shadow-xs transition-colors whitespace-nowrap"
           >
-            <FileSpreadsheet size={15} />
+            <FileSpreadsheet size={13} />
             <span>Export CSV</span>
           </button>
         </div>
