@@ -43,7 +43,6 @@ interface AppContextType {
   updateSettings: (settings: Partial<UserSettings>) => void;
   
   resetAllData: () => void;
-  loadSampleData: () => void;
   importData: (jsonStr: string) => boolean;
   exportData: (format: 'json' | 'csv') => void;
   showToast: (message: string, type?: ToastItem['type']) => void;
@@ -72,10 +71,14 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
-  // Theme state – persisted in localStorage
+  // Theme state – persisted in localStorage with system preference fallback
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     try {
-      return (localStorage.getItem('1pavala_theme_v1') as 'light' | 'dark') || 'light';
+      const saved = localStorage.getItem('1pavala_theme_v1');
+      if (saved === 'dark' || saved === 'light') return saved;
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
     } catch {
       return 'light';
     }
@@ -84,7 +87,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // Sidebar state
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
-  // Apply theme class to <html> root whenever theme changes
+  // Synchronize theme class to <html> root and theme-color meta tag
   useEffect(() => {
     const root = document.documentElement;
     if (theme === 'dark') {
@@ -94,23 +97,61 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
     try {
       localStorage.setItem('1pavala_theme_v1', theme);
+      const metaTheme = document.querySelector('meta[name="theme-color"]');
+      if (metaTheme) {
+        metaTheme.setAttribute('content', theme === 'dark' ? '#000000' : '#214B30');
+      }
     } catch {
       // ignore storage errors
     }
   }, [theme]);
 
-  const toggleTheme = () => setTheme((t) => (t === 'light' ? 'dark' : 'light'));
+  const toggleTheme = () => {
+    setTheme((prev) => {
+      const next = prev === 'light' ? 'dark' : 'light';
+      // Immediate synchronous DOM class update for lag-free response
+      const root = document.documentElement;
+      if (next === 'dark') {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+      try {
+        localStorage.setItem('1pavala_theme_v1', next);
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+          metaTheme.setAttribute('content', next === 'dark' ? '#000000' : '#214B30');
+        }
+      } catch {
+        // ignore storage errors
+      }
+      return next;
+    });
+  };
   const openSidebar = () => setIsSidebarOpen(true);
   const closeSidebar = () => setIsSidebarOpen(false);
   const toggleSidebar = () => setIsSidebarOpen((o) => !o);
 
-  // Initialize storage
+  // Initialize storage: load synchronously for instant paint, then sync with persistent IndexedDB
   useEffect(() => {
     const initData = StorageService.initData();
     setExpenses(initData.expenses);
     setCategories(initData.categories);
     setBudgets(initData.budgets);
     setSettings(initData.settings);
+
+    // Asynchronously connect to persistent IndexedDB
+    StorageService.syncWithIndexedDB().then((synced) => {
+      if (synced) {
+        setExpenses(synced.expenses);
+        setCategories(synced.categories);
+        setBudgets(synced.budgets);
+        setSettings(synced.settings);
+        if (synced.restoredFromIndexedDB && synced.expenses.length > 0) {
+          showToast(`Restored ${synced.expenses.length} records from IndexedDB`, 'info');
+        }
+      }
+    });
   }, []);
 
   const showToast = (message: string, type: ToastItem['type'] = 'info') => {
@@ -240,15 +281,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setBudgets([]);
     setSettings(DEFAULT_SETTINGS);
     showToast('All expense and budget data cleared.', 'warning');
-  };
-
-  const loadSampleData = () => {
-    const res = StorageService.loadSampleData();
-    setExpenses(res.expenses);
-    setCategories(res.categories);
-    setBudgets(res.budgets);
-    setSettings(res.settings);
-    showToast('Loaded demo transactions and budgets!', 'success');
   };
 
   const importData = (jsonStr: string): boolean => {
@@ -396,7 +428,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setBudget,
         updateSettings,
         resetAllData,
-        loadSampleData,
         importData,
         exportData,
         showToast,

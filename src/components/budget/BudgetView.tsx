@@ -108,16 +108,17 @@ export const BudgetView: React.FC = () => {
                 <input
                   type="number"
                   min="1"
-                  step="500"
+                  step="any"
                   value={newBudgetAmount}
                   onChange={(e) => setNewBudgetAmount(e.target.value)}
-                  className="w-24 sm:w-36 pl-6 sm:pl-7 pr-2 py-1 sm:py-1.5 bg-white border border-brand-500 rounded-xl text-xs sm:text-sm font-extrabold text-slate-900 focus:outline-hidden focus:ring-2 focus:ring-brand-200"
+                  placeholder="10000"
+                  className="w-24 sm:w-36 pl-6 sm:pl-7 pr-2 py-1 sm:py-1.5 bg-white dark:bg-[#2C2C2E] border border-brand-500 rounded-xl text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-brand-200 dark:focus:ring-brand-800"
                   autoFocus
                 />
               </div>
               <button
                 type="submit"
-                className="flex items-center gap-1 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs"
+                className="flex items-center gap-1 px-2.5 sm:px-3 py-1 sm:py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition-colors"
               >
                 <Save size={13} />
                 <span>Save</span>
@@ -125,7 +126,7 @@ export const BudgetView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsEditingBudget(false)}
-                className="px-2 sm:px-2.5 py-1 sm:py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold rounded-xl"
+                className="px-2 sm:px-2.5 py-1 sm:py-1.5 bg-slate-100 dark:bg-white/[0.08] hover:bg-slate-200 dark:hover:bg-white/[0.12] text-slate-600 dark:text-slate-300 text-xs font-semibold rounded-xl transition-colors"
               >
                 Cancel
               </button>

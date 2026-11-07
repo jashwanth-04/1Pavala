@@ -1,6 +1,19 @@
 import { Expense, Category, Budget, UserSettings } from '../types';
 import { PREDEFINED_CATEGORIES, DEFAULT_MONTHLY_BUDGET } from '../constants/categories';
 import { getCurrentMonthKey, getPreviousMonthKey, generateId } from '../utils/formatters';
+import {
+  idbGetExpenses,
+  idbSaveExpenses,
+  idbGetCategories,
+  idbSaveCategories,
+  idbGetBudgets,
+  idbSaveBudgets,
+  idbGetSettings,
+  idbSaveSettings,
+  idbClearAll,
+  idbHasInitialized,
+  idbSetInitialized,
+} from './indexedDB';
 
 const STORAGE_KEYS = {
   EXPENSES: '1pavala_expenses_v1',
@@ -26,69 +39,8 @@ export const DEFAULT_SETTINGS: UserSettings = {
   userName: 'User',
 };
 
-// Realistic sample transactions for demonstration
-export function generateSampleExpenses(): Expense[] {
-  const currentMonth = getCurrentMonthKey();
-  const prevMonth = getPreviousMonthKey(currentMonth);
-
-  const sampleItems: Array<{
-    amount: number;
-    categoryId: string;
-    dayOffset: number; // day of month
-    isCurrentMonth: boolean;
-    method: Expense['paymentMethod'];
-    note: string;
-  }> = [
-    // Current month expenses
-    { amount: 1450, categoryId: 'groceries', dayOffset: 1, isCurrentMonth: true, method: 'UPI', note: 'Weekly veggies & essentials from Blinkit' },
-    { amount: 480, categoryId: 'food', dayOffset: 2, isCurrentMonth: true, method: 'UPI', note: 'Lunch with colleagues at Andhra Mess' },
-    { amount: 220, categoryId: 'transportation', dayOffset: 3, isCurrentMonth: true, method: 'UPI', note: 'Metro card recharge' },
-    { amount: 3500, categoryId: 'shopping', dayOffset: 4, isCurrentMonth: true, method: 'Credit card', note: 'Sneakers from Myntra Sale' },
-    { amount: 650, categoryId: 'entertainment', dayOffset: 5, isCurrentMonth: true, method: 'UPI', note: 'Weekend movie tickets at PVR' },
-    { amount: 1850, categoryId: 'bills', dayOffset: 6, isCurrentMonth: true, method: 'UPI', note: 'Electricity Bill (BESCOM)' },
-    { amount: 850, categoryId: 'groceries', dayOffset: 7, isCurrentMonth: true, method: 'Debit card', note: 'Supermarket dairy & fruits' },
-    { amount: 550, categoryId: 'healthcare', dayOffset: 8, isCurrentMonth: true, method: 'UPI', note: 'Apollo Pharmacy vitamins & cough syrup' },
-    { amount: 320, categoryId: 'food', dayOffset: 9, isCurrentMonth: true, method: 'UPI', note: 'Dinner via Swiggy' },
-    { amount: 1200, categoryId: 'transportation', dayOffset: 10, isCurrentMonth: true, method: 'Credit card', note: 'Petrol fill up at Indian Oil' },
-    { amount: 999, categoryId: 'bills', dayOffset: 11, isCurrentMonth: true, method: 'UPI', note: 'Airtel Xstream Fiber Broadband' },
-    { amount: 240, categoryId: 'food', dayOffset: 12, isCurrentMonth: true, method: 'Cash', note: 'Irani chai & snacks with friends' },
-    { amount: 1750, categoryId: 'groceries', dayOffset: 13, isCurrentMonth: true, method: 'UPI', note: 'Monthly pantry staples & cooking oil' },
-    { amount: 699, categoryId: 'entertainment', dayOffset: 14, isCurrentMonth: true, method: 'Credit card', note: 'OTT subscriptions bundle' },
-    { amount: 150, categoryId: 'transportation', dayOffset: 15, isCurrentMonth: true, method: 'UPI', note: 'Auto rickshaw ride to station' },
-
-    // Previous month expenses for rich month-over-month comparison
-    { amount: 1800, categoryId: 'groceries', dayOffset: 2, isCurrentMonth: false, method: 'UPI', note: 'Monthly groceries' },
-    { amount: 4200, categoryId: 'travel', dayOffset: 5, isCurrentMonth: false, method: 'Credit card', note: 'Train ticket booking IRCTC' },
-    { amount: 890, categoryId: 'food', dayOffset: 8, isCurrentMonth: false, method: 'UPI', note: 'Family weekend dinner' },
-    { amount: 1600, categoryId: 'bills', dayOffset: 10, isCurrentMonth: false, method: 'UPI', note: 'Electricity & water bill' },
-    { amount: 2500, categoryId: 'shopping', dayOffset: 14, isCurrentMonth: false, method: 'Debit card', note: 'Festival clothing' },
-    { amount: 1100, categoryId: 'transportation', dayOffset: 18, isCurrentMonth: false, method: 'Cash', note: 'Cab fares and fuel' },
-    { amount: 600, categoryId: 'healthcare', dayOffset: 21, isCurrentMonth: false, method: 'UPI', note: 'Doctor consultation' },
-    { amount: 1500, categoryId: 'education', dayOffset: 24, isCurrentMonth: false, method: 'Credit card', note: 'Online course enrollment' },
-    { amount: 450, categoryId: 'entertainment', dayOffset: 27, isCurrentMonth: false, method: 'UPI', note: 'Movie outing' },
-  ];
-
-  return sampleItems.map((item, idx) => {
-    const monthKey = item.isCurrentMonth ? currentMonth : prevMonth;
-    const dayStr = String(item.dayOffset).padStart(2, '0');
-    const dateStr = `${monthKey}-${dayStr}`;
-    const nowIso = new Date().toISOString();
-
-    return {
-      id: `sample_${idx + 1}`,
-      amount: item.amount,
-      categoryId: item.categoryId,
-      date: dateStr,
-      paymentMethod: item.method,
-      note: item.note,
-      createdAt: nowIso,
-      updatedAt: nowIso,
-    };
-  });
-}
-
 export const StorageService = {
-  // Check if first time run, seed sample data
+  // Initialize storage: starts with empty expenses (zero demo data)
   initData(): {
     expenses: Expense[];
     categories: Category[];
@@ -114,27 +66,15 @@ export const StorageService = {
     }
 
     if (!hasInit) {
-      const initialExpenses = generateSampleExpenses();
+      const initialExpenses: Expense[] = [];
       const currentMonth = getCurrentMonthKey();
-      const prevMonth = getPreviousMonthKey(currentMonth);
 
       const initialBudgets: Budget[] = [
         {
           id: generateId(),
           month: currentMonth,
           amount: DEFAULT_MONTHLY_BUDGET,
-          categoryBudgets: {
-            food: 6000,
-            groceries: 7000,
-            bills: 3500,
-            shopping: 4000,
-            transportation: 3000,
-          },
-        },
-        {
-          id: generateId(),
-          month: prevMonth,
-          amount: DEFAULT_MONTHLY_BUDGET,
+          categoryBudgets: {},
         },
       ];
 
@@ -152,10 +92,31 @@ export const StorageService = {
       };
     }
 
+    // Clean up any lingering sample/demo data from existing storage
+    const storedExpenses = this.getExpenses();
+    const cleanedExpenses = storedExpenses.filter((e) => !e.id.startsWith('sample_'));
+    if (cleanedExpenses.length !== storedExpenses.length) {
+      this.saveExpenses(cleanedExpenses);
+    }
+
+    // Clean up demo category budgets if still present
+    const storedBudgets = this.getBudgets();
+    let budgetsModified = false;
+    const cleanedBudgets = storedBudgets.map((b) => {
+      if (b.categoryBudgets && b.categoryBudgets.food === 6000 && b.categoryBudgets.groceries === 7000) {
+        budgetsModified = true;
+        return { ...b, categoryBudgets: {} };
+      }
+      return b;
+    });
+    if (budgetsModified) {
+      this.saveBudgets(cleanedBudgets);
+    }
+
     return {
-      expenses: this.getExpenses(),
+      expenses: cleanedExpenses,
       categories: this.getCategories(),
-      budgets: this.getBudgets(),
+      budgets: cleanedBudgets,
       settings: this.getSettings(),
     };
   },
@@ -171,6 +132,9 @@ export const StorageService = {
 
   saveExpenses(expenses: Expense[]): void {
     localStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(expenses));
+    idbSaveExpenses(expenses).catch((err) => {
+      console.warn('[1Pavala Storage] Failed to write expenses to IndexedDB:', err);
+    });
   },
 
   getCategories(): Category[] {
@@ -184,6 +148,9 @@ export const StorageService = {
 
   saveCategories(categories: Category[]): void {
     localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories));
+    idbSaveCategories(categories).catch((err) => {
+      console.warn('[1Pavala Storage] Failed to write categories to IndexedDB:', err);
+    });
   },
 
   getBudgets(): Budget[] {
@@ -197,6 +164,9 @@ export const StorageService = {
 
   saveBudgets(budgets: Budget[]): void {
     localStorage.setItem(STORAGE_KEYS.BUDGETS, JSON.stringify(budgets));
+    idbSaveBudgets(budgets).catch((err) => {
+      console.warn('[1Pavala Storage] Failed to write budgets to IndexedDB:', err);
+    });
   },
 
   getSettings(): UserSettings {
@@ -210,21 +180,113 @@ export const StorageService = {
 
   saveSettings(settings: UserSettings): void {
     localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+    idbSaveSettings(settings).catch((err) => {
+      console.warn('[1Pavala Storage] Failed to write settings to IndexedDB:', err);
+    });
   },
 
   resetAllData(): void {
     Object.values(STORAGE_KEYS).forEach((k) => localStorage.removeItem(k));
     Object.values(LEGACY_KEYS).forEach((k) => localStorage.removeItem(k));
+    idbClearAll().catch((err) => {
+      console.warn('[1Pavala Storage] Failed to clear IndexedDB:', err);
+    });
   },
 
-  loadSampleData(): {
+  /**
+   * Two-way synchronization with IndexedDB:
+   * 1. If localStorage was cleared (e.g. cache clear or reload), restores from IndexedDB!
+   * 2. If IndexedDB is empty, seeds it from localStorage (seamless migration).
+   */
+  async syncWithIndexedDB(): Promise<{
     expenses: Expense[];
     categories: Category[];
     budgets: Budget[];
     settings: UserSettings;
-  } {
-    this.resetAllData();
-    return this.initData();
+    restoredFromIndexedDB: boolean;
+  }> {
+    try {
+      const [idbExpenses, idbCategories, idbBudgets, idbSettings, idbInitialized] = await Promise.all([
+        idbGetExpenses(),
+        idbGetCategories(),
+        idbGetBudgets(),
+        idbGetSettings(),
+        idbHasInitialized(),
+      ]);
+
+      const localExpenses = this.getExpenses();
+      const localCategories = this.getCategories();
+      const localBudgets = this.getBudgets();
+      const localSettings = this.getSettings();
+      const hasLocalInit = localStorage.getItem(STORAGE_KEYS.HAS_INITIALIZED) === 'true';
+
+      // SCENARIO 1: IndexedDB has records or was initialized, but localStorage is empty/wiped
+      if (idbInitialized && (idbExpenses.length > 0 || !hasLocalInit)) {
+        // Re-hydrate localStorage from persistent IndexedDB
+        localStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(idbExpenses));
+        localStorage.setItem(
+          STORAGE_KEYS.CATEGORIES,
+          JSON.stringify(idbCategories.length > 0 ? idbCategories : PREDEFINED_CATEGORIES)
+        );
+        localStorage.setItem(STORAGE_KEYS.BUDGETS, JSON.stringify(idbBudgets));
+        localStorage.setItem(
+          STORAGE_KEYS.SETTINGS,
+          JSON.stringify(idbSettings || DEFAULT_SETTINGS)
+        );
+        localStorage.setItem(STORAGE_KEYS.HAS_INITIALIZED, 'true');
+
+        return {
+          expenses: idbExpenses,
+          categories: idbCategories.length > 0 ? idbCategories : PREDEFINED_CATEGORIES,
+          budgets: idbBudgets,
+          settings: idbSettings || DEFAULT_SETTINGS,
+          restoredFromIndexedDB: true,
+        };
+      }
+
+      // SCENARIO 2: IndexedDB is empty, but localStorage has data (seed IndexedDB from localStorage)
+      if (hasLocalInit || localExpenses.length > 0) {
+        await Promise.all([
+          idbSaveExpenses(localExpenses),
+          idbSaveCategories(localCategories),
+          idbSaveBudgets(localBudgets),
+          idbSaveSettings(localSettings),
+          idbSetInitialized(),
+        ]);
+
+        return {
+          expenses: localExpenses,
+          categories: localCategories,
+          budgets: localBudgets,
+          settings: localSettings,
+          restoredFromIndexedDB: false,
+        };
+      }
+
+      // SCENARIO 3: Both are fresh/empty
+      const initialData = this.initData();
+      await Promise.all([
+        idbSaveExpenses(initialData.expenses),
+        idbSaveCategories(initialData.categories),
+        idbSaveBudgets(initialData.budgets),
+        idbSaveSettings(initialData.settings),
+        idbSetInitialized(),
+      ]);
+
+      return {
+        ...initialData,
+        restoredFromIndexedDB: false,
+      };
+    } catch (err) {
+      console.warn('[1Pavala Storage] IndexedDB sync error, falling back to localStorage:', err);
+      return {
+        expenses: this.getExpenses(),
+        categories: this.getCategories(),
+        budgets: this.getBudgets(),
+        settings: this.getSettings(),
+        restoredFromIndexedDB: false,
+      };
+    }
   },
 
   exportToJson(): string {

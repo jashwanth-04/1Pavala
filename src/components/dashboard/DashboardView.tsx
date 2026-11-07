@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { CategoryIcon } from '../common/CategoryIcon';
+import { QuickShortcutWidget } from '../common/QuickShortcutWidget';
 import { formatCurrency, formatDateDisplay, getMonthLabel, getShortMonthLabel } from '../../utils/formatters';
 import {
   Plus,
@@ -69,10 +70,16 @@ export const DashboardView: React.FC = () => {
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       {/* =========================================================
+          0. APPLE STADIUM QUICK SHORTCUT WIDGET
+          Ultra-thin, oval-ended capsule with instant '+' expense logging
+          ========================================================= */}
+      <QuickShortcutWidget />
+
+      {/* =========================================================
           1. EXECUTIVE HERO CARD (Apple Wallet / Card Pattern)
           High glanceability: Balance, budget pacing, and actions
           ========================================================= */}
-      <section className="apple-card-elevated p-5 sm:p-7 bg-white dark:bg-[#1C1C1E] border border-black/[0.04] dark:border-white/[0.08] transition-all">
+      <section className="apple-card-elevated p-5 sm:p-7 bg-white dark:bg-[#1C1C1E] border border-black/[0.04] dark:border-white/[0.08] transition-colors duration-150 ease-out">
         {/* Top Meta Row (Minimized & Single-line on mobile, never wraps or bloats) */}
         <div className="flex items-center justify-between gap-1.5 sm:gap-2 mb-2 sm:mb-3">
           <div className="flex items-center min-w-0">

@@ -22,7 +22,7 @@ export const BottomNav: React.FC = () => {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 apple-glass border-t border-black/[0.07] dark:border-white/[0.08] safe-area-pb transition-all"
+      className="md:hidden fixed bottom-0 left-0 right-0 z-40 apple-glass border-t border-black/[0.07] dark:border-white/[0.08] safe-area-pb transition-colors duration-150 ease-out"
       aria-label="Main Navigation"
     >
       <div className="flex items-center justify-around h-14 sm:h-16 px-1 max-w-lg mx-auto">
