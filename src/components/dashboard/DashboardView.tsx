@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { CategoryIcon } from '../common/CategoryIcon';
-import { QuickShortcutWidget } from '../common/QuickShortcutWidget';
 import { formatCurrency, formatDateDisplay, getMonthLabel, getShortMonthLabel } from '../../utils/formatters';
 import {
   Plus,
@@ -69,12 +68,6 @@ export const DashboardView: React.FC = () => {
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      {/* =========================================================
-          0. APPLE STADIUM QUICK SHORTCUT WIDGET
-          Ultra-thin, oval-ended capsule with instant '+' expense logging
-          ========================================================= */}
-      <QuickShortcutWidget />
-
       {/* =========================================================
           1. EXECUTIVE HERO CARD (Apple Wallet / Card Pattern)
           High glanceability: Balance, budget pacing, and actions
