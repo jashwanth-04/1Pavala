@@ -25,7 +25,33 @@
             </intent-filter>
         </activity>
 
-        <!-- Home Screen Quick Expense Widget -->
+        <!-- 1. Apple-style Medium (4x2) Home Screen Widget -->
+        <receiver
+            android:name=".widget.AppleMediumWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_apple_medium_title">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/apple_medium_widget_info" />
+        </receiver>
+
+        <!-- 2. Apple-style Small (2x2) Home Screen Widget -->
+        <receiver
+            android:name=".widget.AppleSmallWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_apple_small_title">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/apple_small_widget_info" />
+        </receiver>
+
+        <!-- 3. Classic Thin Stadium Pill Widget -->
         <receiver
             android:name=".widget.QuickExpenseWidgetProvider"
             android:exported="true"
