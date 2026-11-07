@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/common/Header';
 import { BottomNav } from './components/common/BottomNav';
 import { Sidebar } from './components/common/Sidebar';
-import { AppLogo } from './components/common/AppLogo';
 import { ToastContainer } from './components/common/Toast';
 import { DashboardView } from './components/dashboard/DashboardView';
 import { TransactionListView } from './components/expenses/TransactionListView';
@@ -12,9 +11,14 @@ import { BudgetView } from './components/budget/BudgetView';
 import { MonthlySummaryView } from './components/summary/MonthlySummaryView';
 import { SettingsView } from './components/settings/SettingsView';
 import { AddEditExpenseModal } from './components/expenses/AddEditExpenseModal';
-import { ShieldCheck } from 'lucide-react';
+import { LandingPageView } from './components/landing/LandingPageView';
+import { ShieldCheck, Globe } from 'lucide-react';
 
-const AppContent: React.FC = () => {
+interface AppContentProps {
+  onShowLanding: () => void;
+}
+
+const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
   const { activeTab, openAddExpenseModal } = useApp();
 
   // PWA shortcut listener: If app is opened with ?action=add, immediately launch Add Expense
@@ -71,12 +75,20 @@ const AppContent: React.FC = () => {
       <BottomNav />
 
       {/* Footer — desktop only */}
-      <footer className="hidden md:block border-t border-slate-200/70 dark:border-white/[0.06] mt-auto py-5 bg-white/50 dark:bg-[#1C1C1E]/50 text-xs text-slate-500 dark:text-[#8E8E93]">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
-          {/* Left: brand name */}
-          <div className="flex items-center gap-2 font-medium text-slate-600 dark:text-[#8E8E93]">
-            <AppLogo size="xs" showText={false} />
-            <span>1Pavala — Personal Expense Tracker</span>
+      <footer className="hidden md:block border-t border-black/[0.06] dark:border-white/[0.06] mt-auto py-5 bg-white/60 dark:bg-[#181818]/60 text-xs text-[#8E8E93]">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          {/* Left: brand name & Landing Page toggle */}
+          <div className="flex items-center gap-3">
+            <span className="font-semibold text-[#1C1C1E] dark:text-white">
+              1Pavala — Personal Expense Tracker
+            </span>
+            <button
+              onClick={onShowLanding}
+              className="inline-flex items-center gap-1 text-brand-700 dark:text-emerald-400 hover:underline font-medium caption-2"
+            >
+              <Globe size={12} />
+              <span>Product Page &amp; FAQ</span>
+            </button>
           </div>
 
           {/* Centre / Right: privacy badge */}
@@ -84,9 +96,9 @@ const AppContent: React.FC = () => {
             <span className="text-slate-400 dark:text-[#48484A]">
               Manual money management • PC, Laptop, Mobile &amp; Tablet
             </span>
-            <div className="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400 font-semibold">
-              <ShieldCheck size={13} />
-              <span>100% Private &amp; On-Device Storage</span>
+            <div className="flex items-center gap-1.5 text-brand-700 dark:text-emerald-400 font-semibold">
+              <ShieldCheck size={14} />
+              <span>100% Private On-Device IndexedDB</span>
             </div>
           </div>
         </div>
@@ -96,9 +108,43 @@ const AppContent: React.FC = () => {
 };
 
 export function App() {
+  const [viewMode, setViewMode] = useState<'landing' | 'app'>(() => {
+    // If standalone PWA, open app directly
+    if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+      return 'app';
+    }
+    // If explicit query parameter (?app=true or ?action=add)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('app') === 'true' || params.get('action')) {
+      return 'app';
+    }
+    // Check saved view preference
+    const saved = localStorage.getItem('1pavala_view_mode');
+    if (saved === 'app' || saved === 'landing') {
+      return saved;
+    }
+    // Default to landing page for new visitors
+    return 'landing';
+  });
+
+  const handleOpenApp = () => {
+    setViewMode('app');
+    localStorage.setItem('1pavala_view_mode', 'app');
+  };
+
+  const handleShowLanding = () => {
+    setViewMode('landing');
+    localStorage.setItem('1pavala_view_mode', 'landing');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <AppProvider>
-      <AppContent />
+      {viewMode === 'landing' ? (
+        <LandingPageView onOpenApp={handleOpenApp} />
+      ) : (
+        <AppContent onShowLanding={handleShowLanding} />
+      )}
     </AppProvider>
   );
 }
