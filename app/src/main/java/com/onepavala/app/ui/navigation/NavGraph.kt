@@ -48,7 +48,7 @@ object Routes {
 }
 
 @Composable
-fun MainApp(repository: ExpenseRepository) {
+fun MainApp(repository: ExpenseRepository, initialRoute: String? = null) {
     var startDestination by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
@@ -64,6 +64,16 @@ fun MainApp(repository: ExpenseRepository) {
     }
 
     val navController = rememberNavController()
+
+    // Handle deep navigation from Widget click
+    LaunchedEffect(initialRoute) {
+        if (initialRoute != null && initialRoute != Routes.HOME) {
+            navController.navigate(initialRoute) {
+                launchSingleTop = true
+            }
+        }
+    }
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 

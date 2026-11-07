@@ -8,4 +8,6 @@
     <string name="what_for">What was it for?</string>
     <string name="channel_budget_alerts">Budget Alerts</string>
     <string name="channel_expense_reminders">Expense Reminders</string>
+    <string name="widget_quick_expense_title">Quick Expense</string>
+    <string name="widget_quick_expense_description">Thin stadium pill shortcut to log expenses in one tap</string>
 </resources>
