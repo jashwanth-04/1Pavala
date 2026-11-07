@@ -4,7 +4,6 @@ import {
   ShieldCheck,
   Download,
   Upload,
-  RefreshCw,
   Trash2,
   DollarSign,
   User,
@@ -16,6 +15,7 @@ import {
   Coins,
   Sparkles,
   Smartphone,
+  Database,
 } from 'lucide-react';
 import { CategoryIcon } from '../common/CategoryIcon';
 import { AppLogo } from '../common/AppLogo';
@@ -26,7 +26,6 @@ export const SettingsView: React.FC = () => {
     updateSettings,
     categories,
     addCategory,
-    loadSampleData,
     resetAllData,
     exportData,
     importData,
@@ -144,7 +143,7 @@ export const SettingsView: React.FC = () => {
               {userName.trim() ? userName : 'Personal Ledger'}
             </h3>
             <p className="text-xs text-slate-500 dark:text-[#8E8E93] truncate">
-              Local Browser Storage • Sovereign Ledger
+              IndexedDB Persistent Storage • Sovereign Ledger
             </p>
           </div>
         </div>
@@ -386,6 +385,26 @@ export const SettingsView: React.FC = () => {
         </p>
 
         <div className="bg-white dark:bg-[#1C1C1E] rounded-2xl border border-slate-200/80 dark:border-white/[0.08] shadow-xs divide-y divide-slate-100 dark:divide-white/[0.06] overflow-hidden">
+          {/* Row: Storage Engine Status */}
+          <div className="flex items-center justify-between gap-3 px-4 py-3 sm:py-3.5">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                <Database size={15} />
+              </div>
+              <div>
+                <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">
+                  Persistent Storage Engine
+                </p>
+                <p className="text-[10px] text-slate-400 dark:text-[#8E8E93]">
+                  High-capacity IndexedDB with automatic cache-clear resilience
+                </p>
+              </div>
+            </div>
+            <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 shrink-0">
+              IndexedDB Active
+            </span>
+          </div>
+
           {/* Row: PWA Installation / Standalone Status */}
           {isStandalone ? (
             <div className="flex items-center justify-between gap-3 px-4 py-3 sm:py-3.5 bg-emerald-50/50 dark:bg-emerald-950/20">
@@ -474,32 +493,6 @@ export const SettingsView: React.FC = () => {
               className="hidden"
             />
           </label>
-
-          {/* Row: Load Sample Data */}
-          <button
-            type="button"
-            onClick={() => {
-              if (window.confirm('Reset current records and load realistic sample demo data?')) {
-                loadSampleData();
-              }
-            }}
-            className="w-full flex items-center justify-between gap-3 px-4 py-3 sm:py-3.5 hover:bg-slate-50/80 dark:hover:bg-white/[0.03] transition-colors text-left"
-          >
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="w-7 h-7 rounded-lg bg-slate-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                <RefreshCw size={15} />
-              </div>
-              <div>
-                <p className="text-xs sm:text-sm font-semibold text-slate-800 dark:text-slate-100">
-                  Load Demo Data
-                </p>
-                <p className="text-[10px] text-slate-400 dark:text-[#8E8E93]">
-                  Populate realistic expenses across several categories
-                </p>
-              </div>
-            </div>
-            <ChevronRight size={16} className="text-slate-400 shrink-0" />
-          </button>
 
           {/* Row: Clear All Data */}
           <button
