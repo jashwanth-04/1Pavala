@@ -92,18 +92,17 @@ export const DashboardView: React.FC = () => {
           High glanceability: Balance, budget pacing, and actions
           ========================================================= */}
       <section className="apple-card-elevated p-5 sm:p-7 bg-white dark:bg-[#1C1C1E] border border-black/[0.04] dark:border-white/[0.08] transition-colors duration-150 ease-out">
-        {/* Top Meta Row: Interactive Month Selector on Left + Badges on Right */}
+        {/* Top Meta Row: Compact Month Capsule on Left + Badges on Right */}
         <div className="flex items-center justify-between gap-1.5 sm:gap-2 mb-2 sm:mb-3">
-          {/* Interactive Month Picker Capsule (Replaced into the Spending Card) */}
-          <div className="relative inline-flex items-center min-w-0">
-            <div className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.07] dark:hover:bg-white/[0.14] border border-black/[0.05] dark:border-white/[0.08] text-[#1C1C1E] dark:text-white transition-all duration-150 cursor-pointer pointer-events-none select-none shadow-2xs">
-              <Calendar size={12} className="text-[#214B30] dark:text-[#34C759] shrink-0" />
-              <span className="text-[11px] sm:text-xs font-bold tracking-tight whitespace-nowrap">
+          {/* Compact Month Capsule (Shortened for mobile, perfectly balanced) */}
+          <div className="relative inline-flex items-center">
+            <div className="flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.07] dark:hover:bg-white/[0.14] border border-black/[0.05] dark:border-white/[0.08] text-[#1C1C1E] dark:text-white transition-all duration-150 cursor-pointer pointer-events-none select-none shadow-2xs">
+              <Calendar size={11} className="text-[#214B30] dark:text-[#34C759] shrink-0" />
+              <span className="text-[10px] sm:text-xs font-bold tracking-tight whitespace-nowrap">
                 <span className="sm:hidden">{getShortMonthLabel(selectedMonth)}</span>
                 <span className="hidden sm:inline">{getMonthLabel(selectedMonth)}</span>
-                <span className="text-[#8E8E93] font-normal ml-1">Spending</span>
               </span>
-              <ChevronDown size={11} className="text-[#8E8E93] shrink-0 ml-0.5" />
+              <ChevronDown size={10} className="text-[#8E8E93] shrink-0 ml-0.5" />
             </div>
 
             {/* Invisible native select for fluid touch wheel / dropdown selection */}
@@ -111,8 +110,8 @@ export const DashboardView: React.FC = () => {
               value={selectedMonth}
               onChange={(e) => setSelectedMonth(e.target.value)}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              title="Change Spending Month"
-              aria-label="Change spending month"
+              title="Change Month"
+              aria-label="Change month"
             >
               {availableMonths.map((m) => (
                 <option key={m} value={m}>
@@ -122,10 +121,10 @@ export const DashboardView: React.FC = () => {
             </select>
           </div>
 
-          {/* Minimized Meta Badges: Sleek micro-capsules on mobile */}
+          {/* Minimized Meta Badges: Sleek micro-capsules matching height */}
           <div className="flex items-center gap-1.5 shrink-0">
             {/* Expense Count Micro-Tag */}
-            <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-medium bg-black/[0.04] dark:bg-white/[0.08] text-slate-600 dark:text-slate-400 whitespace-nowrap leading-none">
+            <span className="inline-flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-medium bg-black/[0.04] dark:bg-white/[0.08] text-slate-600 dark:text-slate-400 whitespace-nowrap leading-none">
               {currentMonthStats.expenseCount} {currentMonthStats.expenseCount === 1 ? 'expense' : 'expenses'}
             </span>
 
