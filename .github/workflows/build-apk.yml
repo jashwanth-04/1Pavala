@@ -41,11 +41,11 @@ jobs:
       - name: Build Web Application
         run: npm run build
 
-      - name: Setup Java 17
+      - name: Setup Java 21 (Temurin)
         uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
-          java-version: 17
+          java-version: 21
 
       - name: Accept Android SDK Licenses
         run: |
