@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Capacitor } from '@capacitor/core';
+import { App as CapApp } from '@capacitor/app';
 import { AppProvider, useApp } from './context/AppContext';
 import { Header } from './components/common/Header';
 import { BottomNav } from './components/common/BottomNav';
@@ -19,7 +21,36 @@ interface AppContentProps {
 }
 
 const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
-  const { activeTab, openAddExpenseModal } = useApp();
+  const {
+    activeTab,
+    setActiveTab,
+    openAddExpenseModal,
+    isExpenseModalOpen,
+    closeExpenseModal,
+    isSidebarOpen,
+    closeSidebar,
+  } = useApp();
+
+  // Android hardware back button handler (Capacitor Native)
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return;
+
+    const backListener = CapApp.addListener('backButton', () => {
+      if (isExpenseModalOpen) {
+        closeExpenseModal();
+      } else if (isSidebarOpen) {
+        closeSidebar();
+      } else if (activeTab !== 'dashboard') {
+        setActiveTab('dashboard');
+      } else {
+        CapApp.exitApp();
+      }
+    });
+
+    return () => {
+      backListener.then((handler) => handler.remove());
+    };
+  }, [isExpenseModalOpen, closeExpenseModal, isSidebarOpen, closeSidebar, activeTab, setActiveTab]);
 
   // PWA shortcut listener: If app is opened with ?action=add, immediately launch Add Expense
   useEffect(() => {
@@ -120,6 +151,10 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
 
 export function App() {
   const [viewMode, setViewMode] = useState<'landing' | 'app'>(() => {
+    // If native Capacitor app (Android APK), always open app directly
+    if (Capacitor.isNativePlatform()) {
+      return 'app';
+    }
     // If standalone PWA, open app directly
     if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
       return 'app';
