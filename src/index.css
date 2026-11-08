@@ -415,3 +415,13 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+
+/* Hide scrollbar for horizontal scrollable pills and bars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

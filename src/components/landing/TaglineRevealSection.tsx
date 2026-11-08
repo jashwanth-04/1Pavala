@@ -51,29 +51,29 @@ export const TaglineRevealSection: React.FC = () => {
   return (
     <section
       ref={containerRef}
-      className="py-24 sm:py-36 px-4 bg-white dark:bg-[#181818] border-y border-black/[0.04] dark:border-white/[0.06] transition-colors"
+      className="py-14 sm:py-24 px-4 bg-white dark:bg-[#181818] border-y border-black/[0.04] dark:border-white/[0.06] transition-colors"
       aria-label="Core Philosophy"
     >
-      <div className="max-w-4xl mx-auto text-center">
-        <span className="caption-3 text-brand-700 dark:text-emerald-400 uppercase tracking-widest block mb-4">
+      <div className="max-w-3xl mx-auto text-center">
+        <span className="text-[11px] sm:text-xs font-semibold text-brand-700 dark:text-emerald-400 uppercase tracking-widest block mb-3">
           Our Core Conviction
         </span>
 
-        {/* Word-by-word reveal headline */}
+        {/* Word-by-word reveal headline: Responsive text size */}
         <h2
-          style={{ maxWidth: '680px' }}
-          className="heading-3 sm:heading-2 mx-auto font-bold leading-tight select-none"
+          style={{ maxWidth: '640px' }}
+          className="text-xl sm:text-3xl lg:text-4xl mx-auto font-bold leading-snug sm:leading-tight select-none px-2"
         >
           {words.map((word, idx) => {
             const isLit = idx < activeWordsCount;
             return (
               <span
                 key={`${word}-${idx}`}
-                className="inline-block mr-2.5 transition-all duration-500 ease-base"
+                className="inline-block mr-1.5 sm:mr-2.5 transition-all duration-500 ease-base"
                 style={{
                   color: isLit ? undefined : 'currentColor',
                   opacity: isLit ? 1 : 0.28,
-                  transform: isLit ? 'translateY(0)' : 'translateY(4px)',
+                  transform: isLit ? 'translateY(0)' : 'translateY(3px)',
                 }}
               >
                 {word}
@@ -82,7 +82,7 @@ export const TaglineRevealSection: React.FC = () => {
           })}
         </h2>
 
-        <p className="body-4 text-[#8E8E93] mt-6 max-w-md mx-auto">
+        <p className="text-xs sm:text-sm text-[#8E8E93] mt-4 max-w-sm sm:max-w-md mx-auto">
           Every transaction and budget balance stays completely offline on your device storage.
         </p>
       </div>

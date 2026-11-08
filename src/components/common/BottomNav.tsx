@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ActiveTab } from '../../types';
 import {
@@ -6,52 +6,95 @@ import {
   ReceiptText,
   PieChart,
   Target,
+  CalendarDays,
   Settings,
 } from 'lucide-react';
 
 export const BottomNav: React.FC = () => {
   const { activeTab, setActiveTab } = useApp();
+  const [isVisible, setIsVisible] = useState(true);
+  const lastScrollY = useRef(0);
+  const activeTabRef = useRef<HTMLButtonElement | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
+  // All 6 core application tabs included without cramming
   const navItems: Array<{ id: ActiveTab; label: string; icon: React.ReactNode }> = [
-    { id: 'dashboard', label: 'Overview', icon: <LayoutDashboard size={21} /> },
-    { id: 'transactions', label: 'Expenses', icon: <ReceiptText size={21} /> },
-    { id: 'insights', label: 'Insights', icon: <PieChart size={21} /> },
-    { id: 'budgeting', label: 'Budget', icon: <Target size={21} /> },
-    { id: 'settings', label: 'Settings', icon: <Settings size={21} /> },
+    { id: 'dashboard',    label: 'Overview', icon: <LayoutDashboard size={17} /> },
+    { id: 'transactions', label: 'Expenses', icon: <ReceiptText    size={17} /> },
+    { id: 'insights',     label: 'Insights', icon: <PieChart       size={17} /> },
+    { id: 'budgeting',    label: 'Budget',   icon: <Target         size={17} /> },
+    { id: 'summary',      label: 'Summary',  icon: <CalendarDays   size={17} /> },
+    { id: 'settings',     label: 'Settings', icon: <Settings       size={17} /> },
   ];
+
+  // Dynamic moving dock: hides on scroll down, appears on scroll up
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Always show near top of screen
+      if (currentScrollY < 40) {
+        setIsVisible(true);
+        lastScrollY.current = currentScrollY;
+        return;
+      }
+
+      // Scrolling down -> hide; Scrolling up -> reveal
+      if (currentScrollY > lastScrollY.current + 8) {
+        setIsVisible(false);
+      } else if (currentScrollY < lastScrollY.current - 8) {
+        setIsVisible(true);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Auto-scroll active tab into view in the horizontal scrollable bar
+  useEffect(() => {
+    if (activeTabRef.current) {
+      activeTabRef.current.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest',
+      });
+    }
+  }, [activeTab]);
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-40 apple-glass border-t border-black/[0.07] dark:border-white/[0.08] safe-area-pb transition-colors duration-150 ease-out"
-      aria-label="Main Navigation"
+      className={`md:hidden fixed bottom-3 left-0 right-0 z-40 px-3 transition-all duration-300 ease-base pointer-events-none ${
+        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
+      }`}
+      aria-label="Main Mobile Navigation"
     >
-      <div className="flex items-center justify-around h-14 sm:h-16 px-1 max-w-lg mx-auto">
+      {/* Floating Apple Dock Pill with Smooth Horizontal Scroll */}
+      <div
+        ref={scrollContainerRef}
+        className="pointer-events-auto max-w-fit mx-auto apple-glass bg-white/90 dark:bg-[#1C1C1E]/90 border border-black/[0.08] dark:border-white/[0.12] rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.12)] p-1.5 overflow-x-auto no-scrollbar scroll-smooth flex items-center gap-1 touch-pan-x"
+      >
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
 
           return (
             <button
               key={item.id}
+              ref={isActive ? activeTabRef : null}
               onClick={() => setActiveTab(item.id)}
-              className={`flex-1 flex flex-col items-center justify-center py-1 transition-all apple-pressable ${
+              className={`shrink-0 h-9 px-3.5 rounded-full flex items-center gap-1.5 transition-all duration-200 active:scale-95 text-xs font-semibold select-none ${
                 isActive
-                  ? 'text-[#214B30] dark:text-[#34C759]'
-                  : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-white'
+                  ? 'bg-[#214B30] text-white shadow-[0_2px_10px_rgba(33,75,48,0.30)]'
+                  : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06]'
               }`}
               aria-current={isActive ? 'page' : undefined}
             >
-              <div
-                className={`transition-transform duration-150 ${
-                  isActive ? 'scale-105' : 'scale-100'
-                }`}
-              >
+              <span className={`shrink-0 ${isActive ? 'text-white' : 'text-[#8E8E93]'}`}>
                 {item.icon}
-              </div>
-              <span
-                className={`text-[10px] mt-0.5 tracking-tight ${
-                  isActive ? 'font-semibold text-[#214B30] dark:text-[#34C759]' : 'font-normal text-[#8E8E93]'
-                }`}
-              >
+              </span>
+              <span className="whitespace-nowrap tracking-tight">
                 {item.label}
               </span>
             </button>
