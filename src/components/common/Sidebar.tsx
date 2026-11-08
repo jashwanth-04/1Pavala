@@ -131,15 +131,16 @@ export const Sidebar: React.FC = () => {
           })}
         </nav>
 
-        {/* Footer privacy badge */}
+        {/* Footer privacy badge & author tagline */}
         <div className="px-5 py-4 border-t border-black/[0.06] dark:border-white/[0.08]">
           <div className="flex items-center gap-2 text-[11px] text-[#8E8E93]">
             <ShieldCheck size={14} className="text-emerald-500 flex-shrink-0" />
             <span className="font-medium">100% Private &amp; On-Device Storage</span>
           </div>
-          <p className="text-[10px] text-[#C7C7CC] dark:text-[#48484A] mt-1">
-            Your data never leaves this device
-          </p>
+          <div className="flex items-center justify-between text-[10px] text-[#8E8E93] mt-1.5">
+            <span>Your data never leaves this device</span>
+            <span className="font-semibold text-[#1C1C1E] dark:text-white">Made with ✨ by JK</span>
+          </div>
         </div>
       </aside>
     </>

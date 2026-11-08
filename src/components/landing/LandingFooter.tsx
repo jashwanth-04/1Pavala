@@ -47,13 +47,21 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({ onOpenApp }) => {
 
       </div>
 
-      <div className="max-w-5xl mx-auto mt-6 pt-5 border-t border-black/[0.04] dark:border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-1.5 text-[11px] text-[#8E8E93]/70">
+      <div className="max-w-5xl mx-auto mt-6 pt-5 border-t border-black/[0.04] dark:border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-[#8E8E93]">
         <p>© {new Date().getFullYear()} 1Pavala. Free and open personal money management.</p>
-        <p className="flex items-center gap-1">
-          <span>Crafted with</span>
-          <Heart size={11} className="text-red-500 fill-red-500" />
-          <span>for financial peace of mind</span>
-        </p>
+        <div className="flex items-center gap-2">
+          <p className="flex items-center gap-1">
+            <span>Crafted with</span>
+            <Heart size={11} className="text-red-500 fill-red-500" />
+            <span>for financial peace of mind</span>
+          </p>
+          <span>•</span>
+          <span className="inline-flex items-center gap-1 font-semibold text-[#1C1C1E] dark:text-white">
+            <span>Made with</span>
+            <span className="text-emerald-500">✨</span>
+            <span>by JK</span>
+          </span>
+        </div>
       </div>
     </footer>
   );
