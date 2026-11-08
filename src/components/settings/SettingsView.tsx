@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { CategoryIcon } from '../common/CategoryIcon';
 import { AppLogo } from '../common/AppLogo';
+import { TermsModal } from '../common/TermsModal';
 
 export const SettingsView: React.FC = () => {
   const {
@@ -42,6 +43,7 @@ export const SettingsView: React.FC = () => {
   const [newCatName, setNewCatName] = useState('');
   const [newCatColor, setNewCatColor] = useState('#3b82f6');
   const [newCatIcon, setNewCatIcon] = useState('Tag');
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
 
   // PWA install state
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -546,6 +548,14 @@ export const SettingsView: React.FC = () => {
           <p className="text-xs text-slate-500 dark:text-[#8E8E93] leading-relaxed">
             1Pavala operates entirely offline. No tracking telemetry, no third-party cloud brokers, and no bank credential requests. Financial data never leaves your device.
           </p>
+          <button
+            type="button"
+            onClick={() => setIsTermsModalOpen(true)}
+            className="w-full mt-2 pt-2.5 border-t border-black/[0.05] dark:border-white/[0.06] flex items-center justify-between text-xs font-semibold text-[#214B30] dark:text-[#34C759] hover:underline cursor-pointer"
+          >
+            <span>Read Terms of Service &amp; Privacy Notice</span>
+            <ChevronRight size={14} />
+          </button>
         </div>
       </div>
 
@@ -559,6 +569,13 @@ export const SettingsView: React.FC = () => {
           </p>
         </div>
       </div>
+
+      <TermsModal
+        isOpen={isTermsModalOpen}
+        canDismiss={true}
+        onAccept={() => setIsTermsModalOpen(false)}
+        onClose={() => setIsTermsModalOpen(false)}
+      />
     </div>
   );
 };

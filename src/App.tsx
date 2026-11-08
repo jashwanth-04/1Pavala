@@ -14,6 +14,7 @@ import { MonthlySummaryView } from './components/summary/MonthlySummaryView';
 import { SettingsView } from './components/settings/SettingsView';
 import { AddEditExpenseModal } from './components/expenses/AddEditExpenseModal';
 import { LandingPageView } from './components/landing/LandingPageView';
+import { TermsModal } from './components/common/TermsModal';
 import { ShieldCheck, Globe } from 'lucide-react';
 
 interface AppContentProps {
@@ -79,7 +80,7 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
   }, [openAddExpenseModal]);
 
   return (
-    <div className="min-h-screen bg-[#F2F2F7] dark:bg-[#000000] text-[#1C1C1E] dark:text-white flex flex-col antialiased selection:bg-[#214B30] selection:text-white dark:selection:bg-[#34C759] dark:selection:text-[#0A170F] pb-24 md:pb-12 transition-colors duration-150 ease-out overflow-x-hidden">
+    <div className="min-h-screen bg-[#F2F2F7] dark:bg-[#000000] text-[#1C1C1E] dark:text-white flex flex-col antialiased selection:bg-[#214B30] selection:text-white dark:selection:bg-[#34C759] dark:selection:text-[#0A170F] pb-24 md:pb-12 overflow-x-hidden">
       {/* Toast Feedback */}
       <ToastContainer />
 
@@ -106,7 +107,7 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
       <BottomNav />
 
       {/* Responsive Footer: Solo 'Made with ✨ by JK' on mobile; full metadata on PC & Tablet */}
-      <footer className="border-t border-black/[0.05] dark:border-white/[0.06] mt-auto py-3.5 md:py-5 bg-white/60 dark:bg-[#181818]/60 text-xs text-[#8E8E93] transition-colors">
+      <footer className="border-t border-black/[0.05] dark:border-white/[0.06] mt-auto py-3.5 md:py-5 bg-white/60 dark:bg-[#181818]/60 text-xs text-[#8E8E93]">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
           
           {/* Left: Brand name & Landing Page toggle (PC & Tablet mode only) */}
@@ -150,6 +151,14 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
 };
 
 export function App() {
+  const [isTermsAccepted, setIsTermsAccepted] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('1pavala_terms_accepted_v1') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
   const [viewMode, setViewMode] = useState<'landing' | 'app'>(() => {
     // If native Capacitor app (Android APK), always open app directly
     if (Capacitor.isNativePlatform()) {
@@ -184,8 +193,23 @@ export function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleAcceptTerms = () => {
+    try {
+      localStorage.setItem('1pavala_terms_accepted_v1', 'true');
+    } catch {}
+    setIsTermsAccepted(true);
+  };
+
   return (
     <AppProvider>
+      {/* Terms & Conditions first-install modal */}
+      {!isTermsAccepted && (
+        <TermsModal
+          isOpen={true}
+          onAccept={handleAcceptTerms}
+        />
+      )}
+
       {viewMode === 'landing' ? (
         <LandingPageView onOpenApp={handleOpenApp} />
       ) : (
