@@ -74,11 +74,12 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
       {/* Bottom Navigation — mobile & tablet only */}
       <BottomNav />
 
-      {/* Footer — desktop only */}
-      <footer className="hidden md:block border-t border-black/[0.06] dark:border-white/[0.06] mt-auto py-5 bg-white/60 dark:bg-[#181818]/60 text-xs text-[#8E8E93]">
-        <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-          {/* Left: brand name & Landing Page toggle */}
-          <div className="flex items-center gap-3">
+      {/* Responsive Footer: Solo 'Made with ✨ by JK' on mobile; full metadata on PC & Tablet */}
+      <footer className="border-t border-black/[0.05] dark:border-white/[0.06] mt-auto py-3.5 md:py-5 bg-white/60 dark:bg-[#181818]/60 text-xs text-[#8E8E93] transition-colors">
+        <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+          
+          {/* Left: Brand name & Landing Page toggle (PC & Tablet mode only) */}
+          <div className="hidden md:flex flex-wrap items-center gap-2.5 sm:gap-3">
             <span className="font-semibold text-[#1C1C1E] dark:text-white">
               1Pavala — Personal Expense Tracker
             </span>
@@ -91,16 +92,26 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
             </button>
           </div>
 
-          {/* Centre / Right: privacy badge */}
-          <div className="flex items-center gap-4">
+          {/* Center: Device & Privacy badge (PC & Tablet mode only) */}
+          <div className="hidden md:flex flex-wrap items-center gap-3 sm:gap-4 text-[11px] sm:text-xs">
             <span className="text-slate-400 dark:text-[#48484A]">
-              Manual money management • PC, Laptop, Mobile &amp; Tablet
+              Manual money management • PC &amp; Tablet
             </span>
             <div className="flex items-center gap-1.5 text-brand-700 dark:text-emerald-400 font-semibold">
               <ShieldCheck size={14} />
               <span>100% Private On-Device IndexedDB</span>
             </div>
           </div>
+
+          {/* Author Tagline: Minimalist solo pill on mobile; elegant right-aligned badge on PC & Tablet */}
+          <div className="w-full md:w-auto flex items-center justify-center shrink-0">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/[0.03] dark:bg-white/[0.07] border border-black/[0.05] dark:border-white/[0.08] text-[11px] sm:text-xs font-semibold text-[#1C1C1E] dark:text-white shadow-2xs select-none">
+              <span>Made with</span>
+              <span className="text-emerald-500">✨</span>
+              <span>by JK</span>
+            </span>
+          </div>
+
         </div>
       </footer>
     </div>
