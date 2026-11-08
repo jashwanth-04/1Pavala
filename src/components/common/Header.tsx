@@ -44,7 +44,7 @@ export const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14 sm:h-16 gap-1.5 sm:gap-3">
 
-          {/* LEFT: Hamburger + Logo */}
+          {/* LEFT: Hamburger + Logo + Brand Title */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
             {/* Hamburger / Menu toggle */}
             <button
@@ -55,14 +55,14 @@ export const Header: React.FC = () => {
               <Menu size={17} />
             </button>
 
-            {/* Brand logo */}
+            {/* Brand logo & title (Visible in mobile, tablet, and PC — perfectly proportioned) */}
             <button
               onClick={() => {}}
               className="flex items-center gap-2 group text-left apple-pressable focus:outline-hidden shrink-0"
               aria-label="1Pavala"
             >
               <AppLogo size="sm" showText={false} className="transition-transform group-hover:scale-[1.03]" />
-              <span className="text-[17px] sm:text-lg font-bold tracking-tight text-[#1C1C1E] dark:text-white hidden md:block">
+              <span className="text-[15px] sm:text-[17px] font-bold tracking-tight text-[#1C1C1E] dark:text-white">
                 1Pavala
               </span>
             </button>
