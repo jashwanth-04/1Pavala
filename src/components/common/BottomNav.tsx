@@ -17,7 +17,7 @@ export const BottomNav: React.FC = () => {
   const lastScrollY = useRef(0);
   const activeTabRef = useRef<HTMLButtonElement | null>(null);
 
-  // Navigation items: Overview renamed to Home completely
+  // Navigation items: Home is the first item
   const navItems: Array<{ id: ActiveTab; label: string; icon: React.ReactNode }> = [
     { id: 'dashboard',    label: 'Home',     icon: <Home size={18} /> },
     { id: 'transactions', label: 'Expenses', icon: <Wallet size={18} /> },
@@ -64,24 +64,21 @@ export const BottomNav: React.FC = () => {
     }
   }, [activeTab]);
 
-  const homeItem = navItems[0]; // Home
-  const otherItems = navItems.slice(1); // Expenses, Insights, Budget, Summary, Settings
-
   const renderTabButton = (item: { id: ActiveTab; label: string; icon: React.ReactNode }) => {
     const isActive = activeTab === item.id;
 
     if (isActive) {
-      // Active state: expanding white pill with icon + label (matching reference image)
+      // Active state: expanding pill highlighted with 1Pavala theme green in both light & dark modes
       return (
         <button
           key={item.id}
           ref={activeTabRef}
           onClick={() => setActiveTab(item.id)}
           aria-label={item.label}
-          className="h-10 px-4 rounded-full bg-white text-[#121212] font-bold text-xs flex items-center gap-1.5 shadow-[0_2px_12px_rgba(255,255,255,0.25)] shrink-0 transition-all duration-300 ease-base active:scale-95 select-none"
+          className="h-10 px-4 rounded-full bg-[#214B30] dark:bg-[#34C759] text-white dark:text-[#061A0C] font-bold text-xs flex items-center gap-1.5 shadow-[0_2px_12px_rgba(33,75,48,0.35)] dark:shadow-[0_2px_14px_rgba(52,199,89,0.45)] shrink-0 transition-all duration-300 ease-base active:scale-95 select-none"
           aria-current="page"
         >
-          <span className="shrink-0 text-[#121212]">
+          <span className="shrink-0">
             {item.icon}
           </span>
           <span className="whitespace-nowrap tracking-tight font-bold">
@@ -91,14 +88,14 @@ export const BottomNav: React.FC = () => {
       );
     }
 
-    // Inactive state: circular dark button with icon only (no text, matching reference image)
+    // Inactive state: circular button with icon only (clearly visible in both light & dark modes)
     return (
       <button
         key={item.id}
         onClick={() => setActiveTab(item.id)}
         aria-label={item.label}
         title={item.label}
-        className="w-10 h-10 rounded-full bg-white/10 text-white/75 hover:text-white hover:bg-white/15 active:scale-90 flex items-center justify-center shrink-0 transition-all duration-200 select-none"
+        className="w-10 h-10 rounded-full bg-black/[0.05] dark:bg-white/[0.09] text-[#8E8E93] dark:text-[#AEAEB2] hover:text-[#1C1C1E] dark:hover:text-white hover:bg-black/[0.08] dark:hover:bg-white/[0.16] active:scale-90 flex items-center justify-center shrink-0 transition-all duration-200 select-none"
       >
         <span className="shrink-0">
           {item.icon}
@@ -114,24 +111,22 @@ export const BottomNav: React.FC = () => {
       }`}
       aria-label="Main Mobile Navigation"
     >
-      {/* Floating Apple Capsule Dock: Exactly matching reference image */}
-      <div className="pointer-events-auto max-w-fit mx-auto bg-[#141416]/95 dark:bg-[#121214]/95 backdrop-blur-xl border border-white/10 dark:border-white/12 rounded-full shadow-[0_12px_36px_rgba(0,0,0,0.35)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.65)] p-1.5 overflow-x-auto no-scrollbar scroll-smooth flex items-center gap-2 touch-pan-x">
+      <div className="pointer-events-auto flex items-center justify-center gap-2 max-w-full mx-auto">
         
-        {/* 1. Home tab */}
-        {renderTabButton(homeItem)}
-
-        {/* 2. Plus Button: Placed just beside Home (no text, pure plus symbol) */}
+        {/* 1. SEPARATE ENTITY: Standalone Plus Button on the LEFT side of the navigation bar */}
         <button
           onClick={openAddExpenseModal}
           aria-label="Add expense"
           title="Add expense"
-          className="w-10 h-10 rounded-full bg-[#214B30] hover:bg-[#1A3B26] active:scale-90 text-white flex items-center justify-center shrink-0 shadow-sm border border-white/15 transition-all duration-200"
+          className="w-11 h-11 rounded-full bg-[#214B30] dark:bg-[#34C759] hover:bg-[#1A3B26] dark:hover:bg-[#2db850] active:scale-90 text-white dark:text-[#061A0C] flex items-center justify-center shrink-0 shadow-[0_4px_16px_rgba(33,75,48,0.35)] dark:shadow-[0_4px_20px_rgba(52,199,89,0.40)] border border-white/20 dark:border-black/15 transition-transform duration-150"
         >
-          <Plus size={19} strokeWidth={2.4} />
+          <Plus size={20} strokeWidth={2.6} />
         </button>
 
-        {/* 3. Remaining tabs (Expenses, Insights, Budget, Summary, Settings) */}
-        {otherItems.map((item) => renderTabButton(item))}
+        {/* 2. SCROLLABLE NAVIGATION BAR: Frosted glass dock with Home first, followed by sections */}
+        <div className="apple-glass bg-white/92 dark:bg-[#1C1C1E]/95 border border-black/[0.08] dark:border-white/[0.14] rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.6)] p-1.5 overflow-x-auto no-scrollbar scroll-smooth flex items-center gap-1.5 touch-pan-x min-w-0 max-w-fit">
+          {navItems.map((item) => renderTabButton(item))}
+        </div>
 
       </div>
     </nav>
