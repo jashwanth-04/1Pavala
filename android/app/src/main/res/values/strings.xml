@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">1Pavala</string>
+    <string name="title_activity_main">1Pavala</string>
+    <string name="package_name">com.onepavala.app</string>
+    <string name="custom_url_scheme">com.onepavala.app</string>
+</resources>
