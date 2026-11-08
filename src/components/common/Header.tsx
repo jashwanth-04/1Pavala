@@ -13,6 +13,7 @@ import { getMonthLabel, getShortMonthLabel, getPreviousMonthKey } from '../../ut
 
 export const Header: React.FC = () => {
   const {
+    activeTab,
     selectedMonth,
     setSelectedMonth,
     currentMonthKey,
@@ -67,37 +68,39 @@ export const Header: React.FC = () => {
             </button>
           </div>
 
-          {/* RIGHT: Month picker + Theme toggle + Add Expense button */}
+          {/* RIGHT: Month picker (on non-dashboard tabs) + Theme toggle + Add Expense button */}
           <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 shrink-0">
-            {/* Sleek Apple-style Month Capsule (Compact on mobile, expanded on desktop) */}
-            <div className="relative inline-flex items-center">
-              <div className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black/[0.03] dark:bg-white/[0.08] hover:bg-black/[0.06] dark:hover:bg-white/[0.12] border border-black/[0.05] dark:border-white/[0.06] text-[#1C1C1E] dark:text-white rounded-full text-xs font-semibold transition-colors pointer-events-none shadow-2xs">
-                <Calendar size={12} className="text-[#8E8E93] shrink-0" />
-                {/* On mobile: compact 'Nov 2026' */}
-                <span className="sm:hidden whitespace-nowrap">
-                  {getShortMonthLabel(selectedMonth)}
-                </span>
-                {/* On larger screens: 'November 2026 • Current' */}
-                <span className="hidden sm:inline whitespace-nowrap">
-                  {getMonthLabel(selectedMonth)} {selectedMonth === currentMonthKey ? '• Current' : ''}
-                </span>
-                <ChevronDown size={11} className="text-[#8E8E93] shrink-0 ml-0.5" />
-              </div>
+            {/* Sleek Apple-style Month Capsule (Only shown on non-dashboard tabs; dashboard displays it directly inside the Spending card) */}
+            {activeTab !== 'dashboard' && (
+              <div className="relative inline-flex items-center">
+                <div className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black/[0.03] dark:bg-white/[0.08] hover:bg-black/[0.06] dark:hover:bg-white/[0.12] border border-black/[0.05] dark:border-white/[0.06] text-[#1C1C1E] dark:text-white rounded-full text-xs font-semibold transition-colors pointer-events-none shadow-2xs">
+                  <Calendar size={12} className="text-[#8E8E93] shrink-0" />
+                  {/* On mobile: compact 'Nov 2026' */}
+                  <span className="sm:hidden whitespace-nowrap">
+                    {getShortMonthLabel(selectedMonth)}
+                  </span>
+                  {/* On larger screens: 'November 2026 • Current' */}
+                  <span className="hidden sm:inline whitespace-nowrap">
+                    {getMonthLabel(selectedMonth)} {selectedMonth === currentMonthKey ? '• Current' : ''}
+                  </span>
+                  <ChevronDown size={11} className="text-[#8E8E93] shrink-0 ml-0.5" />
+                </div>
 
-              {/* Invisible native select overlays to trigger the native wheel/modal picker */}
-              <select
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(e.target.value)}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                title="Select Month"
-              >
-                {availableMonths.map((m) => (
-                  <option key={m} value={m}>
-                    {getMonthLabel(m)} {m === currentMonthKey ? '• Current' : ''}
-                  </option>
-                ))}
-              </select>
-            </div>
+                {/* Invisible native select overlays to trigger the native wheel/modal picker */}
+                <select
+                  value={selectedMonth}
+                  onChange={(e) => setSelectedMonth(e.target.value)}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  title="Select Month"
+                >
+                  {availableMonths.map((m) => (
+                    <option key={m} value={m}>
+                      {getMonthLabel(m)} {m === currentMonthKey ? '• Current' : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* Dark / Light Theme Toggle */}
             <button
