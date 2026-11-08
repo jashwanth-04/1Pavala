@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { ActiveTab } from '../../types';
 import { AppLogo } from './AppLogo';
 import {
-  LayoutDashboard,
+  Home,
   ReceiptText,
   PieChart,
   Target,
@@ -21,7 +21,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { id: 'dashboard',    label: 'Overview',  icon: <LayoutDashboard size={20} />, description: 'Monthly summary' },
+  { id: 'dashboard',    label: 'Home',      icon: <Home size={20} />,         description: 'Dashboard & summary' },
   { id: 'transactions', label: 'Expenses',  icon: <ReceiptText    size={20} />, description: 'All transactions' },
   { id: 'insights',     label: 'Insights',  icon: <PieChart       size={20} />, description: 'Spending patterns' },
   { id: 'budgeting',    label: 'Budget',    icon: <Target         size={20} />, description: 'Budget goals' },

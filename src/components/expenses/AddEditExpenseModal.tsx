@@ -111,14 +111,14 @@ export const AddEditExpenseModal: React.FC = () => {
       }
       maxWidth="max-w-md"
     >
-      <form onSubmit={handleSubmit} className="space-y-5">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
         {/* Amount Input */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+          <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
             Amount *
           </label>
           <div className="relative rounded-2xl shadow-xs">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 font-bold text-xl">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 dark:text-[#8E8E93] font-bold text-xl">
               {settings.currencySymbol}
             </div>
             <input
@@ -132,10 +132,10 @@ export const AddEditExpenseModal: React.FC = () => {
               }}
               placeholder="0.00"
               autoFocus
-              className={`w-full pl-10 pr-4 py-3 bg-slate-50 border rounded-2xl text-2xl font-extrabold text-slate-900 focus:bg-white focus:outline-hidden focus:ring-2 transition-all ${
+              className={`w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-white/[0.06] border rounded-2xl text-2xl font-extrabold text-[#1C1C1E] dark:text-white focus:bg-white dark:focus:bg-[#2C2C2E] focus:outline-hidden focus:ring-2 transition-all ${
                 errors.amount
-                  ? 'border-red-400 focus:ring-red-200'
-                  : 'border-slate-200 focus:border-brand-500 focus:ring-brand-100'
+                  ? 'border-red-400 focus:ring-red-200 dark:focus:ring-red-500/30'
+                  : 'border-slate-200 dark:border-white/[0.1] focus:border-[#214B30] dark:focus:border-[#34C759] focus:ring-[#214B30]/20 dark:focus:ring-[#34C759]/20'
               }`}
             />
           </div>
@@ -147,15 +147,15 @@ export const AddEditExpenseModal: React.FC = () => {
         {/* Category Selection Grid */}
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
               Category *
             </label>
-            <span className="text-xs text-slate-400">
+            <span className="text-xs text-slate-500 dark:text-[#8E8E93]">
               {categories.find((c) => c.id === categoryId)?.name || 'Select'}
             </span>
           </div>
 
-          <div className="grid grid-cols-5 gap-2 max-h-44 overflow-y-auto p-1 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+          <div className="grid grid-cols-5 gap-2 max-h-40 overflow-y-auto p-1.5 bg-slate-50/80 dark:bg-white/[0.04] rounded-2xl border border-slate-200/80 dark:border-white/[0.08] no-scrollbar">
             {categories.map((cat) => {
               const isSelected = categoryId === cat.id;
               return (
@@ -168,12 +168,12 @@ export const AddEditExpenseModal: React.FC = () => {
                   }}
                   className={`flex flex-col items-center justify-center p-2 rounded-xl transition-all ${
                     isSelected
-                      ? 'bg-white ring-2 ring-brand-500 shadow-md scale-105'
-                      : 'hover:bg-white/80 opacity-80 hover:opacity-100'
+                      ? 'bg-white dark:bg-white/15 ring-2 ring-[#214B30] dark:ring-[#34C759] shadow-sm scale-102'
+                      : 'hover:bg-white/80 dark:hover:bg-white/10 opacity-80 hover:opacity-100'
                   }`}
                 >
                   <CategoryIcon category={cat} size="sm" />
-                  <span className="text-[11px] font-semibold text-slate-700 mt-1 truncate max-w-[55px] text-center">
+                  <span className="text-[11px] font-semibold text-slate-700 dark:text-white mt-1 truncate max-w-[55px] text-center">
                     {cat.name}
                   </span>
                 </button>
@@ -188,21 +188,21 @@ export const AddEditExpenseModal: React.FC = () => {
         {/* Date Field with Quick Buttons */}
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
               Date *
             </label>
             <div className="flex gap-1.5">
               <button
                 type="button"
                 onClick={() => setDateShortcut(0)}
-                className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors"
+                className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-white/[0.08] hover:bg-slate-200 dark:hover:bg-white/[0.14] text-slate-600 dark:text-slate-300 transition-colors"
               >
                 Today
               </button>
               <button
                 type="button"
                 onClick={() => setDateShortcut(1)}
-                className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors"
+                className="text-[11px] font-semibold px-2 py-0.5 rounded-md bg-slate-100 dark:bg-white/[0.08] hover:bg-slate-200 dark:hover:bg-white/[0.14] text-slate-600 dark:text-slate-300 transition-colors"
               >
                 Yesterday
               </button>
@@ -217,7 +217,7 @@ export const AddEditExpenseModal: React.FC = () => {
                 setDate(e.target.value);
                 if (errors.date) setErrors((prev) => ({ ...prev, date: undefined }));
               }}
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-100 focus:border-brand-500"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-white/[0.06] border border-slate-200 dark:border-white/[0.1] rounded-xl text-sm font-medium text-slate-800 dark:text-white focus:bg-white dark:focus:bg-[#2C2C2E] focus:outline-hidden focus:ring-2 focus:ring-[#214B30]/20 dark:focus:ring-[#34C759]/20 focus:border-[#214B30] dark:focus:border-[#34C759]"
             />
           </div>
           {errors.date && <p className="text-xs text-red-500 font-medium mt-1.5">{errors.date}</p>}
@@ -225,8 +225,8 @@ export const AddEditExpenseModal: React.FC = () => {
 
         {/* Payment Method Pills (Optional) */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-            Payment Method <span className="text-slate-400 font-normal">(Optional)</span>
+          <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+            Payment Method <span className="text-slate-400 dark:text-[#8E8E93] font-normal">(Optional)</span>
           </label>
           <div className="flex flex-wrap gap-2">
             {PAYMENT_METHODS.map((method) => {
@@ -238,8 +238,8 @@ export const AddEditExpenseModal: React.FC = () => {
                   onClick={() => setPaymentMethod(isSelected ? '' : method)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-semibold transition-all border ${
                     isSelected
-                      ? 'bg-brand-600 text-white border-brand-600 shadow-sm'
-                      : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                      ? 'bg-[#214B30] dark:bg-[#34C759] text-white dark:text-[#061A0C] border-[#214B30] dark:border-[#34C759] shadow-xs'
+                      : 'bg-slate-50 dark:bg-white/[0.06] text-slate-600 dark:text-[#8E8E93] border-slate-200 dark:border-white/[0.1] hover:bg-slate-100 dark:hover:bg-white/[0.1]'
                   }`}
                 >
                   {method}
@@ -251,8 +251,8 @@ export const AddEditExpenseModal: React.FC = () => {
 
         {/* Note / Description */}
         <div>
-          <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
-            Note / Description <span className="text-slate-400 font-normal">(Optional)</span>
+          <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+            Note / Description <span className="text-slate-400 dark:text-[#8E8E93] font-normal">(Optional)</span>
           </label>
           <div className="relative">
             <input
@@ -261,23 +261,23 @@ export const AddEditExpenseModal: React.FC = () => {
               onChange={(e) => setNote(e.target.value)}
               placeholder="e.g. Swiggy dinner, Metro recharge, Books"
               maxLength={120}
-              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-brand-100 focus:border-brand-500"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-white/[0.06] border border-slate-200 dark:border-white/[0.1] rounded-xl text-sm text-slate-800 dark:text-white focus:bg-white dark:focus:bg-[#2C2C2E] focus:outline-hidden focus:ring-2 focus:ring-[#214B30]/20 dark:focus:ring-[#34C759]/20 focus:border-[#214B30] dark:focus:border-[#34C759]"
             />
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-black/[0.06] dark:border-white/[0.08]">
           <button
             type="button"
             onClick={closeExpenseModal}
-            className="px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
+            className="px-4 py-2.5 rounded-xl text-sm font-semibold text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl text-sm font-bold bg-brand-600 hover:bg-brand-700 text-white shadow-md shadow-brand-600/30 transition-all hover:shadow-lg active:scale-98"
+            className="flex items-center gap-1.5 px-6 py-2.5 rounded-xl text-sm font-bold bg-[#214B30] dark:bg-[#34C759] text-white dark:text-[#061A0C] hover:opacity-95 shadow-md shadow-[#214B30]/20 dark:shadow-[0_2px_14px_rgba(52,199,89,0.4)] transition-all active:scale-98"
           >
             <Check size={16} strokeWidth={2.5} />
             <span>{editingExpense ? 'Save Changes' : 'Record Expense'}</span>

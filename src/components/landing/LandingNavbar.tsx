@@ -20,6 +20,18 @@ export const LandingNavbar: React.FC<LandingNavbarProps> = ({ onOpenApp }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Prevent background scroll when mobile drawer is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
   const navLinks = [
     { label: 'Benefits', href: '#benefits' },
     { label: 'How it works', href: '#how-it-works' },
@@ -30,23 +42,23 @@ export const LandingNavbar: React.FC<LandingNavbarProps> = ({ onOpenApp }) => {
   return (
     <>
       {/* Floating Centered Navigation Bar per B7 Guidelines */}
-      <header className="fixed top-0 left-0 right-0 z-50 px-4 pt-3 sm:pt-4 pointer-events-none">
+      <header className="fixed top-0 left-0 right-0 z-50 px-3 sm:px-4 pt-2.5 sm:pt-4 pointer-events-none">
         <nav
           aria-label="Primary Navigation"
           className={`pointer-events-auto max-w-4xl mx-auto rounded-full transition-all duration-300 ease-base border ${
             scrolled
               ? 'bg-white/85 dark:bg-[#181818]/90 backdrop-blur-xl shadow-lg border-black/[0.08] dark:border-white/[0.1]'
-              : 'bg-white/70 dark:bg-[#181818]/75 backdrop-blur-md border-black/[0.05] dark:border-white/[0.08]'
-          } px-4 py-2 sm:px-5 sm:py-2.5 flex items-center justify-between gap-4`}
+              : 'bg-white/75 dark:bg-[#181818]/80 backdrop-blur-md border-black/[0.05] dark:border-white/[0.08]'
+          } px-3 py-1.5 sm:px-5 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-4`}
         >
           {/* Brand Logo & Name */}
           <a
             href="#"
-            className="flex items-center gap-2.5 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-700 rounded-full"
+            className="flex items-center gap-2 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand-700 rounded-full shrink-0"
             aria-label="1Pavala Home"
           >
             <AppLogo size="sm" showText={false} />
-            <span className="title-3 text-[#1C1C1E] dark:text-white font-bold tracking-tight">
+            <span className="text-sm sm:text-base text-[#1C1C1E] dark:text-white font-bold tracking-tight">
               1Pavala
             </span>
           </a>
@@ -57,40 +69,41 @@ export const LandingNavbar: React.FC<LandingNavbarProps> = ({ onOpenApp }) => {
               <a
                 key={link.label}
                 href={link.href}
-                className="body-5 text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-white transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand-700 rounded-md"
+                className="text-sm font-medium text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-white transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-brand-700 rounded-md"
               >
                 {link.label}
               </a>
             ))}
           </div>
 
-          {/* Actions: Theme Toggle & Launch CTA */}
-          <div className="flex items-center gap-2">
+          {/* Action Buttons: Clean & Uncongested on Mobile */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* Theme Toggle - Desktop only in header, inside drawer on mobile */}
             <button
               onClick={toggleTheme}
-              className="w-9 h-9 rounded-full flex items-center justify-center bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.14] text-[#1C1C1E] dark:text-white transition-colors active:scale-95 focus-visible:ring-2 focus-visible:ring-brand-700"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center bg-black/[0.04] dark:bg-white/[0.08] hover:bg-black/[0.08] dark:hover:bg-white/[0.14] text-[#1C1C1E] dark:text-white transition-colors active:scale-95 focus-visible:ring-2 focus-visible:ring-brand-700"
               aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
             >
-              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
             </button>
 
             {/* Launch App Primary CTA */}
             <button
               onClick={onOpenApp}
-              className="button-sm bg-brand-700 hover:bg-brand-800 active:scale-[0.98] text-white rounded-full transition-all duration-200 flex items-center gap-1.5 shadow-[0_2px_8px_rgba(33,75,48,0.25)] focus-visible:ring-2 focus-visible:ring-brand-700"
+              className="bg-brand-700 hover:bg-brand-800 active:scale-[0.98] text-white rounded-full text-xs sm:text-sm font-semibold px-3 py-1.5 sm:px-4 sm:py-2 transition-all duration-200 flex items-center gap-1 shadow-[0_2px_8px_rgba(33,75,48,0.25)] focus-visible:ring-2 focus-visible:ring-brand-700"
             >
               <span>Open App</span>
-              <ArrowRight size={14} className="shrink-0" />
+              <ArrowRight size={13} className="shrink-0 hidden xs:inline" />
             </button>
 
             {/* Mobile Hamburger Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden w-9 h-9 rounded-full flex items-center justify-center bg-black/[0.04] dark:bg-white/[0.08] text-[#1C1C1E] dark:text-white transition-colors"
+              className="md:hidden w-8 h-8 rounded-full flex items-center justify-center bg-black/[0.04] dark:bg-white/[0.08] text-[#1C1C1E] dark:text-white transition-colors active:scale-95"
               aria-label="Toggle navigation menu"
               aria-expanded={mobileMenuOpen}
             >
-              {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              {mobileMenuOpen ? <X size={17} /> : <Menu size={17} />}
             </button>
           </div>
         </nav>
@@ -99,17 +112,30 @@ export const LandingNavbar: React.FC<LandingNavbarProps> = ({ onOpenApp }) => {
       {/* Full-Height Mobile Drawer per B7 Navigation Guidelines */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-40 bg-white/95 dark:bg-[#181818]/95 backdrop-blur-2xl md:hidden flex flex-col justify-between pt-24 pb-12 px-6 animate-in fade-in duration-300">
-          <div className="flex flex-col gap-5">
-            <span className="caption-3 text-[#8E8E93] uppercase tracking-wider">
-              Navigation
-            </span>
+          <div className="flex flex-col gap-6">
+            <div className="flex items-center justify-between pb-4 border-b border-black/[0.06] dark:border-white/[0.08]">
+              <span className="caption-3 text-[#8E8E93] uppercase tracking-wider">
+                Menu Navigation
+              </span>
+              <div className="flex items-center gap-2">
+                <span className="caption-4 text-[#8E8E93]">Theme</span>
+                <button
+                  onClick={toggleTheme}
+                  className="w-8 h-8 rounded-full flex items-center justify-center bg-black/[0.05] dark:bg-white/[0.1] text-[#1C1C1E] dark:text-white"
+                  aria-label="Toggle theme in menu"
+                >
+                  {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+                </button>
+              </div>
+            </div>
+
             {navLinks.map((link, idx) => (
               <a
                 key={link.label}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
                 style={{ animationDelay: `${idx * 60}ms` }}
-                className="heading-4 text-[#1C1C1E] dark:text-white hover:text-brand-700 transition-colors"
+                className="text-2xl font-bold text-[#1C1C1E] dark:text-white hover:text-brand-700 transition-colors"
               >
                 {link.label}
               </a>
@@ -122,9 +148,9 @@ export const LandingNavbar: React.FC<LandingNavbarProps> = ({ onOpenApp }) => {
                 setMobileMenuOpen(false);
                 onOpenApp();
               }}
-              className="button-lg w-full bg-brand-700 text-white rounded-full py-3.5 flex items-center justify-center gap-2 shadow-lg"
+              className="button-lg w-full bg-brand-700 text-white rounded-full py-3.5 flex items-center justify-center gap-2 shadow-lg active:scale-98"
             >
-              <span>Start Tracking Free</span>
+              <span>Launch 1Pavala Tracker</span>
               <ArrowRight size={16} />
             </button>
             <p className="caption-2 text-center text-[#8E8E93]">
