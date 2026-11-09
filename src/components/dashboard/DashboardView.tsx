@@ -91,7 +91,7 @@ export const DashboardView: React.FC = () => {
           1. EXECUTIVE HERO CARD (Apple Wallet / Card Pattern)
           High glanceability: Balance, budget pacing, and actions
           ========================================================= */}
-      <section className="apple-card-elevated p-5 sm:p-7 bg-white dark:bg-[#1C1C1E] border border-black/[0.04] dark:border-white/[0.08] transition-colors duration-150 ease-out">
+      <section className="apple-card-elevated p-5 sm:p-7 bg-white dark:bg-[#1C1C1E] border border-black/[0.04] dark:border-white/[0.08]">
         {/* Top Meta Row: Compact Month Capsule on Left + Badges on Right */}
         <div className="flex items-center justify-between gap-1.5 sm:gap-2 mb-2 sm:mb-3">
           {/* Compact Month Capsule (Shortened for mobile, perfectly balanced) */}
