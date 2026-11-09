@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
+import { Category } from '../../types';
 import {
   ShieldCheck,
   Download,
@@ -16,6 +17,8 @@ import {
   Sparkles,
   Smartphone,
   Database,
+  Pencil,
+  X,
 } from 'lucide-react';
 import { CategoryIcon } from '../common/CategoryIcon';
 import { AppLogo } from '../common/AppLogo';
@@ -27,6 +30,8 @@ export const SettingsView: React.FC = () => {
     updateSettings,
     categories,
     addCategory,
+    updateCategory,
+    deleteCategory,
     resetAllData,
     exportData,
     importData,
@@ -44,6 +49,19 @@ export const SettingsView: React.FC = () => {
   const [newCatColor, setNewCatColor] = useState('#3b82f6');
   const [newCatIcon, setNewCatIcon] = useState('Tag');
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+
+  // Edit & Delete Custom Category State
+  const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [editCatName, setEditCatName] = useState('');
+  const [editCatColor, setEditCatColor] = useState('#3b82f6');
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(null);
+
+  useEffect(() => {
+    if (editingCategory) {
+      setEditCatName(editingCategory.name);
+      setEditCatColor(editingCategory.color || '#3b82f6');
+    }
+  }, [editingCategory]);
 
   // PWA install state
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -104,6 +122,25 @@ export const SettingsView: React.FC = () => {
 
     setNewCatName('');
     setIsAddingCategory(false);
+  };
+
+  const handleSaveCategoryEdit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingCategory || !editCatName.trim()) return;
+
+    updateCategory(editingCategory.id, {
+      name: editCatName.trim(),
+      color: editCatColor,
+      bgLight: `${editCatColor}20`,
+    });
+
+    setEditingCategory(null);
+  };
+
+  const handleConfirmDeleteCategory = () => {
+    if (!categoryToDelete) return;
+    deleteCategory(categoryToDelete.id);
+    setCategoryToDelete(null);
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -357,23 +394,48 @@ export const SettingsView: React.FC = () => {
           )}
 
           {/* Categories Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
             {categories.map((cat) => (
               <div
                 key={cat.id}
-                className="flex items-center gap-2 p-2 rounded-xl bg-slate-50/70 dark:bg-white/[0.04] border border-slate-100 dark:border-white/[0.04]"
+                className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-slate-50/70 dark:bg-white/[0.04] border border-slate-100 dark:border-white/[0.04] hover:border-slate-200 dark:hover:border-white/[0.08] transition-all"
               >
-                <CategoryIcon category={cat} size="sm" />
-                <div className="min-w-0">
-                  <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">
-                    {cat.name}
-                  </p>
-                  {cat.isCustom && (
-                    <span className="text-[9px] uppercase font-bold text-[#214B30] dark:text-[#34C759]">
-                      Custom
-                    </span>
-                  )}
+                <div className="flex items-center gap-2 min-w-0">
+                  <CategoryIcon category={cat} size="sm" />
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">
+                      {cat.name}
+                    </p>
+                    {cat.isCustom && (
+                      <span className="text-[9px] uppercase font-bold text-[#214B30] dark:text-[#34C759]">
+                        Custom
+                      </span>
+                    )}
+                  </div>
                 </div>
+
+                {cat.isCustom && (
+                  <div className="flex items-center gap-0.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setEditingCategory(cat)}
+                      className="p-1 rounded-lg text-slate-400 hover:text-[#214B30] dark:hover:text-[#34C759] hover:bg-slate-200/60 dark:hover:bg-white/[0.08] active:scale-95 transition-all"
+                      title={`Edit ${cat.name}`}
+                      aria-label={`Edit ${cat.name}`}
+                    >
+                      <Pencil size={13} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCategoryToDelete(cat)}
+                      className="p-1 rounded-lg text-slate-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 active:scale-95 transition-all"
+                      title={`Delete ${cat.name}`}
+                      aria-label={`Delete ${cat.name}`}
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -569,6 +631,113 @@ export const SettingsView: React.FC = () => {
           </p>
         </div>
       </div>
+
+      {/* Edit Category Modal */}
+      {editingCategory && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs apple-backdrop-fade">
+          <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-[#1C1C1E] border border-slate-200/80 dark:border-white/[0.1] shadow-2xl p-5 space-y-4 apple-window-pop">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                Edit Custom Category
+              </h3>
+              <button
+                type="button"
+                onClick={() => setEditingCategory(null)}
+                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/[0.08]"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveCategoryEdit} className="space-y-3.5">
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                  Category Name
+                </label>
+                <input
+                  type="text"
+                  value={editCatName}
+                  onChange={(e) => setEditCatName(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-white/[0.06] border border-slate-200 dark:border-white/[0.1] rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-[#214B30]"
+                  required
+                  autoFocus
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                  Accent Color
+                </label>
+                <div className="flex items-center gap-2.5">
+                  <input
+                    type="color"
+                    value={editCatColor}
+                    onChange={(e) => setEditCatColor(e.target.value)}
+                    className="w-9 h-9 rounded-xl cursor-pointer border-none bg-transparent"
+                  />
+                  <span className="text-xs font-mono font-medium text-slate-600 dark:text-slate-300">
+                    {editCatColor}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingCategory(null)}
+                  className="px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/[0.14] transition-all"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-xs font-bold rounded-xl bg-[#214B30] hover:bg-[#1A3B26] text-white shadow-xs transition-all active:scale-95"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Category Confirmation Dialog */}
+      {categoryToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs apple-backdrop-fade">
+          <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-[#1C1C1E] border border-slate-200/80 dark:border-white/[0.1] shadow-2xl p-5 space-y-4 apple-window-pop">
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-xl bg-red-100 dark:bg-red-950/40 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
+                <Trash2 size={18} />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                  Delete "{categoryToDelete.name}"?
+                </h3>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+                  Any existing expenses assigned to this category will be preserved and reassigned to "Other".
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-1">
+              <button
+                type="button"
+                onClick={() => setCategoryToDelete(null)}
+                className="px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/[0.14] transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDeleteCategory}
+                className="px-4 py-2 text-xs font-bold rounded-xl bg-red-600 hover:bg-red-700 text-white shadow-xs transition-all active:scale-95"
+              >
+                Delete Category
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <TermsModal
         isOpen={isTermsModalOpen}

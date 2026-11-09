@@ -251,14 +251,14 @@ export const InsightsView: React.FC = () => {
         </div>
 
         {/* Timeframe Switcher: Daily, Weekly, Monthly, Yearly */}
-        <div className="inline-flex p-1 rounded-2xl bg-black/[0.05] dark:bg-white/[0.08] border border-black/[0.04] dark:border-white/[0.06] overflow-x-auto no-scrollbar max-w-full">
+        <div className="grid grid-cols-4 w-full sm:w-[380px] p-1 rounded-2xl bg-black/[0.05] dark:bg-white/[0.08] border border-black/[0.04] dark:border-white/[0.06] gap-1 shrink-0">
           {(['daily', 'weekly', 'monthly', 'yearly'] as const).map((mode) => (
             <button
               key={mode}
               onClick={() => setTimeframe(mode)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 capitalize whitespace-nowrap select-none ${
+              className={`w-full py-1.5 px-1 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-150 capitalize text-center select-none ${
                 timeframe === mode
-                  ? 'bg-[#214B30] dark:bg-[#34C759] text-white dark:text-[#061A0C] shadow-sm'
+                  ? 'bg-[#214B30] dark:bg-[#34C759] text-white dark:text-[#061A0C] shadow-xs'
                   : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-white'
               }`}
             >

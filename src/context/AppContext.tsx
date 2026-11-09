@@ -39,6 +39,8 @@ interface AppContextType {
   deleteExpense: (id: string) => void;
   
   addCategory: (category: Omit<Category, 'id'>) => void;
+  updateCategory: (id: string, category: Partial<Omit<Category, 'id'>>) => void;
+  deleteCategory: (id: string) => void;
   setBudget: (month: string, amount: number, categoryBudgets?: Record<string, number>) => void;
   updateSettings: (settings: Partial<UserSettings>) => void;
   
@@ -147,9 +149,6 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         setCategories(synced.categories);
         setBudgets(synced.budgets);
         setSettings(synced.settings);
-        if (synced.restoredFromIndexedDB && synced.expenses.length > 0) {
-          showToast(`Restored ${synced.expenses.length} records from IndexedDB`, 'info');
-        }
       }
     });
   }, []);
@@ -237,6 +236,63 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     setCategories(updated);
     StorageService.saveCategories(updated);
     showToast(`Category "${newCategory.name}" created!`, 'success');
+  };
+
+  const updateCategory = (id: string, catData: Partial<Omit<Category, 'id'>>) => {
+    const updated = categories.map((c) => {
+      if (c.id === id) {
+        return {
+          ...c,
+          ...catData,
+          bgLight: catData.color ? `${catData.color}20` : c.bgLight,
+        };
+      }
+      return c;
+    });
+    setCategories(updated);
+    StorageService.saveCategories(updated);
+    showToast('Category updated successfully!', 'success');
+  };
+
+  const deleteCategory = (id: string) => {
+    const targetCat = categories.find((c) => c.id === id);
+    if (!targetCat) return;
+
+    const updatedCategories = categories.filter((c) => c.id !== id);
+    setCategories(updatedCategories);
+    StorageService.saveCategories(updatedCategories);
+
+    let remappedCount = 0;
+    const updatedExpenses = expenses.map((e) => {
+      if (e.categoryId === id) {
+        remappedCount++;
+        return { ...e, categoryId: 'other', updatedAt: new Date().toISOString() };
+      }
+      return e;
+    });
+
+    if (remappedCount > 0) {
+      setExpenses(updatedExpenses);
+      StorageService.saveExpenses(updatedExpenses);
+    }
+
+    const updatedBudgets = budgets.map((b) => {
+      if (b.categoryBudgets && b.categoryBudgets[id]) {
+        const newCatBudgets = { ...b.categoryBudgets };
+        delete newCatBudgets[id];
+        return { ...b, categoryBudgets: newCatBudgets };
+      }
+      return b;
+    });
+    setBudgets(updatedBudgets);
+    StorageService.saveBudgets(updatedBudgets);
+
+    showToast(
+      remappedCount > 0
+        ? `Deleted "${targetCat.name}" (${remappedCount} expense${remappedCount > 1 ? 's' : ''} moved to Other)`
+        : `Category "${targetCat.name}" deleted`,
+      'success'
+    );
   };
 
   const setBudget = (month: string, amount: number, categoryBudgets?: Record<string, number>) => {
@@ -425,6 +481,8 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         updateExpense,
         deleteExpense,
         addCategory,
+        updateCategory,
+        deleteCategory,
         setBudget,
         updateSettings,
         resetAllData,
