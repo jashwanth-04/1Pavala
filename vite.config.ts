@@ -14,6 +14,7 @@ export default defineConfig({
         'apple-touch-icon.png',
         'favicon-32x32.png',
         'favicon-64x64.png',
+        'logo.png',
         'logo.svg',
         'icon-192.png',
         'icon-512.png',
