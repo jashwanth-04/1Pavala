@@ -49,6 +49,7 @@
         <receiver
             android:name=".QuickRecordWidgetProvider"
             android:label="1Pavala Quick Record"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -62,6 +63,7 @@
         <receiver
             android:name=".MonthlyBudgetWidgetProvider"
             android:label="1Pavala Monthly Budget"
+            android:icon="@mipmap/ic_launcher"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
