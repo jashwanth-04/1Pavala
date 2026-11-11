@@ -40,7 +40,7 @@ export const SpendingTrendChart: React.FC<SpendingTrendChartProps> = ({
 
   const maxAmount = Math.max(...dailyTotals.map((d) => d.amount), 500);
   const totalAmount = dailyTotals.reduce((sum, d) => sum + d.amount, 0);
-  const avgAmount = Math.round(totalAmount / daysInMonth);
+  const avgAmount = Number((totalAmount / daysInMonth).toFixed(2));
 
   return (
     <div className="w-full flex flex-col">

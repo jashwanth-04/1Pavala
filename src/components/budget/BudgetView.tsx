@@ -42,7 +42,7 @@ export const BudgetView: React.FC = () => {
 
   // Safe daily allowance
   const remainingBudget = currentMonthStats.remainingBudget;
-  const safeDailyBudget = remainingBudget > 0 ? Math.round(remainingBudget / daysRemaining) : 0;
+  const safeDailyBudget = remainingBudget > 0 ? Number((remainingBudget / daysRemaining).toFixed(2)) : 0;
 
   // Category expenses for this month
   const categorySpending = React.useMemo(() => {
@@ -186,7 +186,7 @@ export const BudgetView: React.FC = () => {
               <p className="text-xs text-slate-500 font-medium">Average Daily Spend</p>
               <p className="text-lg font-extrabold text-slate-900 mt-0.5">
                 {formatCurrency(
-                  Math.round(currentMonthStats.totalSpent / (isSelectedCurrentMonth ? Math.max(1, currentDay) : totalDays)),
+                  Number((currentMonthStats.totalSpent / (isSelectedCurrentMonth ? Math.max(1, currentDay) : totalDays)).toFixed(2)),
                   settings.currencySymbol
                 )}
                 <span className="text-xs font-normal text-slate-400">/day</span>

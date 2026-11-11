@@ -46,7 +46,7 @@ export const AddEditExpenseModal: React.FC = () => {
   const validate = (): boolean => {
     const newErrors: typeof errors = {};
 
-    const parsedAmount = parseFloat(amount);
+    const parsedAmount = Number(parseFloat(amount).toFixed(2));
     if (!amount || isNaN(parsedAmount) || parsedAmount <= 0) {
       newErrors.amount = 'Please enter a valid amount greater than 0';
     }
@@ -67,7 +67,7 @@ export const AddEditExpenseModal: React.FC = () => {
     e.preventDefault();
     if (!validate()) return;
 
-    const parsedAmount = parseFloat(amount);
+    const parsedAmount = Number(parseFloat(amount).toFixed(2));
 
     if (editingExpense) {
       updateExpense(editingExpense.id, {
@@ -124,7 +124,7 @@ export const AddEditExpenseModal: React.FC = () => {
             <input
               type="number"
               step="any"
-              min="1"
+              min="0.01"
               value={amount}
               onChange={(e) => {
                 setAmount(e.target.value);

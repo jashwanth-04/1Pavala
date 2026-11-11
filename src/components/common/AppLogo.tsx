@@ -66,7 +66,7 @@ export const AppLogo: React.FC<AppLogoProps> = ({
         } ${rounded ? config.rounded : ''}`}
       >
         <img
-          src="/logo.svg"
+          src="/logo.png"
           alt="1Pavala official app logo"
           className="w-full h-full object-cover"
           draggable={false}

@@ -64,7 +64,7 @@ export const InsightsView: React.FC = () => {
   }, [selectedMonth]);
 
   const dailyAverage = useMemo(() => {
-    return daysInMonth > 0 ? Math.round(totalPeriodSpent / daysInMonth) : 0;
+    return daysInMonth > 0 ? Number((totalPeriodSpent / daysInMonth).toFixed(2)) : 0;
   }, [totalPeriodSpent, daysInMonth]);
 
   // B. Weekly Aggregation (Weeks of Selected Month: Week 1 to 5)
@@ -90,7 +90,7 @@ export const InsightsView: React.FC = () => {
 
     const activeWeeks = weeks.filter((w, idx) => idx < 4 || daysInMonth > 28);
     const maxWeekAmount = Math.max(...activeWeeks.map((w) => w.amount), 500);
-    const avgWeekAmount = Math.round(totalPeriodSpent / activeWeeks.length);
+    const avgWeekAmount = activeWeeks.length > 0 ? Number((totalPeriodSpent / activeWeeks.length).toFixed(2)) : 0;
 
     return {
       weeks: activeWeeks,
@@ -131,7 +131,7 @@ export const InsightsView: React.FC = () => {
 
     const maxMonthAmount = Math.max(...monthsData.map((m) => m.amount), 1000);
     const monthsWithSpend = monthsData.filter((m) => m.amount > 0).length || 1;
-    const avgMonthAmount = Math.round(totalPeriodSpent / monthsWithSpend);
+    const avgMonthAmount = Number((totalPeriodSpent / monthsWithSpend).toFixed(2));
     const peakMonth = [...monthsData].sort((a, b) => b.amount - a.amount)[0];
 
     return {
@@ -161,7 +161,7 @@ export const InsightsView: React.FC = () => {
     }
 
     const maxYearAmount = Math.max(...yearsList.map((y) => y.amount), 5000);
-    const avgYearAmount = Math.round(totalPeriodSpent / yearsList.length);
+    const avgYearAmount = yearsList.length > 0 ? Number((totalPeriodSpent / yearsList.length).toFixed(2)) : 0;
     const peakYear = [...yearsList].sort((a, b) => b.amount - a.amount)[0];
 
     return {

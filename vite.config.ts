@@ -14,6 +14,7 @@ export default defineConfig({
         'apple-touch-icon.png',
         'favicon-32x32.png',
         'favicon-64x64.png',
+        'logo.png',
         'logo.svg',
         'icon-192.png',
         'icon-512.png',
@@ -66,6 +67,7 @@ export default defineConfig({
         ],
       },
       workbox: {
+        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         cleanupOutdatedCaches: true,
         runtimeCaching: [
