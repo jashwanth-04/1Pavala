@@ -15,6 +15,7 @@ import { SettingsView } from './components/settings/SettingsView';
 import { AddEditExpenseModal } from './components/expenses/AddEditExpenseModal';
 import { LandingPageView } from './components/landing/LandingPageView';
 import { TermsModal } from './components/common/TermsModal';
+import { FloatingWindowView } from './components/widgets/FloatingWindowView';
 import { ShieldCheck, Globe } from 'lucide-react';
 
 interface AppContentProps {
@@ -199,6 +200,17 @@ export function App() {
     } catch {}
     setIsTermsAccepted(true);
   };
+
+  const isFloatingMode = new URLSearchParams(window.location.search).get('mode') === 'floating';
+
+  if (isFloatingMode) {
+    return (
+      <AppProvider>
+        <ToastContainer />
+        <FloatingWindowView />
+      </AppProvider>
+    );
+  }
 
   return (
     <AppProvider>
