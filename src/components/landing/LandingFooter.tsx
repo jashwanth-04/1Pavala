@@ -28,6 +28,9 @@ export const LandingFooter: React.FC<LandingFooterProps> = ({ onOpenApp }) => {
           >
             Launch Web App
           </button>
+          <a href="#download" className="hover:text-[#1C1C1E] dark:hover:text-white transition-colors font-medium text-brand-700 dark:text-emerald-400">
+            Download APK
+          </a>
           <a href="#privacy" className="hover:text-[#1C1C1E] dark:hover:text-white transition-colors">
             Privacy Pledge
           </a>

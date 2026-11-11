@@ -5,6 +5,7 @@ import { TaglineRevealSection } from './TaglineRevealSection';
 import { ProblemSolutionSection } from './ProblemSolutionSection';
 import { BenefitsSection } from './BenefitsSection';
 import { HowItWorksSection } from './HowItWorksSection';
+import { DownloadApkSection } from './DownloadApkSection';
 import { PrivacyProofSection } from './PrivacyProofSection';
 import { FaqSection } from './FaqSection';
 import { FinalCtaSection } from './FinalCtaSection';
@@ -25,6 +26,7 @@ export const LandingPageView: React.FC<LandingPageViewProps> = ({ onOpenApp }) =
         <ProblemSolutionSection />
         <BenefitsSection />
         <HowItWorksSection />
+        <DownloadApkSection />
         <PrivacyProofSection />
         <FaqSection />
         <FinalCtaSection onStartTracking={onOpenApp} />

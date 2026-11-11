@@ -6,16 +6,28 @@ export const FaqSection: React.FC = () => {
 
   const faqs = [
     {
+      q: 'How do I download and install the Android APK on my mobile phone?',
+      a: 'Scroll to the "Install on Android" section above and tap "Download APK (Direct)" or visit our GitHub Releases page. Once the 1Pavala.apk file finishes downloading, tap on it in your notification shade or Files/Downloads folder. If prompted to allow installations from your browser, toggle "Allow from this source" and tap "Install". The app will appear immediately on your device without requiring any Google Play account.',
+    },
+    {
+      q: 'Why does Android show "File might be harmful" or "Install unknown apps"?',
+      a: 'This is Android’s standard built-in security notice whenever an application package (.apk) is installed directly outside the official Google Play Store. Because 1Pavala is free and privacy-focused open source software that you download directly from our GitHub release repo, Google flags it as an "unknown source". 1Pavala contains zero advertising trackers, zero banking scrapers, and zero telemetry. It is completely safe to tap "Download anyway" and install.',
+    },
+    {
+      q: 'How do I add the 1Pavala Quick Record widget to my home screen?',
+      a: 'Once the APK is installed, go to your phone’s home screen. Touch and hold any empty area until the menu appears, then tap "Widgets". Scroll or search for "1Pavala", select the wide "Quick Record" capsule bar, and place it on your home screen. Tapping "Record" or "Recent" will open a fast, floating modal right over your wallpaper without having to open the full app.',
+    },
+    {
       q: 'Does 1Pavala connect to my bank account or read my SMS?',
       a: 'No. 1Pavala is strictly manual and private. It never asks for bank credentials, account numbers, or text message reading permissions.',
     },
     {
       q: 'Where is my financial data stored?',
-      a: 'All your transactions, monthly targets, and settings are stored locally on your device using native browser IndexedDB and Web Storage. No data is ever sent to any remote server.',
+      a: 'All your transactions, monthly targets, and settings are stored locally on your device using native on-device IndexedDB and Web Storage. No data is ever sent to any remote server.',
     },
     {
       q: 'Will 1Pavala work without an internet connection?',
-      a: 'Yes. 1Pavala is a certified Progressive Web App. It loads instantly and functions completely offline without any internet connection.',
+      a: 'Yes. 1Pavala is built as an offline-first system. Both the Android APK and the Progressive Web App load instantly and function completely offline without any internet connection.',
     },
     {
       q: 'What happens if I clear my browser cache?',
@@ -26,16 +38,16 @@ export const FaqSection: React.FC = () => {
       a: 'No. 1Pavala is free and open with zero recurring subscriptions, paywalls, or hidden charges.',
     },
     {
-      q: 'Can I install 1Pavala on my Android or iPhone?',
-      a: 'Yes. In Safari on iOS, tap Share and select "Add to Home Screen". On Chrome for Android, tap the three dots and select "Install app". It runs as a standalone app on your home screen.',
+      q: 'Can I install 1Pavala on my iPhone as well?',
+      a: 'Yes. On Safari for iOS/iPadOS, tap the Share icon and select "Add to Home Screen". It installs as a standalone Progressive Web App with offline caching directly on your home screen.',
     },
     {
       q: 'Can I import my existing expenses from Excel or CSV?',
       a: 'Yes. You can import any previously exported CSV or JSON backup anytime directly from the Settings tab in seconds.',
     },
     {
-      q: 'How does 1Pavala handle multiple currencies?',
-      a: '1Pavala supports Indian Rupees, US Dollars, Euros, British Pounds, and custom currency symbols configurable in Settings.',
+      q: 'How does 1Pavala handle paise and decimals?',
+      a: '1Pavala supports accurate decimal precision up to two decimal places (e.g., ₹65.52 or ₹120.75) while keeping clean whole integers (₹1,000) uncluttered without trailing zeroes.',
     },
   ];
 
@@ -50,11 +62,11 @@ export const FaqSection: React.FC = () => {
           Frequently asked questions
         </h2>
         <p className="text-xs sm:text-sm text-[#8E8E93] max-w-sm sm:max-w-md mx-auto mt-1.5">
-          Everything you need to know about our privacy architecture and offline reliability.
+          Everything you need to know about APK installation, widgets, and our offline privacy guarantee.
         </p>
       </div>
 
-      {/* Apple Inset Grouped Card Pattern: Unified, serene, and mobile-friendly */}
+      {/* Apple Inset Grouped Card Pattern */}
       <div className="rounded-2xl sm:rounded-3xl bg-white dark:bg-[#181818] border border-black/[0.06] dark:border-white/[0.08] divide-y divide-black/[0.05] dark:divide-white/[0.06] shadow-xs overflow-hidden">
         {faqs.map((faq, idx) => {
           const isOpen = openIndex === idx;

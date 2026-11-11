@@ -35,6 +35,7 @@ export const LandingNavbar: React.FC<LandingNavbarProps> = ({ onOpenApp }) => {
   const navLinks = [
     { label: 'Benefits', href: '#benefits' },
     { label: 'How it works', href: '#how-it-works' },
+    { label: 'Download APK', href: '#download' },
     { label: 'Privacy guarantee', href: '#privacy' },
     { label: 'FAQ', href: '#faq' },
   ];
