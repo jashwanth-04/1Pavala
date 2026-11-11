@@ -5,12 +5,11 @@
     <color name="colorPrimaryDark">#1E452B</color>
     <color name="colorAccent">#D4AF37</color>
 
-    <!-- Widget Specific Colors -->
-    <color name="widget_divider">#33FFFFFF</color>
-    <color name="widget_progress_food">#34C759</color>
-    <color name="widget_progress_grocery">#2ECC71</color>
-    <color name="widget_progress_transit">#6366F1</color>
-    <color name="widget_progress_shopping">#E67E22</color>
-    <color name="widget_progress_remaining">#0A140D</color>
-    <color name="widget_progress_track">#15271A</color>
+    <!-- Quick Record Widget (Notes-style light green theme) -->
+    <color name="widget_bg_start">#E6F4EA</color>
+    <color name="widget_bg_end">#D4EED8</color>
+    <color name="widget_border">#A6D8B3</color>
+    <color name="widget_text_primary">#163A21</color>
+    <color name="widget_text_secondary">#295D37</color>
+    <color name="widget_divider">#331E452B</color>
 </resources>

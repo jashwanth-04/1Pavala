@@ -39,10 +39,9 @@ No logins. No external servers. No telemetry. Just disciplined, frictionless mon
 - Intelligent formatting keeps whole rupee values clean (`₹1,000`) while dynamically preserving decimals whenever fractional amounts exist.
 - Normalized IEEE-754 summation ensures zero floating-point accumulation errors across budgets and ledgers.
 
-### 📱 Native Android Homescreen Widgets & Floating Window
-- **Quick Record Capsule Widget**: A sleek, pill-shaped stadium widget placed right on your Android homescreen featuring a `+` (Log Expense) button and a `Recent` transactions shortcut.
-- **Floating Action Window**: Tapping the widget opens a lightweight, translucent floating window over your homescreen wallpaper — log an expense in 2 seconds without launching or switching into the full app.
-- **Monthly Budget Dashboard Widget (4×2)**: Live glanceable spending monitor displaying month-to-date expenditure vs. monthly limit, 4-tier segmented category progress, Saver Milestone badge, and quick Budget Guard toggle.
+### 📱 Native Android Homescreen Widget & Floating Window
+- **Quick Record Capsule Bar**: A wide, slim pill bar placed right on your Android homescreen inspired by the Notes capture bar, styled in 1Pavala's signature light green theme with a `+` (Log Expense) button and a `Recent` transactions shortcut.
+- **Floating Action Window**: Tapping either shortcut opens a lightweight, translucent floating window over your homescreen wallpaper — log an expense in 2 seconds without launching or switching into the full app.
 
 ### 🛡️ Smart Budget Pacing & Safety Runway
 - **Monthly Spending Ceiling**: Set monthly budget caps with real-time burn-rate calculations.
@@ -203,8 +202,7 @@ gradlew.bat assembleDebug    # On Windows
 │   │   ├── java/com/onepavala/app/
 │   │   │   ├── MainActivity.java             # Main Capacitor Bridge Activity
 │   │   │   ├── FloatingActionActivity.java   # Translucent floating expense window
-│   │   │   ├── QuickRecordWidgetProvider.java# Quick Record homescreen capsule widget
-│   │   │   └── MonthlyBudgetWidgetProvider.java # Monthly budget dashboard widget
+│   │   │   └── QuickRecordWidgetProvider.java# Quick Record homescreen capsule widget
 │   │   ├── res/layout/                       # Native widget XML layouts
 │   │   ├── res/drawable/                     # Widget backgrounds & drawables
 │   │   └── res/mipmap-*/                     # Adaptive emerald coin launcher icons

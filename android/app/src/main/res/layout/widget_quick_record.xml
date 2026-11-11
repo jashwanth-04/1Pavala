@@ -2,23 +2,27 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="4dp">
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp"
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp">
 
+    <!-- Wide, Slim Notes-Style Light Green Pill Bar -->
     <LinearLayout
         android:id="@+id/widget_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:minHeight="48dp"
+        android:minHeight="42dp"
         android:background="@drawable/widget_pill_background"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp">
 
-        <!-- Record Expense Button (+ Icon & Label) -->
+        <!-- Record Expense Action (+ Icon & Record Label) -->
         <LinearLayout
             android:id="@+id/widget_btn_record"
             android:layout_width="0dp"
@@ -30,6 +34,7 @@
             <ImageView
                 android:layout_width="18dp"
                 android:layout_height="18dp"
+                android:scaleType="fitCenter"
                 android:src="@drawable/ic_widget_add"
                 android:contentDescription="Record Expense" />
 
@@ -37,22 +42,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Record"
-                android:textColor="#FFFFFF"
+                android:textColor="@color/widget_text_primary"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                android:layout_marginStart="6dp" />
+                android:layout_marginStart="7dp" />
         </LinearLayout>
 
-        <!-- Subtle Vertical Divider (ImageView for RemoteViews safety) -->
+        <!-- Subtle Vertical Divider -->
         <ImageView
             android:layout_width="1dp"
-            android:layout_height="22dp"
+            android:layout_height="20dp"
             android:background="@color/widget_divider"
-            android:layout_marginStart="6dp"
-            android:layout_marginEnd="6dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:contentDescription="@null" />
 
-        <!-- Recent Transactions Button (History Icon & Label) -->
+        <!-- Recent Transactions Action (Clock Icon & Recent Label) -->
         <LinearLayout
             android:id="@+id/widget_btn_recent"
             android:layout_width="0dp"
@@ -62,8 +67,9 @@
             android:gravity="center">
 
             <ImageView
-                android:layout_width="17dp"
-                android:layout_height="17dp"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:scaleType="fitCenter"
                 android:src="@drawable/ic_widget_recent"
                 android:contentDescription="Recent Transactions" />
 
@@ -71,10 +77,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Recent"
-                android:textColor="#E0E0E0"
+                android:textColor="@color/widget_text_primary"
                 android:textSize="13sp"
                 android:textStyle="bold"
-                android:layout_marginStart="6dp" />
+                android:layout_marginStart="7dp" />
         </LinearLayout>
 
     </LinearLayout>

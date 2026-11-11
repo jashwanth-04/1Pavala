@@ -5,5 +5,4 @@
     <string name="package_name">com.onepavala.app</string>
     <string name="custom_url_scheme">com.onepavala.app</string>
     <string name="widget_quick_record_description">Quickly record expenses and view recent transactions in a floating window</string>
-    <string name="widget_monthly_budget_description">Live monthly spending, category breakdown, and budget milestone tracking</string>
 </resources>
