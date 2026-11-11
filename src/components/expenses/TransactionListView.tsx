@@ -88,7 +88,7 @@ export const TransactionListView: React.FC = () => {
   }, [expenses, selectedMonth, selectedCategory, selectedMethod, searchQuery, sortBy, sortOrder, categoryMap]);
 
   const totalFilteredAmount = useMemo(() => {
-    return filteredExpenses.reduce((sum, e) => sum + e.amount, 0);
+    return Number(filteredExpenses.reduce((sum, e) => sum + e.amount, 0).toFixed(2));
   }, [filteredExpenses]);
 
   const hasActiveFilters =

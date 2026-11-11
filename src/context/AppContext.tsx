@@ -374,9 +374,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   // Helper calculation for any month
   const getMonthlyStats = (monthKey: string): MonthlyStats => {
     const monthExpenses = expenses.filter((e) => e.date.startsWith(monthKey));
-    const totalSpent = monthExpenses.reduce((acc, curr) => acc + curr.amount, 0);
+    const totalSpent = Number(monthExpenses.reduce((acc, curr) => acc + curr.amount, 0).toFixed(2));
     const expenseCount = monthExpenses.length;
-    const averageExpense = expenseCount > 0 ? Math.round(totalSpent / expenseCount) : 0;
+    const averageExpense = expenseCount > 0 ? Number((totalSpent / expenseCount).toFixed(2)) : 0;
 
     // Largest expense
     let largestExpense: Expense | null = null;
@@ -387,7 +387,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     // Category breakdown
     const categoryTotals: Record<string, number> = {};
     monthExpenses.forEach((exp) => {
-      categoryTotals[exp.categoryId] = (categoryTotals[exp.categoryId] || 0) + exp.amount;
+      categoryTotals[exp.categoryId] = Number(((categoryTotals[exp.categoryId] || 0) + exp.amount).toFixed(2));
     });
 
     let highestCatEntry: { category: Category; amount: number; percentage: number } | null = null;
@@ -411,7 +411,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
       };
       highestCatEntry = {
         category: catObj,
-        amount: highestAmount,
+        amount: Number(highestAmount.toFixed(2)),
         percentage: Math.round((highestAmount / totalSpent) * 100),
       };
     }
@@ -419,15 +419,15 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     // Budget
     const monthBudgetObj = budgets.find((b) => b.month === monthKey);
     const budget = monthBudgetObj ? monthBudgetObj.amount : (budgets[0]?.amount || 25000);
-    const remainingBudget = budget - totalSpent;
+    const remainingBudget = Number((budget - totalSpent).toFixed(2));
     const budgetPercentage = budget > 0 ? Math.round((totalSpent / budget) * 100) : 0;
 
     // Previous month comparison
     const prevMonthKey = getPreviousMonthKey(monthKey);
     const prevMonthExpenses = expenses.filter((e) => e.date.startsWith(prevMonthKey));
-    const prevMonthSpent = prevMonthExpenses.reduce((acc, curr) => acc + curr.amount, 0);
+    const prevMonthSpent = Number(prevMonthExpenses.reduce((acc, curr) => acc + curr.amount, 0).toFixed(2));
 
-    const monthOverMonthDiff = totalSpent - prevMonthSpent;
+    const monthOverMonthDiff = Number((totalSpent - prevMonthSpent).toFixed(2));
     let monthOverMonthPercentChange: number | null = null;
     if (prevMonthSpent > 0) {
       monthOverMonthPercentChange = Math.round(((totalSpent - prevMonthSpent) / prevMonthSpent) * 100);

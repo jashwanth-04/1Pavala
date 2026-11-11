@@ -1,20 +1,19 @@
-export function formatCurrency(amount: number, symbol: string = '₹'): string {
+export function formatCurrency(amount: number, symbol: string = '₹', forceDecimals: boolean = false): string {
   const isNegative = amount < 0;
   const absAmount = Math.abs(amount);
   
+  // Round to nearest 2 decimal places to avoid IEEE 754 precision issues
+  const rounded = Number(absAmount.toFixed(2));
+  // Show 2 decimal places if there is a decimal portion (paise) or if forceDecimals is explicitly requested
+  const hasDecimals = !Number.isInteger(rounded);
+  const fractionDigits = (hasDecimals || forceDecimals) ? 2 : 0;
+
   // Format with commas, handling Indian numbering system if currency is ₹
-  let formattedNumber: string;
-  if (symbol === '₹') {
-    formattedNumber = absAmount.toLocaleString('en-IN', {
-      maximumFractionDigits: 0,
-      minimumFractionDigits: 0,
-    });
-  } else {
-    formattedNumber = absAmount.toLocaleString('en-US', {
-      maximumFractionDigits: 0,
-      minimumFractionDigits: 0,
-    });
-  }
+  const locale = symbol === '₹' ? 'en-IN' : 'en-US';
+  const formattedNumber = rounded.toLocaleString(locale, {
+    minimumFractionDigits: fractionDigits,
+    maximumFractionDigits: 2,
+  });
 
   return `${isNegative ? '-' : ''}${symbol}${formattedNumber}`;
 }
