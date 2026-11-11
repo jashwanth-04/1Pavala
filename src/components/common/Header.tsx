@@ -11,7 +11,11 @@ import {
 } from 'lucide-react';
 import { getMonthLabel, getShortMonthLabel, getPreviousMonthKey } from '../../utils/formatters';
 
-export const Header: React.FC = () => {
+interface HeaderProps {
+  onShowLanding?: () => void;
+}
+
+export const Header: React.FC<HeaderProps> = ({ onShowLanding }) => {
   const {
     activeTab,
     selectedMonth,
@@ -55,11 +59,12 @@ export const Header: React.FC = () => {
               <Menu size={17} />
             </button>
 
-            {/* Brand logo & title (Visible in mobile, tablet, and PC — perfectly proportioned) */}
+            {/* Brand logo & title: Tapping redirects to FAQ & Homepage on mobile, tablet, and PC */}
             <button
-              onClick={() => {}}
-              className="flex items-center gap-2 group text-left apple-pressable focus:outline-hidden shrink-0"
-              aria-label="1Pavala"
+              onClick={onShowLanding}
+              className="flex items-center gap-2 group text-left apple-pressable focus:outline-hidden shrink-0 cursor-pointer"
+              aria-label="1Pavala - Go to FAQ & Homepage"
+              title="Go to FAQ & Homepage"
             >
               <AppLogo size="sm" showText={false} className="transition-transform group-hover:scale-[1.03]" />
               <span className="text-[15px] sm:text-[17px] font-bold tracking-tight text-[#1C1C1E] dark:text-white">

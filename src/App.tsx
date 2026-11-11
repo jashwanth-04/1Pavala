@@ -86,10 +86,10 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
       <ToastContainer />
 
       {/* Left Slide-in Sidebar */}
-      <Sidebar />
+      <Sidebar onShowLanding={onShowLanding} />
 
       {/* Top Application Bar */}
-      <Header />
+      <Header onShowLanding={onShowLanding} />
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
@@ -105,23 +105,23 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
       <AddEditExpenseModal />
 
       {/* Bottom Navigation — mobile & tablet only */}
-      <BottomNav />
+      <BottomNav onShowLanding={onShowLanding} />
 
-      {/* Responsive Footer: Solo 'Made with ✨ by JK' on mobile; full metadata on PC & Tablet */}
+      {/* Responsive Footer: Includes direct FAQ & Guide link on mobile & PC */}
       <footer className="border-t border-black/[0.05] dark:border-white/[0.06] mt-auto py-3.5 md:py-5 bg-white/60 dark:bg-[#181818]/60 text-xs text-[#8E8E93]">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
           
-          {/* Left: Brand name & Landing Page toggle (PC & Tablet mode only) */}
-          <div className="hidden md:flex flex-wrap items-center gap-2.5 sm:gap-3">
+          {/* Left: Brand name & Landing Page / FAQ link (Visible on mobile, tablet, and PC) */}
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5 sm:gap-3">
             <span className="font-semibold text-[#1C1C1E] dark:text-white">
-              1Pavala — Personal Expense Tracker
+              1Pavala
             </span>
             <button
               onClick={onShowLanding}
-              className="inline-flex items-center gap-1 text-brand-700 dark:text-emerald-400 hover:underline font-medium caption-2"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 dark:bg-emerald-400/15 text-brand-700 dark:text-emerald-300 hover:bg-emerald-500/20 font-semibold text-xs transition-colors"
             >
-              <Globe size={12} />
-              <span>Product Page &amp; FAQ</span>
+              <Globe size={13} />
+              <span>FAQ &amp; Product Guide</span>
             </button>
           </div>
 
@@ -212,10 +212,15 @@ export function App() {
     );
   }
 
+  // Only prompt for terms acceptance if installed as native APK or standalone PWA
+  const isAppInstalled = Capacitor.isNativePlatform() || 
+    (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || 
+    (typeof window !== 'undefined' && (window.navigator as any)?.standalone === true);
+
   return (
     <AppProvider>
-      {/* Terms & Conditions first-install modal */}
-      {!isTermsAccepted && (
+      {/* Terms & Conditions first-install modal: only shown when installed */}
+      {isAppInstalled && !isTermsAccepted && (
         <TermsModal
           isOpen={true}
           onAccept={handleAcceptTerms}

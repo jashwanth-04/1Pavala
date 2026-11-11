@@ -9,9 +9,14 @@ import {
   Target,
   CalendarDays,
   Settings,
+  HelpCircle,
 } from 'lucide-react';
 
-export const BottomNav: React.FC = () => {
+interface BottomNavProps {
+  onShowLanding?: () => void;
+}
+
+export const BottomNav: React.FC<BottomNavProps> = ({ onShowLanding }) => {
   const { activeTab, setActiveTab, openAddExpenseModal } = useApp();
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollY = useRef(0);
@@ -127,6 +132,24 @@ export const BottomNav: React.FC = () => {
         <div className="apple-glass bg-white/92 dark:bg-[#1C1C1E]/95 border border-black/[0.08] dark:border-white/[0.14] rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.6)] p-1 overflow-x-auto no-scrollbar scroll-smooth flex items-center gap-1 touch-pan-x w-[210px] max-w-[215px] shrink-0">
           {navItems.map((item) => renderTabButton(item))}
         </div>
+
+        {/* 3. SEPARATE ENTITY: FAQ & App Guide Button on the RIGHT side of the navigation bar */}
+        <button
+          onClick={() => {
+            if (onShowLanding) {
+              onShowLanding();
+              setTimeout(() => {
+                const el = document.getElementById('faq');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }, 150);
+            }
+          }}
+          aria-label="FAQ & App Guide"
+          title="FAQ & App Guide"
+          className="w-10 h-10 rounded-full apple-glass bg-white/92 dark:bg-[#1C1C1E]/95 hover:bg-black/[0.05] dark:hover:bg-white/[0.1] active:scale-90 text-brand-700 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-[0_3px_12px_rgba(0,0,0,0.10)] dark:shadow-[0_3px_14px_rgba(0,0,0,0.5)] border border-black/[0.08] dark:border-white/[0.14] transition-transform duration-150"
+        >
+          <HelpCircle size={18} strokeWidth={2.2} />
+        </button>
 
       </div>
     </nav>
