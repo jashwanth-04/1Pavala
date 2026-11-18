@@ -35,6 +35,7 @@ export const SettingsView: React.FC = () => {
     resetAllData,
     exportData,
     importData,
+    showToast,
   } = useApp();
 
   const [userName, setUserName] = useState(settings.userName || '');
@@ -146,6 +147,12 @@ export const SettingsView: React.FC = () => {
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (!file.name.toLowerCase().endsWith('.json') && file.type && file.type !== 'application/json' && file.type !== 'text/plain') {
+      showToast('Please select a valid .json backup file', 'error');
+      e.target.value = '';
+      return;
+    }
 
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -552,7 +559,7 @@ export const SettingsView: React.FC = () => {
             <ChevronRight size={16} className="text-slate-400 shrink-0" />
             <input
               type="file"
-              accept=".json"
+              accept=".json,application/json,text/plain,*/*"
               onChange={handleFileUpload}
               className="hidden"
             />

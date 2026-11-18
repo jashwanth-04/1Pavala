@@ -354,21 +354,83 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
-  const exportData = (format: 'json' | 'csv') => {
+  const exportData = async (format: 'json' | 'csv') => {
     const content = format === 'json' ? StorageService.exportToJson() : StorageService.exportToCsv();
     const mime = format === 'json' ? 'application/json' : 'text/csv';
     const filename = `1Pavala_expenses_${getCurrentMonthKey()}.${format}`;
 
-    const blob = new Blob([content], { type: mime });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast(`Exported ${format.toUpperCase()} file`, 'success');
+    // 1. Native Android Export Bridge (saves directly to Downloads folder on mobile device)
+    if (
+      typeof (window as any).AndroidExportBridge !== 'undefined' &&
+      typeof (window as any).AndroidExportBridge.exportFile === 'function'
+    ) {
+      try {
+        const savedPath = (window as any).AndroidExportBridge.exportFile(filename, content, mime);
+        if (savedPath) {
+          showToast(`Saved to ${savedPath}`, 'success');
+          return;
+        }
+      } catch (e) {
+        console.error('AndroidExportBridge error:', e);
+      }
+    }
+
+    // 2. Mobile Web / PWA Share API fallback (for saving to Files / Drive on mobile web)
+    if (navigator.canShare && typeof navigator.share === 'function') {
+      try {
+        const file = new File([content], filename, { type: mime });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: filename,
+            text: `1Pavala ${format.toUpperCase()} Backup`,
+          });
+          showToast(`Exported ${format.toUpperCase()} file`, 'success');
+          return;
+        }
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+
+    // 3. Desktop File System Access API
+    if ('showSaveFilePicker' in window) {
+      try {
+        const handle = await (window as any).showSaveFilePicker({
+          suggestedName: filename,
+          types: [
+            {
+              description: format === 'json' ? 'JSON Backup' : 'CSV Spreadsheet',
+              accept: { [mime]: [`.${format}`] },
+            },
+          ],
+        });
+        const writable = await handle.createWritable();
+        await writable.write(content);
+        await writable.close();
+        showToast(`Saved ${filename}`, 'success');
+        return;
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+
+    // 4. Universal Browser Anchor Download Fallback
+    try {
+      const blob = new Blob([content], { type: mime });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast(`Exported ${format.toUpperCase()} file`, 'success');
+    } catch (err) {
+      console.error('Blob download failed:', err);
+      showToast('Export failed. Please check permissions.', 'error');
+    }
   };
 
   // Helper calculation for any month

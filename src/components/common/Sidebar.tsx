@@ -77,7 +77,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onShowLanding }) => {
       {/* Sidebar panel */}
       <aside
         ref={sidebarRef}
-        className={`fixed top-0 left-0 h-full z-50 w-72 flex flex-col
+        className={`fixed top-0 left-0 h-full z-50 w-72 flex flex-col pt-[env(safe-area-inset-top,0px)]
           apple-glass dark:bg-[#1C1C1E]/95 border-r border-black/[0.06] dark:border-white/[0.08]
           shadow-2xl transition-transform duration-300 ease-[cubic-bezier(0.25,1,0.5,1)]
           ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
