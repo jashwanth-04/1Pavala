@@ -12,4 +12,5 @@
     <color name="widget_text_primary">#163A21</color>
     <color name="widget_text_secondary">#295D37</color>
     <color name="widget_divider">#331E452B</color>
+    <color name="widget_add_circle">#214B30</color>
 </resources>

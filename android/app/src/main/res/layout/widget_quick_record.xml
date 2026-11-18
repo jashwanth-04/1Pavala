@@ -14,53 +14,46 @@
         android:id="@+id/widget_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="42dp"
+        android:minHeight="50dp"
         android:background="@drawable/widget_pill_background"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingStart="14dp"
-        android:paddingEnd="14dp"
+        android:paddingStart="6dp"
+        android:paddingEnd="12dp"
         android:paddingTop="4dp"
         android:paddingBottom="4dp">
 
-        <!-- Record Expense Action (+ Icon only, no description) -->
-        <LinearLayout
+        <!-- Primary Action: Sovereign Green Circle with Crisp White Plus (Notes widget style) -->
+        <FrameLayout
             android:id="@+id/widget_btn_record"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical"
+            android:background="@drawable/widget_circle_add_bg">
 
             <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_widget_add"
                 android:contentDescription="Record Expense" />
-        </LinearLayout>
+        </FrameLayout>
 
-        <!-- Subtle Vertical Divider -->
-        <ImageView
-            android:layout_width="1dp"
-            android:layout_height="18dp"
-            android:background="@color/widget_divider"
-            android:layout_marginStart="4dp"
-            android:layout_marginEnd="4dp"
-            android:contentDescription="@null" />
-
-        <!-- Recent Transactions Action (Complete Clock Icon & Recent Label) -->
+        <!-- Recent Transactions Action (Official Material History Clock Icon & Recent Label) -->
         <LinearLayout
             android:id="@+id/widget_btn_recent"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:paddingStart="8dp"
+            android:paddingEnd="4dp">
 
             <ImageView
-                android:layout_width="18dp"
-                android:layout_height="18dp"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_widget_recent"
                 android:contentDescription="Recent Transactions" />
@@ -70,14 +63,14 @@
                 android:layout_height="wrap_content"
                 android:text="Recent"
                 android:textColor="@color/widget_text_primary"
-                android:textSize="13sp"
+                android:textSize="14sp"
                 android:textStyle="bold"
-                android:layout_marginStart="6dp" />
+                android:layout_marginStart="8dp" />
         </LinearLayout>
 
     </LinearLayout>
 
-    <!-- App Name Label just below the widget: 1Pavala -->
+    <!-- App Name Label just below the widget: 1Pavala (Matches Notes widget) -->
     <TextView
         android:id="@+id/widget_app_label"
         android:layout_width="wrap_content"
