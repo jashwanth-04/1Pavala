@@ -1,43 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { App as CapApp } from '@capacitor/app';
 import { useApp } from '../../context/AppContext';
 import { formatCurrency, getTodayDateString, formatDateDisplay } from '../../utils/formatters';
 import { PaymentMethod, Expense } from '../../types';
+import { CategoryIcon } from '../common/CategoryIcon';
 import { 
   Plus, 
   Clock, 
   X, 
   Check, 
-  CreditCard, 
-  Smartphone, 
-  Banknote, 
-  Building2,
-  Receipt,
-  Utensils,
-  Car,
-  ShoppingBag,
-  Film,
-  Zap,
-  Briefcase,
-  HelpCircle
+  Receipt
 } from 'lucide-react';
 
 interface FloatingWindowViewProps {
   initialAction?: 'add' | 'recent';
 }
-
-const getCategoryIcon = (iconName: string) => {
-  const map: Record<string, React.ReactNode> = {
-    Utensils: <Utensils size={18} />,
-    Car: <Car size={18} />,
-    ShoppingBag: <ShoppingBag size={18} />,
-    Film: <Film size={18} />,
-    Zap: <Zap size={18} />,
-    Briefcase: <Briefcase size={18} />,
-  };
-  return map[iconName] || <HelpCircle size={18} />;
-};
 
 export const FloatingWindowView: React.FC<FloatingWindowViewProps> = ({ initialAction }) => {
   const { expenses, categories, settings, addExpense, showToast } = useApp();
@@ -91,17 +69,25 @@ export const FloatingWindowView: React.FC<FloatingWindowViewProps> = ({ initialA
     }, 600);
   };
 
-  // Recent 6 transactions
-  const recentExpenses = expenses.slice(0, 6);
+  // Recent transactions strictly sorted by recorded date descending, then createdAt descending
+  const recentExpenses = useMemo(() => {
+    return [...expenses]
+      .sort((a, b) => {
+        const d = b.date.localeCompare(a.date);
+        if (d !== 0) return d;
+        return (b.createdAt || '').localeCompare(a.createdAt || '');
+      })
+      .slice(0, 30);
+  }, [expenses]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-200">
       {/* Background click to dismiss */}
       <div className="absolute inset-0" onClick={handleDismiss} />
 
-      {/* Floating Modal Window */}
+      {/* Floating Modal Window - No transition animation on container to prevent soft-keyboard resize stutter */}
       <div 
-        className="relative w-full max-w-md bg-white dark:bg-[#1C1C1E] rounded-[28px] shadow-2xl border border-black/10 dark:border-white/15 overflow-hidden flex flex-col max-h-[90vh] z-10 transition-all duration-300 scale-100"
+        className="relative w-full max-w-md bg-white dark:bg-[#1C1C1E] rounded-[28px] shadow-2xl border border-black/10 dark:border-white/15 overflow-hidden flex flex-col max-h-[90vh] z-10"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Header */}
@@ -128,7 +114,7 @@ export const FloatingWindowView: React.FC<FloatingWindowViewProps> = ({ initialA
               <button
                 type="button"
                 onClick={() => setCurrentTab('add')}
-                className={`p-1.5 rounded-full transition-all ${
+                className={`p-1.5 rounded-full transition-colors ${
                   currentTab === 'add' 
                     ? 'bg-[#214B30] text-white shadow-xs' 
                     : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-white'
@@ -140,7 +126,7 @@ export const FloatingWindowView: React.FC<FloatingWindowViewProps> = ({ initialA
               <button
                 type="button"
                 onClick={() => setCurrentTab('recent')}
-                className={`p-1.5 rounded-full transition-all ${
+                className={`p-1.5 rounded-full transition-colors ${
                   currentTab === 'recent' 
                     ? 'bg-[#214B30] text-white shadow-xs' 
                     : 'text-[#8E8E93] hover:text-[#1C1C1E] dark:hover:text-white'
@@ -166,7 +152,7 @@ export const FloatingWindowView: React.FC<FloatingWindowViewProps> = ({ initialA
         <div className="p-5 overflow-y-auto">
           {currentTab === 'add' ? (
             <form onSubmit={handleSave} className="space-y-4">
-              {/* Amount Input with Paisa support */}
+              {/* Amount Input with Decimal Keypad & Instant Character Deletion */}
               <div>
                 <label className="block text-[11px] font-bold text-slate-500 dark:text-[#8E8E93] uppercase tracking-wider mb-1">
                   Amount
@@ -176,52 +162,60 @@ export const FloatingWindowView: React.FC<FloatingWindowViewProps> = ({ initialA
                     {settings.currencySymbol}
                   </span>
                   <input
-                    type="number"
-                    step="any"
-                    min="0.01"
+                    type="text"
+                    inputMode="decimal"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    spellCheck={false}
                     value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    onChange={(e) => {
+                      const val = e.target.value.replace(/,/g, '.');
+                      if (val === '' || /^\d*\.?\d{0,2}$/.test(val)) {
+                        setAmount(val);
+                      }
+                    }}
                     placeholder="0.00"
-                    autoFocus
                     required
                     className="w-full pl-11 pr-4 py-3 bg-slate-100 dark:bg-white/[0.06] border border-black/5 dark:border-white/10 rounded-2xl text-2xl font-extrabold text-[#1C1C1E] dark:text-white focus:outline-hidden focus:ring-2 focus:ring-[#214B30]"
                   />
                 </div>
               </div>
 
-              {/* Category Pills */}
+              {/* Scrollable Category Selection with Full Icons */}
               <div>
-                <label className="block text-[11px] font-bold text-slate-500 dark:text-[#8E8E93] uppercase tracking-wider mb-1.5">
-                  Category
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {categories.slice(0, 6).map((cat) => {
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-[11px] font-bold text-slate-500 dark:text-[#8E8E93] uppercase tracking-wider">
+                    Category
+                  </label>
+                  <span className="text-[11px] font-semibold text-[#214B30] dark:text-[#34C759]">
+                    {categories.find((c) => c.id === categoryId)?.name || 'Select'}
+                  </span>
+                </div>
+                
+                {/* Scrollable categories grid showing ALL categories */}
+                <div className="max-h-48 overflow-y-auto pr-1 grid grid-cols-3 gap-2 touch-pan-y overscroll-contain">
+                  {categories.map((cat) => {
                     const isSelected = categoryId === cat.id;
                     return (
                       <button
                         key={cat.id}
                         type="button"
                         onClick={() => setCategoryId(cat.id)}
-                        className={`flex items-center gap-2 p-2 rounded-xl text-left transition-all border ${
+                        className={`flex items-center gap-2 p-2 rounded-xl text-left transition-colors border ${
                           isSelected
-                            ? 'bg-[#214B30]/10 border-[#214B30] text-[#214B30] dark:bg-[#34C759]/15 dark:border-[#34C759] dark:text-[#34C759] font-bold shadow-xs'
-                            : 'bg-slate-50 dark:bg-white/[0.04] border-black/5 dark:border-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-100'
+                            ? 'bg-[#214B30]/10 border-[#214B30] text-[#214B30] dark:bg-[#34C759]/15 dark:border-[#34C759] dark:text-[#34C759] font-bold shadow-2xs'
+                            : 'bg-slate-50 dark:bg-white/[0.04] border-black/5 dark:border-white/5 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/[0.08]'
                         }`}
                       >
-                        <div 
-                          className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                          style={{ backgroundColor: `${cat.color}20`, color: cat.color }}
-                        >
-                          {getCategoryIcon(cat.icon)}
-                        </div>
-                        <span className="text-xs truncate">{cat.name}</span>
+                        <CategoryIcon category={cat} size="sm" />
+                        <span className="text-xs truncate font-medium">{cat.name}</span>
                       </button>
                     );
                   })}
                 </div>
               </div>
 
-              {/* Payment Method & Note */}
+              {/* Payment Method & Date */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[11px] font-bold text-slate-500 dark:text-[#8E8E93] uppercase tracking-wider mb-1">
@@ -252,10 +246,13 @@ export const FloatingWindowView: React.FC<FloatingWindowViewProps> = ({ initialA
                 </div>
               </div>
 
-              {/* Optional Note */}
+              {/* Optional Note with Android IME Safety */}
               <div>
                 <input
                   type="text"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  spellCheck={false}
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   placeholder="Note (optional, e.g. Lunch with friends)"
@@ -283,7 +280,7 @@ export const FloatingWindowView: React.FC<FloatingWindowViewProps> = ({ initialA
               </button>
             </form>
           ) : (
-            /* Recent Transactions View */
+            /* Recent Transactions View - Chronologically Sorted */
             <div className="space-y-2.5">
               {recentExpenses.length === 0 ? (
                 <div className="text-center py-8">
@@ -292,36 +289,33 @@ export const FloatingWindowView: React.FC<FloatingWindowViewProps> = ({ initialA
                   <p className="text-xs text-slate-400 mt-0.5">Use the + button to record your first expense</p>
                 </div>
               ) : (
-                recentExpenses.map((exp: Expense) => {
-                  const cat = categories.find((c) => c.id === exp.categoryId);
-                  return (
-                    <div
-                      key={exp.id}
-                      className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-black/5 dark:border-white/5"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                          style={{ backgroundColor: `${cat?.color || '#214B30'}20`, color: cat?.color || '#214B30' }}
-                        >
-                          {getCategoryIcon(cat?.icon || 'HelpCircle')}
+                <div className="max-h-[380px] overflow-y-auto pr-1 space-y-2 touch-pan-y overscroll-contain">
+                  {recentExpenses.map((exp: Expense) => {
+                    const cat = categories.find((c) => c.id === exp.categoryId);
+                    return (
+                      <div
+                        key={exp.id}
+                        className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-white/[0.04] border border-black/5 dark:border-white/5"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <CategoryIcon category={cat} size="sm" />
+                          <div className="min-w-0">
+                            <p className="text-xs font-bold text-[#1C1C1E] dark:text-white truncate max-w-[170px]">
+                              {exp.note || cat?.name || 'Expense'}
+                            </p>
+                            <p className="text-[10px] text-slate-400">
+                              {formatDateDisplay(exp.date)} • {exp.paymentMethod || 'UPI'}
+                            </p>
+                          </div>
                         </div>
-                        <div>
-                          <p className="text-xs font-bold text-[#1C1C1E] dark:text-white truncate max-w-[170px]">
-                            {exp.note || cat?.name || 'Expense'}
-                          </p>
-                          <p className="text-[10px] text-slate-400">
-                            {formatDateDisplay(exp.date)} • {exp.paymentMethod || 'UPI'}
-                          </p>
-                        </div>
-                      </div>
 
-                      <span className="text-sm font-black text-slate-900 dark:text-white">
-                        {formatCurrency(exp.amount, settings.currencySymbol)}
-                      </span>
-                    </div>
-                  );
-                })
+                        <span className="text-sm font-black text-slate-900 dark:text-white shrink-0 ml-2">
+                          {formatCurrency(exp.amount, settings.currencySymbol)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
               )}
 
               {/* Bottom Quick Action */}

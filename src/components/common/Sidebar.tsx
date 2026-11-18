@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { Capacitor } from '@capacitor/core';
 import { useApp } from '../../context/AppContext';
 import { ActiveTab } from '../../types';
 import { AppLogo } from './AppLogo';
@@ -134,34 +135,36 @@ export const Sidebar: React.FC<SidebarProps> = ({ onShowLanding }) => {
               </button>
             );
           })}
-          {/* FAQ & App Guide action */}
-          <div className="pt-2 mt-2 border-t border-black/[0.04] dark:border-white/[0.06]">
-            <button
-              onClick={() => {
-                closeSidebar();
-                if (onShowLanding) {
-                  onShowLanding();
-                  setTimeout(() => {
-                    const el = document.getElementById('faq');
-                    if (el) el.scrollIntoView({ behavior: 'smooth' });
-                  }, 150);
-                }
-              }}
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-[14px] text-left transition-all duration-150 apple-pressable group text-brand-700 dark:text-emerald-400 hover:bg-brand-500/10 dark:hover:bg-emerald-500/15"
-            >
-              <span className="flex-shrink-0 text-brand-700 dark:text-emerald-400">
-                <HelpCircle size={20} />
-              </span>
-              <div className="flex flex-col min-w-0">
-                <span className="text-[14px] font-semibold leading-tight">
-                  FAQ &amp; Product Guide
+          {/* FAQ & App Guide action (Web / PWA only; hidden in installed APK) */}
+          {!Capacitor.isNativePlatform() && (
+            <div className="pt-2 mt-2 border-t border-black/[0.04] dark:border-white/[0.06]">
+              <button
+                onClick={() => {
+                  closeSidebar();
+                  if (onShowLanding) {
+                    onShowLanding();
+                    setTimeout(() => {
+                      const el = document.getElementById('faq');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }, 150);
+                  }
+                }}
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-[14px] text-left transition-all duration-150 apple-pressable group text-brand-700 dark:text-emerald-400 hover:bg-brand-500/10 dark:hover:bg-emerald-500/15"
+              >
+                <span className="flex-shrink-0 text-brand-700 dark:text-emerald-400">
+                  <HelpCircle size={20} />
                 </span>
-                <span className="text-[11px] leading-tight mt-0.5 text-[#8E8E93] dark:text-[#AEAEB2]">
-                  How to download &amp; use
-                </span>
-              </div>
-            </button>
-          </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-[14px] font-semibold leading-tight">
+                    FAQ &amp; Product Guide
+                  </span>
+                  <span className="text-[11px] leading-tight mt-0.5 text-[#8E8E93] dark:text-[#AEAEB2]">
+                    How to download &amp; use
+                  </span>
+                </div>
+              </button>
+            </div>
+          )}
         </nav>
 
         {/* Footer privacy badge & author tagline */}

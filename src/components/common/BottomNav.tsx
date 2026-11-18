@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Capacitor } from '@capacitor/core';
 import { useApp } from '../../context/AppContext';
 import { ActiveTab } from '../../types';
 import {
@@ -133,23 +134,25 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onShowLanding }) => {
           {navItems.map((item) => renderTabButton(item))}
         </div>
 
-        {/* 3. SEPARATE ENTITY: FAQ & App Guide Button on the RIGHT side of the navigation bar */}
-        <button
-          onClick={() => {
-            if (onShowLanding) {
-              onShowLanding();
-              setTimeout(() => {
-                const el = document.getElementById('faq');
-                if (el) el.scrollIntoView({ behavior: 'smooth' });
-              }, 150);
-            }
-          }}
-          aria-label="FAQ & App Guide"
-          title="FAQ & App Guide"
-          className="w-10 h-10 rounded-full apple-glass bg-white/92 dark:bg-[#1C1C1E]/95 hover:bg-black/[0.05] dark:hover:bg-white/[0.1] active:scale-90 text-brand-700 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-[0_3px_12px_rgba(0,0,0,0.10)] dark:shadow-[0_3px_14px_rgba(0,0,0,0.5)] border border-black/[0.08] dark:border-white/[0.14] transition-transform duration-150"
-        >
-          <HelpCircle size={18} strokeWidth={2.2} />
-        </button>
+        {/* 3. SEPARATE ENTITY: FAQ & App Guide Button on the RIGHT side of the navigation bar (Web / PWA only; hidden in installed APK) */}
+        {!Capacitor.isNativePlatform() && (
+          <button
+            onClick={() => {
+              if (onShowLanding) {
+                onShowLanding();
+                setTimeout(() => {
+                  const el = document.getElementById('faq');
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }, 150);
+              }
+            }}
+            aria-label="FAQ & App Guide"
+            title="FAQ & App Guide"
+            className="w-10 h-10 rounded-full apple-glass bg-white/92 dark:bg-[#1C1C1E]/95 hover:bg-black/[0.05] dark:hover:bg-white/[0.1] active:scale-90 text-brand-700 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-[0_3px_12px_rgba(0,0,0,0.10)] dark:shadow-[0_3px_14px_rgba(0,0,0,0.5)] border border-black/[0.08] dark:border-white/[0.14] transition-transform duration-150"
+          >
+            <HelpCircle size={18} strokeWidth={2.2} />
+          </button>
+        )}
 
       </div>
     </nav>

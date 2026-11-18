@@ -19,7 +19,7 @@ import { FloatingWindowView } from './components/widgets/FloatingWindowView';
 import { ShieldCheck, Globe } from 'lucide-react';
 
 interface AppContentProps {
-  onShowLanding: () => void;
+  onShowLanding?: () => void;
 }
 
 const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
@@ -111,18 +111,20 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
       <footer className="border-t border-black/[0.05] dark:border-white/[0.06] mt-auto py-3.5 md:py-5 bg-white/60 dark:bg-[#181818]/60 text-xs text-[#8E8E93]">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
           
-          {/* Left: Brand name & Landing Page / FAQ link (Visible on mobile, tablet, and PC) */}
+          {/* Left: Brand name & Landing Page / FAQ link (Visible on Web/PWA; hidden on installed APK) */}
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5 sm:gap-3">
             <span className="font-semibold text-[#1C1C1E] dark:text-white">
               1Pavala
             </span>
-            <button
-              onClick={onShowLanding}
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 dark:bg-emerald-400/15 text-brand-700 dark:text-emerald-300 hover:bg-emerald-500/20 font-semibold text-xs transition-colors"
-            >
-              <Globe size={13} />
-              <span>FAQ &amp; Product Guide</span>
-            </button>
+            {!Capacitor.isNativePlatform() && (
+              <button
+                onClick={onShowLanding}
+                className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 dark:bg-emerald-400/15 text-brand-700 dark:text-emerald-300 hover:bg-emerald-500/20 font-semibold text-xs transition-colors cursor-pointer"
+              >
+                <Globe size={13} />
+                <span>FAQ &amp; Product Guide</span>
+              </button>
+            )}
           </div>
 
           {/* Center: Device & Privacy badge (PC & Tablet mode only) */}
@@ -227,10 +229,10 @@ export function App() {
         />
       )}
 
-      {viewMode === 'landing' ? (
+      {viewMode === 'landing' && !Capacitor.isNativePlatform() ? (
         <LandingPageView onOpenApp={handleOpenApp} />
       ) : (
-        <AppContent onShowLanding={handleShowLanding} />
+        <AppContent onShowLanding={Capacitor.isNativePlatform() ? undefined : handleShowLanding} />
       )}
     </AppProvider>
   );

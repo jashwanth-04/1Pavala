@@ -1,4 +1,5 @@
 import React from 'react';
+import { Capacitor } from '@capacitor/core';
 import { useApp } from '../../context/AppContext';
 import { AppLogo } from './AppLogo';
 import {
@@ -27,6 +28,9 @@ export const Header: React.FC<HeaderProps> = ({ onShowLanding }) => {
     theme,
     toggleTheme,
   } = useApp();
+
+  // Check if running inside installed native APK
+  const isNative = Capacitor.isNativePlatform();
 
   // Build list of months available (from expenses + current + previous)
   const availableMonths = React.useMemo(() => {
@@ -59,14 +63,16 @@ export const Header: React.FC<HeaderProps> = ({ onShowLanding }) => {
               <Menu size={17} />
             </button>
 
-            {/* Brand logo & title: Tapping redirects to FAQ & Homepage on mobile, tablet, and PC */}
+            {/* Brand logo & title: Tapping redirects to FAQ & Homepage on web/PWA; neutral on APK */}
             <button
-              onClick={onShowLanding}
-              className="flex items-center gap-2 group text-left apple-pressable focus:outline-hidden shrink-0 cursor-pointer"
-              aria-label="1Pavala - Go to FAQ & Homepage"
-              title="Go to FAQ & Homepage"
+              onClick={isNative ? undefined : onShowLanding}
+              className={`flex items-center gap-2 group text-left apple-pressable focus:outline-hidden shrink-0 ${
+                isNative ? 'cursor-default' : 'cursor-pointer'
+              }`}
+              aria-label={isNative ? '1Pavala' : '1Pavala - Go to FAQ & Homepage'}
+              title={isNative ? '1Pavala' : 'Go to FAQ & Homepage'}
             >
-              <AppLogo size="sm" showText={false} className="transition-transform group-hover:scale-[1.03]" />
+              <AppLogo size="sm" showText={false} className={`transition-transform ${!isNative ? 'group-hover:scale-[1.03]' : ''}`} />
               <span className="text-[15px] sm:text-[17px] font-bold tracking-tight text-[#1C1C1E] dark:text-white">
                 1Pavala
               </span>

@@ -122,17 +122,21 @@ export const AddEditExpenseModal: React.FC = () => {
               {settings.currencySymbol}
             </div>
             <input
-              type="number"
-              step="any"
-              min="0.01"
+              type="text"
+              inputMode="decimal"
+              autoComplete="off"
+              autoCorrect="off"
+              spellCheck={false}
               value={amount}
               onChange={(e) => {
-                setAmount(e.target.value);
-                if (errors.amount) setErrors((prev) => ({ ...prev, amount: undefined }));
+                const val = e.target.value.replace(/,/g, '.');
+                if (val === '' || /^\d*\.?\d{0,2}$/.test(val)) {
+                  setAmount(val);
+                  if (errors.amount) setErrors((prev) => ({ ...prev, amount: undefined }));
+                }
               }}
               placeholder="0.00"
-              autoFocus
-              className={`w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-white/[0.06] border rounded-2xl text-2xl font-extrabold text-[#1C1C1E] dark:text-white focus:bg-white dark:focus:bg-[#2C2C2E] focus:outline-hidden focus:ring-2 transition-all ${
+              className={`w-full pl-10 pr-4 py-3 bg-slate-50 dark:bg-white/[0.06] border rounded-2xl text-2xl font-extrabold text-[#1C1C1E] dark:text-white focus:bg-white dark:focus:bg-[#2C2C2E] focus:outline-hidden focus:ring-2 ${
                 errors.amount
                   ? 'border-red-400 focus:ring-red-200 dark:focus:ring-red-500/30'
                   : 'border-slate-200 dark:border-white/[0.1] focus:border-[#214B30] dark:focus:border-[#34C759] focus:ring-[#214B30]/20 dark:focus:ring-[#34C759]/20'
@@ -257,6 +261,9 @@ export const AddEditExpenseModal: React.FC = () => {
           <div className="relative">
             <input
               type="text"
+              autoComplete="off"
+              autoCorrect="off"
+              spellCheck={false}
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="e.g. Swiggy dinner, Metro recharge, Books"

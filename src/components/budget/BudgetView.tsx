@@ -106,14 +106,20 @@ export const BudgetView: React.FC = () => {
                   {settings.currencySymbol}
                 </span>
                 <input
-                  type="number"
-                  min="1"
-                  step="any"
+                  type="text"
+                  inputMode="decimal"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  spellCheck={false}
                   value={newBudgetAmount}
-                  onChange={(e) => setNewBudgetAmount(e.target.value)}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/,/g, '.');
+                    if (val === '' || /^\d*\.?\d{0,2}$/.test(val)) {
+                      setNewBudgetAmount(val);
+                    }
+                  }}
                   placeholder="10000"
                   className="w-24 sm:w-36 pl-6 sm:pl-7 pr-2 py-1 sm:py-1.5 bg-white dark:bg-[#2C2C2E] border border-brand-500 rounded-xl text-xs sm:text-sm font-extrabold text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-brand-200 dark:focus:ring-brand-800"
-                  autoFocus
                 />
               </div>
               <button
