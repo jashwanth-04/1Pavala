@@ -4,11 +4,9 @@ import { BudgetProgressBar } from '../charts/BudgetProgressBar';
 import { CategoryIcon } from '../common/CategoryIcon';
 import { formatCurrency, getMonthLabel } from '../../utils/formatters';
 import {
-  Target,
   Edit3,
   Calendar,
   AlertTriangle,
-  CheckCircle2,
   TrendingDown,
   Sparkles,
   Save,
@@ -22,14 +20,12 @@ export const BudgetView: React.FC = () => {
     setBudget,
     budgets,
     categories,
-    categoryMap,
     expenses,
   } = useApp();
 
   const [isEditingBudget, setIsEditingBudget] = useState(false);
   const [newBudgetAmount, setNewBudgetAmount] = useState(String(currentMonthStats.budget));
 
-  // Determine days remaining in the selected month
   const [yearStr, monthStr] = selectedMonth.split('-');
   const year = parseInt(yearStr, 10);
   const month = parseInt(monthStr, 10);
@@ -40,17 +36,18 @@ export const BudgetView: React.FC = () => {
     today.getFullYear() === year && today.getMonth() + 1 === month;
   const daysRemaining = isSelectedCurrentMonth ? Math.max(1, totalDays - currentDay + 1) : totalDays;
 
-  // Safe daily allowance
   const remainingBudget = currentMonthStats.remainingBudget;
   const safeDailyBudget = remainingBudget > 0 ? Number((remainingBudget / daysRemaining).toFixed(2)) : 0;
 
-  // Category expenses for this month
+  const softThreshold = settings.thresholds?.[0] ?? 75;
+  const critThreshold = settings.thresholds?.[1] ?? 90;
+
   const categorySpending = React.useMemo(() => {
     const monthExpenses = expenses.filter((e) => e.date.startsWith(selectedMonth));
     const totals: Record<string, number> = {};
-    monthExpenses.forEach((exp) => {
+    for (const exp of monthExpenses) {
       totals[exp.categoryId] = (totals[exp.categoryId] || 0) + exp.amount;
-    });
+    }
 
     const currentBudgetObj = budgets.find((b) => b.month === selectedMonth);
     const catBudgets = currentBudgetObj?.categoryBudgets || {};
@@ -212,20 +209,20 @@ export const BudgetView: React.FC = () => {
           <div className="p-3 bg-white rounded-xl border border-yellow-200/60 shadow-2xs">
             <div className="flex items-center gap-1.5 font-bold text-yellow-800">
               <AlertTriangle size={15} />
-              <span>75% Soft Alert</span>
+              <span>{softThreshold}% Soft Alert</span>
             </div>
             <p className="text-slate-600 mt-1 text-[11px]">
-              Triggered when you cross three quarters of your monthly limit ({formatCurrency(Math.round(currentMonthStats.budget * 0.75), settings.currencySymbol)}).
+              Triggered when you cross {softThreshold}% of your monthly limit ({formatCurrency(Math.round(currentMonthStats.budget * (softThreshold / 100)), settings.currencySymbol)}).
             </p>
           </div>
 
           <div className="p-3 bg-white rounded-xl border border-amber-200/60 shadow-2xs">
             <div className="flex items-center gap-1.5 font-bold text-amber-800">
               <AlertTriangle size={15} />
-              <span>90% Critical Warning</span>
+              <span>{critThreshold}% Critical Warning</span>
             </div>
             <p className="text-slate-600 mt-1 text-[11px]">
-              High caution threshold ({formatCurrency(Math.round(currentMonthStats.budget * 0.90), settings.currencySymbol)}). Review non-essential spending.
+              High caution threshold ({formatCurrency(Math.round(currentMonthStats.budget * (critThreshold / 100)), settings.currencySymbol)}). Review non-essential spending.
             </p>
           </div>
 

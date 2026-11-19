@@ -1,6 +1,6 @@
 import { Expense, Category, Budget, UserSettings } from '../types';
 import { PREDEFINED_CATEGORIES, DEFAULT_MONTHLY_BUDGET } from '../constants/categories';
-import { getCurrentMonthKey, getPreviousMonthKey, generateId } from '../utils/formatters';
+import { getCurrentMonthKey, generateId } from '../utils/formatters';
 import {
   idbGetExpenses,
   idbSaveExpenses,
@@ -15,22 +15,16 @@ import {
   idbSetInitialized,
 } from './indexedDB';
 
-const STORAGE_KEYS = {
+export const STORAGE_KEYS = {
   EXPENSES: '1pavala_expenses_v1',
   CATEGORIES: '1pavala_categories_v1',
   BUDGETS: '1pavala_budgets_v1',
   SETTINGS: '1pavala_settings_v1',
   HAS_INITIALIZED: '1pavala_has_initialized_v1',
-};
-
-// Fallback legacy keys for smooth migration
-const LEGACY_KEYS = {
-  EXPENSES: '1pavan_expenses_v1',
-  CATEGORIES: '1pavan_categories_v1',
-  BUDGETS: '1pavan_budgets_v1',
-  SETTINGS: '1pavan_settings_v1',
-  HAS_INITIALIZED: '1pavan_has_initialized_v1',
-};
+  THEME: '1pavala_theme_v1',
+  TERMS_ACCEPTED: '1pavala_terms_accepted_v1',
+  VIEW_MODE: '1pavala_view_mode',
+} as const;
 
 export const DEFAULT_SETTINGS: UserSettings = {
   currency: 'INR',
@@ -40,30 +34,13 @@ export const DEFAULT_SETTINGS: UserSettings = {
 };
 
 export const StorageService = {
-  // Initialize storage: starts with empty expenses (zero demo data)
   initData(): {
     expenses: Expense[];
     categories: Category[];
     budgets: Budget[];
     settings: UserSettings;
   } {
-    // Check if new key exists
-    let hasInit = localStorage.getItem(STORAGE_KEYS.HAS_INITIALIZED);
-
-    // If legacy exists, migrate it
-    if (!hasInit && localStorage.getItem(LEGACY_KEYS.HAS_INITIALIZED)) {
-      const legExp = localStorage.getItem(LEGACY_KEYS.EXPENSES);
-      const legCat = localStorage.getItem(LEGACY_KEYS.CATEGORIES);
-      const legBud = localStorage.getItem(LEGACY_KEYS.BUDGETS);
-      const legSet = localStorage.getItem(LEGACY_KEYS.SETTINGS);
-
-      if (legExp) localStorage.setItem(STORAGE_KEYS.EXPENSES, legExp);
-      if (legCat) localStorage.setItem(STORAGE_KEYS.CATEGORIES, legCat);
-      if (legBud) localStorage.setItem(STORAGE_KEYS.BUDGETS, legBud);
-      if (legSet) localStorage.setItem(STORAGE_KEYS.SETTINGS, legSet);
-      localStorage.setItem(STORAGE_KEYS.HAS_INITIALIZED, 'true');
-      hasInit = 'true';
-    }
+    const hasInit = localStorage.getItem(STORAGE_KEYS.HAS_INITIALIZED);
 
     if (!hasInit) {
       const initialExpenses: Expense[] = [];
@@ -92,31 +69,10 @@ export const StorageService = {
       };
     }
 
-    // Clean up any lingering sample/demo data from existing storage
-    const storedExpenses = this.getExpenses();
-    const cleanedExpenses = storedExpenses.filter((e) => !e.id.startsWith('sample_'));
-    if (cleanedExpenses.length !== storedExpenses.length) {
-      this.saveExpenses(cleanedExpenses);
-    }
-
-    // Clean up demo category budgets if still present
-    const storedBudgets = this.getBudgets();
-    let budgetsModified = false;
-    const cleanedBudgets = storedBudgets.map((b) => {
-      if (b.categoryBudgets && b.categoryBudgets.food === 6000 && b.categoryBudgets.groceries === 7000) {
-        budgetsModified = true;
-        return { ...b, categoryBudgets: {} };
-      }
-      return b;
-    });
-    if (budgetsModified) {
-      this.saveBudgets(cleanedBudgets);
-    }
-
     return {
-      expenses: cleanedExpenses,
+      expenses: this.getExpenses(),
       categories: this.getCategories(),
-      budgets: cleanedBudgets,
+      budgets: this.getBudgets(),
       settings: this.getSettings(),
     };
   },
@@ -125,13 +81,18 @@ export const StorageService = {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.EXPENSES);
       return data ? JSON.parse(data) : [];
-    } catch {
+    } catch (e) {
+      console.error('[1Pavala Storage] Failed to read expenses from localStorage:', e);
       return [];
     }
   },
 
   saveExpenses(expenses: Expense[]): void {
-    localStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(expenses));
+    try {
+      localStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(expenses));
+    } catch (e) {
+      console.error('[1Pavala Storage] Failed to write expenses to localStorage:', e);
+    }
     idbSaveExpenses(expenses).catch((err) => {
       console.warn('[1Pavala Storage] Failed to write expenses to IndexedDB:', err);
     });
@@ -141,13 +102,18 @@ export const StorageService = {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.CATEGORIES);
       return data ? JSON.parse(data) : PREDEFINED_CATEGORIES;
-    } catch {
+    } catch (e) {
+      console.error('[1Pavala Storage] Failed to read categories from localStorage:', e);
       return PREDEFINED_CATEGORIES;
     }
   },
 
   saveCategories(categories: Category[]): void {
-    localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories));
+    try {
+      localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(categories));
+    } catch (e) {
+      console.error('[1Pavala Storage] Failed to write categories to localStorage:', e);
+    }
     idbSaveCategories(categories).catch((err) => {
       console.warn('[1Pavala Storage] Failed to write categories to IndexedDB:', err);
     });
@@ -157,13 +123,18 @@ export const StorageService = {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.BUDGETS);
       return data ? JSON.parse(data) : [];
-    } catch {
+    } catch (e) {
+      console.error('[1Pavala Storage] Failed to read budgets from localStorage:', e);
       return [];
     }
   },
 
   saveBudgets(budgets: Budget[]): void {
-    localStorage.setItem(STORAGE_KEYS.BUDGETS, JSON.stringify(budgets));
+    try {
+      localStorage.setItem(STORAGE_KEYS.BUDGETS, JSON.stringify(budgets));
+    } catch (e) {
+      console.error('[1Pavala Storage] Failed to write budgets to localStorage:', e);
+    }
     idbSaveBudgets(budgets).catch((err) => {
       console.warn('[1Pavala Storage] Failed to write budgets to IndexedDB:', err);
     });
@@ -173,31 +144,83 @@ export const StorageService = {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.SETTINGS);
       return data ? { ...DEFAULT_SETTINGS, ...JSON.parse(data) } : DEFAULT_SETTINGS;
-    } catch {
+    } catch (e) {
+      console.error('[1Pavala Storage] Failed to read settings from localStorage:', e);
       return DEFAULT_SETTINGS;
     }
   },
 
   saveSettings(settings: UserSettings): void {
-    localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+    try {
+      localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(settings));
+    } catch (e) {
+      console.error('[1Pavala Storage] Failed to write settings to localStorage:', e);
+    }
     idbSaveSettings(settings).catch((err) => {
       console.warn('[1Pavala Storage] Failed to write settings to IndexedDB:', err);
     });
   },
 
+  getTheme(): 'light' | 'dark' {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.THEME);
+      if (saved === 'dark' || saved === 'light') return saved;
+      return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        ? 'dark'
+        : 'light';
+    } catch {
+      return 'light';
+    }
+  },
+
+  setTheme(theme: 'light' | 'dark'): void {
+    try {
+      localStorage.setItem(STORAGE_KEYS.THEME, theme);
+    } catch (e) {
+      console.error('[1Pavala Storage] Failed to save theme:', e);
+    }
+  },
+
+  getTermsAccepted(): boolean {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.TERMS_ACCEPTED) === 'true';
+    } catch {
+      return false;
+    }
+  },
+
+  setTermsAccepted(accepted: boolean): void {
+    try {
+      localStorage.setItem(STORAGE_KEYS.TERMS_ACCEPTED, accepted ? 'true' : 'false');
+    } catch (e) {
+      console.error('[1Pavala Storage] Failed to save terms accepted state:', e);
+    }
+  },
+
+  getViewMode(): 'landing' | 'app' | null {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.VIEW_MODE);
+      return saved === 'app' || saved === 'landing' ? saved : null;
+    } catch {
+      return null;
+    }
+  },
+
+  setViewMode(mode: 'landing' | 'app'): void {
+    try {
+      localStorage.setItem(STORAGE_KEYS.VIEW_MODE, mode);
+    } catch (e) {
+      console.error('[1Pavala Storage] Failed to save view mode:', e);
+    }
+  },
+
   resetAllData(): void {
     Object.values(STORAGE_KEYS).forEach((k) => localStorage.removeItem(k));
-    Object.values(LEGACY_KEYS).forEach((k) => localStorage.removeItem(k));
     idbClearAll().catch((err) => {
       console.warn('[1Pavala Storage] Failed to clear IndexedDB:', err);
     });
   },
 
-  /**
-   * Two-way synchronization with IndexedDB:
-   * 1. If localStorage was cleared (e.g. cache clear or reload), restores from IndexedDB!
-   * 2. If IndexedDB is empty, seeds it from localStorage (seamless migration).
-   */
   async syncWithIndexedDB(): Promise<{
     expenses: Expense[];
     categories: Category[];
@@ -220,9 +243,7 @@ export const StorageService = {
       const localSettings = this.getSettings();
       const hasLocalInit = localStorage.getItem(STORAGE_KEYS.HAS_INITIALIZED) === 'true';
 
-      // SCENARIO 1: IndexedDB has records or was initialized, but localStorage is empty/wiped
       if (idbInitialized && (idbExpenses.length > 0 || !hasLocalInit)) {
-        // Re-hydrate localStorage from persistent IndexedDB
         localStorage.setItem(STORAGE_KEYS.EXPENSES, JSON.stringify(idbExpenses));
         localStorage.setItem(
           STORAGE_KEYS.CATEGORIES,
@@ -244,7 +265,6 @@ export const StorageService = {
         };
       }
 
-      // SCENARIO 2: IndexedDB is empty, but localStorage has data (seed IndexedDB from localStorage)
       if (hasLocalInit || localExpenses.length > 0) {
         await Promise.all([
           idbSaveExpenses(localExpenses),
@@ -263,7 +283,6 @@ export const StorageService = {
         };
       }
 
-      // SCENARIO 3: Both are fresh/empty
       const initialData = this.initData();
       await Promise.all([
         idbSaveExpenses(initialData.expenses),
@@ -305,10 +324,10 @@ export const StorageService = {
   exportToCsv(): string {
     const expenses = this.getExpenses();
     const categories = this.getCategories();
-    const catMap = new Map(categories.map(c => [c.id, c.name]));
+    const catMap = new Map(categories.map((c) => [c.id, c.name]));
 
     const header = ['ID', 'Date', 'Category', 'Amount', 'Payment Method', 'Note', 'Created At'];
-    const rows = expenses.map(exp => [
+    const rows = expenses.map((exp) => [
       exp.id,
       exp.date,
       `"${catMap.get(exp.categoryId) || exp.categoryId}"`,
@@ -318,7 +337,7 @@ export const StorageService = {
       exp.createdAt,
     ]);
 
-    return [header.join(','), ...rows.map(r => r.join(','))].join('\n');
+    return [header.join(','), ...rows.map((r) => r.join(','))].join('\n');
   },
 
   importFromJson(jsonStr: string): boolean {
@@ -340,7 +359,7 @@ export const StorageService = {
       }
       return false;
     } catch (e) {
-      console.error('Failed to import JSON', e);
+      console.error('[1Pavala Storage] Failed to import JSON:', e);
       return false;
     }
   },

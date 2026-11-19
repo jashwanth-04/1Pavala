@@ -5,18 +5,13 @@ import { SpendingTrendChart } from '../charts/SpendingTrendChart';
 import { MonthComparisonChart } from '../charts/MonthComparisonChart';
 import { CategoryIcon } from '../common/CategoryIcon';
 import { formatCurrency, getMonthLabel, getPreviousMonthKey } from '../../utils/formatters';
+import { aggregateCategoryTotals } from '../../services/finance';
 import {
   PieChart,
   TrendingUp,
   Scale,
   CreditCard,
   Calendar,
-  CalendarDays,
-  Target,
-  ArrowUpRight,
-  ArrowDownRight,
-  Activity,
-  Award,
 } from 'lucide-react';
 
 type Timeframe = 'daily' | 'weekly' | 'monthly' | 'yearly';
@@ -172,28 +167,8 @@ export const InsightsView: React.FC = () => {
     };
   }, [expenses, currentYear, totalPeriodSpent]);
 
-  // 3. CATEGORY BREAKDOWN FOR THE CHOSEN TIMEFRAME
   const categorySegments = useMemo(() => {
-    const categoryTotals: Record<string, number> = {};
-    filteredExpenses.forEach((exp) => {
-      categoryTotals[exp.categoryId] = (categoryTotals[exp.categoryId] || 0) + exp.amount;
-    });
-
-    if (totalPeriodSpent === 0) return [];
-
-    return Object.entries(categoryTotals)
-      .map(([catId, amount]) => {
-        const cat = categoryMap.get(catId) || {
-          id: catId,
-          name: catId,
-          icon: 'MoreHorizontal',
-          color: '#64748b',
-          bgLight: '#f1f5f9',
-        };
-        const percentage = Math.round((amount / totalPeriodSpent) * 100);
-        return { category: cat, amount, percentage };
-      })
-      .sort((a, b) => b.amount - a.amount);
+    return aggregateCategoryTotals(filteredExpenses, categoryMap, totalPeriodSpent);
   }, [filteredExpenses, totalPeriodSpent, categoryMap]);
 
   // 4. PAYMENT METHOD BREAKDOWN FOR THE CHOSEN TIMEFRAME

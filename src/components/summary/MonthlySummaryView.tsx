@@ -7,24 +7,19 @@ import {
   getMonthLabel,
   getPreviousMonthKey,
 } from '../../utils/formatters';
+import { aggregateCategoryTotals } from '../../services/finance';
 import {
-  CalendarDays,
   TrendingUp,
-  TrendingDown,
   Award,
-  Layers,
   ArrowUpRight,
   ArrowDownRight,
-  CheckCircle,
   FileSpreadsheet,
   Printer,
-  ShoppingBag,
 } from 'lucide-react';
 
 export const MonthlySummaryView: React.FC = () => {
   const {
     selectedMonth,
-    setSelectedMonth,
     currentMonthStats,
     settings,
     expenses,
@@ -35,36 +30,8 @@ export const MonthlySummaryView: React.FC = () => {
   const prevMonthKey = getPreviousMonthKey(selectedMonth);
   const monthExpenses = expenses.filter((e) => e.date.startsWith(selectedMonth));
 
-  // Category breakdown ranked
   const categoryRanking = React.useMemo(() => {
-    const totals: Record<string, number> = {};
-    const counts: Record<string, number> = {};
-
-    monthExpenses.forEach((exp) => {
-      totals[exp.categoryId] = (totals[exp.categoryId] || 0) + exp.amount;
-      counts[exp.categoryId] = (counts[exp.categoryId] || 0) + 1;
-    });
-
-    const total = currentMonthStats.totalSpent;
-
-    return Object.entries(totals)
-      .map(([catId, amount]) => {
-        const cat = categoryMap.get(catId) || {
-          id: catId,
-          name: catId,
-          icon: 'MoreHorizontal',
-          color: '#64748b',
-          bgLight: '#f1f5f9',
-        };
-        const percentage = total > 0 ? Math.round((amount / total) * 100) : 0;
-        return {
-          category: cat,
-          amount,
-          count: counts[catId] || 0,
-          percentage,
-        };
-      })
-      .sort((a, b) => b.amount - a.amount);
+    return aggregateCategoryTotals(monthExpenses, categoryMap, currentMonthStats.totalSpent);
   }, [monthExpenses, currentMonthStats.totalSpent, categoryMap]);
 
   const handlePrint = () => {

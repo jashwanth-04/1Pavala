@@ -39,15 +39,6 @@ export type ActiveTab = 'dashboard' | 'transactions' | 'insights' | 'budgeting' 
 export type SortField = 'date' | 'amount' | 'category';
 export type SortOrder = 'asc' | 'desc';
 
-export interface ExpenseFilter {
-  searchQuery: string;
-  categoryId: string;
-  month: string; // YYYY-MM or 'ALL'
-  paymentMethod: string; // PaymentMethod or 'ALL'
-  sortBy: SortField;
-  sortOrder: SortOrder;
-}
-
 export interface MonthlyStats {
   month: string;
   monthLabel: string;
