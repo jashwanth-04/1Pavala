@@ -13,16 +13,14 @@ import {
   Check,
   ChevronRight,
   Shield,
-  Coins,
-  Sparkles,
   Smartphone,
   Database,
   Pencil,
-  X,
 } from 'lucide-react';
 import { CategoryIcon } from '../common/CategoryIcon';
 import { AppLogo } from '../common/AppLogo';
 import { TermsModal } from '../common/TermsModal';
+import { Modal } from '../common/Modal';
 
 export const SettingsView: React.FC = () => {
   const {
@@ -641,89 +639,79 @@ export const SettingsView: React.FC = () => {
 
       {/* Edit Category Modal */}
       {editingCategory && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs apple-backdrop-fade">
-          <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-[#1C1C1E] border border-slate-200/80 dark:border-white/[0.1] shadow-2xl p-5 space-y-4 apple-window-pop">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                Edit Custom Category
-              </h3>
+        <Modal
+          isOpen={!!editingCategory}
+          onClose={() => setEditingCategory(null)}
+          title="Edit Custom Category"
+          maxWidth="max-w-sm"
+        >
+          <form onSubmit={handleSaveCategoryEdit} className="space-y-3.5">
+            <div>
+              <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                Category Name
+              </label>
+              <input
+                type="text"
+                value={editCatName}
+                onChange={(e) => setEditCatName(e.target.value)}
+                className="w-full px-3 py-2 bg-slate-50 dark:bg-white/[0.06] border border-slate-200 dark:border-white/[0.1] rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-[#214B30]"
+                required
+                autoFocus
+              />
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
+                Accent Color
+              </label>
+              <div className="flex items-center gap-2.5">
+                <input
+                  type="color"
+                  value={editCatColor}
+                  onChange={(e) => setEditCatColor(e.target.value)}
+                  className="w-9 h-9 rounded-xl cursor-pointer border-none bg-transparent"
+                />
+                <span className="text-xs font-mono font-medium text-slate-600 dark:text-slate-300">
+                  {editCatColor}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-2">
               <button
                 type="button"
                 onClick={() => setEditingCategory(null)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/[0.08]"
+                className="px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/[0.14] transition-all"
               >
-                <X size={16} />
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 text-xs font-bold rounded-xl bg-[#214B30] hover:bg-[#1A3B26] text-white shadow-xs transition-all active:scale-95"
+              >
+                Save Changes
               </button>
             </div>
-
-            <form onSubmit={handleSaveCategoryEdit} className="space-y-3.5">
-              <div>
-                <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
-                  Category Name
-                </label>
-                <input
-                  type="text"
-                  value={editCatName}
-                  onChange={(e) => setEditCatName(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-white/[0.06] border border-slate-200 dark:border-white/[0.1] rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-[#214B30]"
-                  required
-                  autoFocus
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-semibold text-slate-500 dark:text-slate-400 mb-1">
-                  Accent Color
-                </label>
-                <div className="flex items-center gap-2.5">
-                  <input
-                    type="color"
-                    value={editCatColor}
-                    onChange={(e) => setEditCatColor(e.target.value)}
-                    className="w-9 h-9 rounded-xl cursor-pointer border-none bg-transparent"
-                  />
-                  <span className="text-xs font-mono font-medium text-slate-600 dark:text-slate-300">
-                    {editCatColor}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setEditingCategory(null)}
-                  className="px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-white/[0.08] text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-white/[0.14] transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 text-xs font-bold rounded-xl bg-[#214B30] hover:bg-[#1A3B26] text-white shadow-xs transition-all active:scale-95"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+          </form>
+        </Modal>
       )}
 
       {/* Delete Category Confirmation Dialog */}
       {categoryToDelete && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs apple-backdrop-fade">
-          <div className="w-full max-w-sm rounded-2xl bg-white dark:bg-[#1C1C1E] border border-slate-200/80 dark:border-white/[0.1] shadow-2xl p-5 space-y-4 apple-window-pop">
+        <Modal
+          isOpen={!!categoryToDelete}
+          onClose={() => setCategoryToDelete(null)}
+          title={`Delete "${categoryToDelete.name}"?`}
+          maxWidth="max-w-sm"
+        >
+          <div className="space-y-4">
             <div className="flex items-start gap-3">
               <div className="w-9 h-9 rounded-xl bg-red-100 dark:bg-red-950/40 text-red-600 dark:text-red-400 flex items-center justify-center shrink-0">
                 <Trash2 size={18} />
               </div>
-              <div>
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                  Delete "{categoryToDelete.name}"?
-                </h3>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-                  Any existing expenses assigned to this category will be preserved and reassigned to "Other".
-                </p>
-              </div>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                Any existing expenses assigned to this category will be preserved and reassigned to &quot;Other&quot;.
+              </p>
             </div>
 
             <div className="flex items-center justify-end gap-2 pt-1">
@@ -743,7 +731,7 @@ export const SettingsView: React.FC = () => {
               </button>
             </div>
           </div>
-        </div>
+        </Modal>
       )}
 
       <TermsModal

@@ -2,16 +2,27 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { useApp } from '../../context/AppContext';
 import { ActiveTab } from '../../types';
+import { APP_NAV_ITEMS } from '../../constants/navigation';
 import {
   Home,
-  Plus,
-  Wallet,
-  BarChart3,
+  ReceiptText,
+  PieChart,
   Target,
   CalendarDays,
   Settings,
+  Plus,
   HelpCircle,
+  LucideIcon,
 } from 'lucide-react';
+
+const NAV_ICON_MAP: Record<string, LucideIcon> = {
+  Home,
+  ReceiptText,
+  PieChart,
+  Target,
+  CalendarDays,
+  Settings,
+};
 
 interface BottomNavProps {
   onShowLanding?: () => void;
@@ -23,29 +34,16 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onShowLanding }) => {
   const lastScrollY = useRef(0);
   const activeTabRef = useRef<HTMLButtonElement | null>(null);
 
-  // Navigation items: Home is the first item
-  const navItems: Array<{ id: ActiveTab; label: string; icon: React.ReactNode }> = [
-    { id: 'dashboard',    label: 'Home',     icon: <Home size={15} /> },
-    { id: 'transactions', label: 'Expenses', icon: <Wallet size={15} /> },
-    { id: 'insights',     label: 'Insights', icon: <BarChart3 size={15} /> },
-    { id: 'budgeting',    label: 'Budget',   icon: <Target size={15} /> },
-    { id: 'summary',      label: 'Summary',  icon: <CalendarDays size={15} /> },
-    { id: 'settings',     label: 'Settings', icon: <Settings size={15} /> },
-  ];
-
-  // Dynamic moving dock: hides on scroll down, appears on scroll up
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
-      // Always show near top of screen
       if (currentScrollY < 40) {
         setIsVisible(true);
         lastScrollY.current = currentScrollY;
         return;
       }
 
-      // Scrolling down -> hide; Scrolling up -> reveal
       if (currentScrollY > lastScrollY.current + 8) {
         setIsVisible(false);
       } else if (currentScrollY < lastScrollY.current - 8) {
@@ -59,7 +57,6 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onShowLanding }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Auto-scroll active tab into center view in the horizontal scrollable bar
   useEffect(() => {
     if (activeTabRef.current) {
       activeTabRef.current.scrollIntoView({
@@ -70,11 +67,21 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onShowLanding }) => {
     }
   }, [activeTab]);
 
-  const renderTabButton = (item: { id: ActiveTab; label: string; icon: React.ReactNode }) => {
+  const handleFaqClick = () => {
+    if (onShowLanding) {
+      onShowLanding();
+      requestAnimationFrame(() => {
+        const el = document.getElementById('faq');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
+  };
+
+  const renderTabButton = (item: { id: ActiveTab; label: string; iconName: string }) => {
     const isActive = activeTab === item.id;
+    const IconComponent = NAV_ICON_MAP[item.iconName] || Home;
 
     if (isActive) {
-      // Active state: compact expanding pill highlighted with 1Pavala theme green in both light & dark modes
       return (
         <button
           key={item.id}
@@ -85,7 +92,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onShowLanding }) => {
           aria-current="page"
         >
           <span className="shrink-0">
-            {item.icon}
+            <IconComponent size={15} />
           </span>
           <span className="whitespace-nowrap tracking-tight font-bold">
             {item.label}
@@ -94,7 +101,6 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onShowLanding }) => {
       );
     }
 
-    // Inactive state: compact circular button with icon only
     return (
       <button
         key={item.id}
@@ -104,7 +110,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onShowLanding }) => {
         className="w-9 h-9 rounded-full bg-black/[0.05] dark:bg-white/[0.09] text-[#8E8E93] dark:text-[#AEAEB2] hover:text-[#1C1C1E] dark:hover:text-white hover:bg-black/[0.08] dark:hover:bg-white/[0.16] active:scale-90 flex items-center justify-center shrink-0 transition-all duration-150 select-none"
       >
         <span className="shrink-0">
-          {item.icon}
+          <IconComponent size={15} />
         </span>
       </button>
     );
@@ -119,8 +125,6 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onShowLanding }) => {
       aria-label="Main Mobile Navigation"
     >
       <div className="pointer-events-auto flex items-center justify-center gap-2 max-w-full mx-auto">
-        
-        {/* 1. SEPARATE ENTITY: Standalone Plus Button on the LEFT side of the navigation bar */}
         <button
           onClick={openAddExpenseModal}
           aria-label="Add expense"
@@ -130,23 +134,13 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onShowLanding }) => {
           <Plus size={18} strokeWidth={2.6} />
         </button>
 
-        {/* 2. COMPACT SCROLLABLE NAVIGATION DOCK: Noticeably shorter, sleek Apple pill */}
         <div className="apple-glass bg-white/92 dark:bg-[#1C1C1E]/95 border border-black/[0.08] dark:border-white/[0.14] rounded-full shadow-[0_8px_30px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_30px_rgba(0,0,0,0.6)] p-1 overflow-x-auto no-scrollbar scroll-smooth flex items-center gap-1 touch-pan-x w-[210px] max-w-[215px] shrink-0">
-          {navItems.map((item) => renderTabButton(item))}
+          {APP_NAV_ITEMS.map((item) => renderTabButton(item))}
         </div>
 
-        {/* 3. SEPARATE ENTITY: FAQ & App Guide Button on the RIGHT side of the navigation bar (Web / PWA only; hidden in installed APK) */}
         {!Capacitor.isNativePlatform() && (
           <button
-            onClick={() => {
-              if (onShowLanding) {
-                onShowLanding();
-                setTimeout(() => {
-                  const el = document.getElementById('faq');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }, 150);
-              }
-            }}
+            onClick={handleFaqClick}
             aria-label="FAQ & App Guide"
             title="FAQ & App Guide"
             className="w-10 h-10 rounded-full apple-glass bg-white/92 dark:bg-[#1C1C1E]/95 hover:bg-black/[0.05] dark:hover:bg-white/[0.1] active:scale-90 text-brand-700 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-[0_3px_12px_rgba(0,0,0,0.10)] dark:shadow-[0_3px_14px_rgba(0,0,0,0.5)] border border-black/[0.08] dark:border-white/[0.14] transition-transform duration-150"
@@ -154,7 +148,6 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onShowLanding }) => {
             <HelpCircle size={18} strokeWidth={2.2} />
           </button>
         )}
-
       </div>
     </nav>
   );

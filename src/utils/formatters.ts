@@ -2,13 +2,10 @@ export function formatCurrency(amount: number, symbol: string = '₹', forceDeci
   const isNegative = amount < 0;
   const absAmount = Math.abs(amount);
   
-  // Round to nearest 2 decimal places to avoid IEEE 754 precision issues
   const rounded = Number(absAmount.toFixed(2));
-  // Show 2 decimal places if there is a decimal portion (paise) or if forceDecimals is explicitly requested
   const hasDecimals = !Number.isInteger(rounded);
   const fractionDigits = (hasDecimals || forceDecimals) ? 2 : 0;
 
-  // Format with commas, handling Indian numbering system if currency is ₹
   const locale = symbol === '₹' ? 'en-IN' : 'en-US';
   const formattedNumber = rounded.toLocaleString(locale, {
     minimumFractionDigits: fractionDigits,
@@ -60,10 +57,11 @@ export function formatDateDisplay(dateStr: string): string {
   if (!dateStr) return '';
   const [y, m, d] = dateStr.split('-').map(Number);
   const date = new Date(y, m - 1, d);
+  
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const compareDate = new Date(y, m - 1, d);
+  const compareDate = new Date(date);
   compareDate.setHours(0, 0, 0, 0);
 
   const diffTime = today.getTime() - compareDate.getTime();
@@ -80,10 +78,17 @@ export function formatDateDisplay(dateStr: string): string {
 }
 
 export function getTodayDateString(): string {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, '0');
-  const day = String(today.getDate()).padStart(2, '0');
+  return getDateOffsetString(0);
+}
+
+export function getDateOffsetString(offsetDays: number = 0): string {
+  const d = new Date();
+  if (offsetDays !== 0) {
+    d.setDate(d.getDate() - offsetDays);
+  }
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
   return `${year}-${month}-${day}`;
 }
 

@@ -14,9 +14,6 @@ export const STORES = {
 let dbInstance: IDBDatabase | null = null;
 let initPromise: Promise<IDBDatabase | null> | null = null;
 
-/**
- * Open the native IndexedDB database with schema initialization
- */
 export async function openDB(): Promise<IDBDatabase | null> {
   if (typeof window === 'undefined' || !window.indexedDB) {
     console.warn('[1Pavala IDB] IndexedDB is not supported in this browser environment');
@@ -33,30 +30,25 @@ export async function openDB(): Promise<IDBDatabase | null> {
       request.onupgradeneeded = () => {
         const db = request.result;
 
-        // Expenses object store with indexed dates and categories
         if (!db.objectStoreNames.contains(STORES.EXPENSES)) {
           const expenseStore = db.createObjectStore(STORES.EXPENSES, { keyPath: 'id' });
           expenseStore.createIndex('date', 'date', { unique: false });
           expenseStore.createIndex('categoryId', 'categoryId', { unique: false });
         }
 
-        // Categories store
         if (!db.objectStoreNames.contains(STORES.CATEGORIES)) {
           db.createObjectStore(STORES.CATEGORIES, { keyPath: 'id' });
         }
 
-        // Budgets store
         if (!db.objectStoreNames.contains(STORES.BUDGETS)) {
           const budgetStore = db.createObjectStore(STORES.BUDGETS, { keyPath: 'id' });
           budgetStore.createIndex('month', 'month', { unique: false });
         }
 
-        // User settings store
         if (!db.objectStoreNames.contains(STORES.SETTINGS)) {
           db.createObjectStore(STORES.SETTINGS, { keyPath: 'key' });
         }
 
-        // App metadata store (initialized flags, versioning)
         if (!db.objectStoreNames.contains(STORES.META)) {
           db.createObjectStore(STORES.META, { keyPath: 'key' });
         }
@@ -78,9 +70,7 @@ export async function openDB(): Promise<IDBDatabase | null> {
           }
         };
 
-        // Automatically request persistent storage permission
         requestPersistentStorage().catch(() => {});
-
         resolve(dbInstance);
       };
 
@@ -101,60 +91,16 @@ export async function openDB(): Promise<IDBDatabase | null> {
   return initPromise;
 }
 
-/**
- * Request the browser to mark 1Pavala storage as persistent.
- * Persistent storage prevents the browser from evicting IndexedDB
- * during cache clears or under low disk pressure.
- */
 export async function requestPersistentStorage(): Promise<boolean> {
   if (typeof window !== 'undefined' && navigator.storage && navigator.storage.persist) {
     try {
-      const isPersisted = await navigator.storage.persist();
-      return isPersisted;
+      return await navigator.storage.persist();
     } catch {
       return false;
     }
   }
   return false;
 }
-
-/**
- * Check if the browser currently considers storage persistent
- */
-export async function isStoragePersisted(): Promise<boolean> {
-  if (typeof window !== 'undefined' && navigator.storage && navigator.storage.persisted) {
-    try {
-      return await navigator.storage.persisted();
-    } catch {
-      return false;
-    }
-  }
-  return false;
-}
-
-/**
- * Retrieve storage estimate (usage and quota in bytes)
- */
-export async function getStorageEstimate(): Promise<{ usage: number; quota: number; isPersisted: boolean } | null> {
-  if (typeof window !== 'undefined' && navigator.storage && navigator.storage.estimate) {
-    try {
-      const estimate = await navigator.storage.estimate();
-      const isPersisted = await isStoragePersisted();
-      return {
-        usage: estimate.usage || 0,
-        quota: estimate.quota || 0,
-        isPersisted,
-      };
-    } catch {
-      return null;
-    }
-  }
-  return null;
-}
-
-// -------------------------------------------------------------
-// GENERIC STORE HELPERS
-// -------------------------------------------------------------
 
 async function getAllFromStore<T>(storeName: string): Promise<T[]> {
   const db = await openDB();
@@ -167,8 +113,12 @@ async function getAllFromStore<T>(storeName: string): Promise<T[]> {
       const req = store.getAll();
 
       req.onsuccess = () => resolve((req.result as T[]) || []);
-      req.onerror = () => resolve([]);
-    } catch {
+      req.onerror = () => {
+        console.warn(`[1Pavala IndexedDB] getAll error on ${storeName}:`, req.error);
+        resolve([]);
+      };
+    } catch (err) {
+      console.warn(`[1Pavala IndexedDB] transaction error on ${storeName}:`, err);
       resolve([]);
     }
   });
@@ -189,8 +139,12 @@ async function setAllInStore<T>(storeName: string, items: T[]): Promise<void> {
       }
 
       tx.oncomplete = () => resolve();
-      tx.onerror = () => resolve();
-    } catch {
+      tx.onerror = () => {
+        console.warn(`[1Pavala IndexedDB] setAll error on ${storeName}:`, tx.error);
+        resolve();
+      };
+    } catch (err) {
+      console.warn(`[1Pavala IndexedDB] write transaction error on ${storeName}:`, err);
       resolve();
     }
   });
@@ -207,8 +161,12 @@ async function putRecord(storeName: string, key: string, value: any): Promise<vo
       store.put({ key, value });
 
       tx.oncomplete = () => resolve();
-      tx.onerror = () => resolve();
-    } catch {
+      tx.onerror = () => {
+        console.warn(`[1Pavala IndexedDB] putRecord error on ${storeName} [${key}]:`, tx.error);
+        resolve();
+      };
+    } catch (err) {
+      console.warn(`[1Pavala IndexedDB] putRecord transaction error on ${storeName} [${key}]:`, err);
       resolve();
     }
   });
@@ -228,16 +186,16 @@ async function getRecord<T>(storeName: string, key: string): Promise<T | null> {
         const res = req.result;
         resolve(res ? (res.value as T) : null);
       };
-      req.onerror = () => resolve(null);
-    } catch {
+      req.onerror = () => {
+        console.warn(`[1Pavala IndexedDB] getRecord error on ${storeName} [${key}]:`, req.error);
+        resolve(null);
+      };
+    } catch (err) {
+      console.warn(`[1Pavala IndexedDB] getRecord transaction error on ${storeName} [${key}]:`, err);
       resolve(null);
     }
   });
 }
-
-// -------------------------------------------------------------
-// TYPED INDEXED-DB API METHODS
-// -------------------------------------------------------------
 
 export async function idbGetExpenses(): Promise<Expense[]> {
   return getAllFromStore<Expense>(STORES.EXPENSES);
@@ -245,40 +203,6 @@ export async function idbGetExpenses(): Promise<Expense[]> {
 
 export async function idbSaveExpenses(expenses: Expense[]): Promise<void> {
   return setAllInStore<Expense>(STORES.EXPENSES, expenses);
-}
-
-export async function idbPutExpense(expense: Expense): Promise<void> {
-  const db = await openDB();
-  if (!db) return;
-
-  return new Promise((resolve) => {
-    try {
-      const tx = db.transaction(STORES.EXPENSES, 'readwrite');
-      const store = tx.objectStore(STORES.EXPENSES);
-      store.put(expense);
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => resolve();
-    } catch {
-      resolve();
-    }
-  });
-}
-
-export async function idbDeleteExpense(id: string): Promise<void> {
-  const db = await openDB();
-  if (!db) return;
-
-  return new Promise((resolve) => {
-    try {
-      const tx = db.transaction(STORES.EXPENSES, 'readwrite');
-      const store = tx.objectStore(STORES.EXPENSES);
-      store.delete(id);
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => resolve();
-    } catch {
-      resolve();
-    }
-  });
 }
 
 export async function idbGetCategories(): Promise<Category[]> {
@@ -314,9 +238,6 @@ export async function idbSetInitialized(): Promise<void> {
   return putRecord(STORES.META, 'has_initialized', true);
 }
 
-/**
- * Erase all records from all stores in IndexedDB
- */
 export async function idbClearAll(): Promise<void> {
   const db = await openDB();
   if (!db) return;
@@ -334,8 +255,12 @@ export async function idbClearAll(): Promise<void> {
       tx.objectStore(STORES.META).clear();
 
       tx.oncomplete = () => resolve();
-      tx.onerror = () => resolve();
-    } catch {
+      tx.onerror = () => {
+        console.warn('[1Pavala IndexedDB] clearAll error:', tx.error);
+        resolve();
+      };
+    } catch (err) {
+      console.warn('[1Pavala IndexedDB] clearAll transaction error:', err);
       resolve();
     }
   });

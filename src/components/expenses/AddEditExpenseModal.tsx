@@ -4,7 +4,7 @@ import { Modal } from '../common/Modal';
 import { PAYMENT_METHODS } from '../../constants/categories';
 import { PaymentMethod } from '../../types';
 import { CategoryIcon } from '../common/CategoryIcon';
-import { getTodayDateString, formatCurrency } from '../../utils/formatters';
+import { getTodayDateString, getDateOffsetString, formatCurrency } from '../../utils/formatters';
 import { PlusCircle, Calendar, CreditCard, FileText, Check } from 'lucide-react';
 
 export const AddEditExpenseModal: React.FC = () => {
@@ -91,12 +91,7 @@ export const AddEditExpenseModal: React.FC = () => {
   };
 
   const setDateShortcut = (offsetDays: number) => {
-    const d = new Date();
-    d.setDate(d.getDate() - offsetDays);
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    setDate(`${y}-${m}-${day}`);
+    setDate(getDateOffsetString(offsetDays));
   };
 
   return (

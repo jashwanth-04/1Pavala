@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { App as CapApp } from '@capacitor/app';
 import { AppProvider, useApp } from './context/AppContext';
+import { StorageService } from './services/storage';
 import { Header } from './components/common/Header';
 import { BottomNav } from './components/common/BottomNav';
 import { Sidebar } from './components/common/Sidebar';
@@ -34,7 +35,6 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
     closeSidebar,
   } = useApp();
 
-  // Android hardware back button handler (Capacitor Native)
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return;
 
@@ -55,7 +55,6 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
     };
   }, [isExpenseModalOpen, closeExpenseModal, isSidebarOpen, closeSidebar, activeTab, setActiveTab]);
 
-  // PWA shortcut listener: If app is opened with ?action=add, immediately launch Add Expense
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('action') === 'add') {
@@ -64,7 +63,6 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
     }
   }, [openAddExpenseModal]);
 
-  // Keyboard shortcut: Pressing 'n' or '+' opens Add Expense modal if not in an input
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const activeTag = (document.activeElement?.tagName || '').toLowerCase();
@@ -88,16 +86,10 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
         paddingBottom: 'calc(var(--safe-area-bottom, 0px) + 6rem)',
       }}
     >
-      {/* Toast Feedback */}
       <ToastContainer />
-
-      {/* Left Slide-in Sidebar */}
       <Sidebar onShowLanding={onShowLanding} />
-
-      {/* Top Application Bar */}
       <Header onShowLanding={onShowLanding} />
 
-      {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {activeTab === 'dashboard'    && <DashboardView />}
         {activeTab === 'transactions' && <TransactionListView />}
@@ -107,17 +99,11 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
         {activeTab === 'settings'     && <SettingsView />}
       </main>
 
-      {/* Add / Edit Expense Dialog */}
       <AddEditExpenseModal />
-
-      {/* Bottom Navigation — mobile & tablet only */}
       <BottomNav onShowLanding={onShowLanding} />
 
-      {/* Responsive Footer: Includes direct FAQ & Guide link on mobile & PC */}
       <footer className="border-t border-black/[0.05] dark:border-white/[0.06] mt-auto py-3.5 md:py-5 bg-white/60 dark:bg-[#181818]/60 text-xs text-[#8E8E93]">
         <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
-          
-          {/* Left: Brand name & Landing Page / FAQ link (Visible on Web/PWA; hidden on installed APK) */}
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-2.5 sm:gap-3">
             <span className="font-semibold text-[#1C1C1E] dark:text-white">
               1Pavala
@@ -133,7 +119,6 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
             )}
           </div>
 
-          {/* Center: Device & Privacy badge (PC & Tablet mode only) */}
           <div className="hidden md:flex flex-wrap items-center gap-3 sm:gap-4 text-[11px] sm:text-xs">
             <span className="text-slate-400 dark:text-[#48484A]">
               Manual money management • PC &amp; Tablet
@@ -144,7 +129,6 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
             </div>
           </div>
 
-          {/* Author Tagline: Minimalist solo pill on mobile; elegant right-aligned badge on PC & Tablet */}
           <div className="w-full md:w-auto flex items-center justify-center shrink-0">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/[0.03] dark:bg-white/[0.07] border border-black/[0.05] dark:border-white/[0.08] text-[11px] sm:text-xs font-semibold text-[#1C1C1E] dark:text-white shadow-2xs select-none">
               <span>Made with</span>
@@ -152,7 +136,6 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
               <span>by JK</span>
             </span>
           </div>
-
         </div>
       </footer>
     </div>
@@ -160,55 +143,39 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
 };
 
 export function App() {
-  // Synchronize native Android WindowInsets with CSS custom properties
   useSafeArea();
 
-  const [isTermsAccepted, setIsTermsAccepted] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem('1pavala_terms_accepted_v1') === 'true';
-    } catch {
-      return false;
-    }
-  });
+  const [isTermsAccepted, setIsTermsAccepted] = useState<boolean>(() =>
+    StorageService.getTermsAccepted()
+  );
 
   const [viewMode, setViewMode] = useState<'landing' | 'app'>(() => {
-    // If native Capacitor app (Android APK), always open app directly
     if (Capacitor.isNativePlatform()) {
       return 'app';
     }
-    // If standalone PWA, open app directly
-    if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
+    if (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) {
       return 'app';
     }
-    // If explicit query parameter (?app=true or ?action=add)
     const params = new URLSearchParams(window.location.search);
     if (params.get('app') === 'true' || params.get('action')) {
       return 'app';
     }
-    // Check saved view preference
-    const saved = localStorage.getItem('1pavala_view_mode');
-    if (saved === 'app' || saved === 'landing') {
-      return saved;
-    }
-    // Default to landing page for new visitors
-    return 'landing';
+    return StorageService.getViewMode() || 'landing';
   });
 
   const handleOpenApp = () => {
     setViewMode('app');
-    localStorage.setItem('1pavala_view_mode', 'app');
+    StorageService.setViewMode('app');
   };
 
   const handleShowLanding = () => {
     setViewMode('landing');
-    localStorage.setItem('1pavala_view_mode', 'landing');
+    StorageService.setViewMode('landing');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleAcceptTerms = () => {
-    try {
-      localStorage.setItem('1pavala_terms_accepted_v1', 'true');
-    } catch {}
+    StorageService.setTermsAccepted(true);
     setIsTermsAccepted(true);
   };
 
@@ -223,14 +190,12 @@ export function App() {
     );
   }
 
-  // Only prompt for terms acceptance if installed as native APK or standalone PWA
   const isAppInstalled = Capacitor.isNativePlatform() || 
     (typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || 
     (typeof window !== 'undefined' && (window.navigator as any)?.standalone === true);
 
   return (
     <AppProvider>
-      {/* Terms & Conditions first-install modal: only shown when installed */}
       {isAppInstalled && !isTermsAccepted && (
         <TermsModal
           isOpen={true}

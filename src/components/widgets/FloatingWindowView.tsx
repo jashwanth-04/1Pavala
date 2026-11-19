@@ -4,6 +4,7 @@ import { App as CapApp } from '@capacitor/app';
 import { useApp } from '../../context/AppContext';
 import { formatCurrency, getTodayDateString, formatDateDisplay } from '../../utils/formatters';
 import { PaymentMethod, Expense } from '../../types';
+import { PAYMENT_METHODS } from '../../constants/categories';
 import { CategoryIcon } from '../common/CategoryIcon';
 import { 
   Plus, 
@@ -27,7 +28,7 @@ export const FloatingWindowView: React.FC<FloatingWindowViewProps> = ({ initialA
 
   // Add Expense State
   const [amount, setAmount] = useState<string>('');
-  const [categoryId, setCategoryId] = useState<string>(categories[0]?.id || 'cat-1');
+  const [categoryId, setCategoryId] = useState<string>(categories[0]?.id || 'food');
   const [date, setDate] = useState<string>(getTodayDateString());
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('UPI');
   const [note, setNote] = useState<string>('');
@@ -226,10 +227,11 @@ export const FloatingWindowView: React.FC<FloatingWindowViewProps> = ({ initialA
                     onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
                     className="w-full px-3 py-2.5 bg-slate-100 dark:bg-white/[0.06] border border-black/5 dark:border-white/10 rounded-xl text-xs font-semibold text-[#1C1C1E] dark:text-white"
                   >
-                    <option value="UPI">UPI</option>
-                    <option value="Cash">Cash</option>
-                    <option value="Card">Card</option>
-                    <option value="Net Banking">Net Banking</option>
+                    {PAYMENT_METHODS.map((method) => (
+                      <option key={method} value={method}>
+                        {method}
+                      </option>
+                    ))}
                   </select>
                 </div>
 

@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useApp } from '../../context/AppContext';
 import { CategoryIcon } from '../common/CategoryIcon';
-import { formatCurrency, formatDateDisplay, getMonthLabel, getPreviousMonthKey } from '../../utils/formatters';
+import { formatCurrency, formatDateDisplay, getMonthLabel } from '../../utils/formatters';
 import { PAYMENT_METHODS } from '../../constants/categories';
 import {
   Search,
@@ -25,7 +25,7 @@ export const TransactionListView: React.FC = () => {
     openEditExpenseModal,
     deleteExpense,
     exportData,
-    currentMonthKey,
+    availableMonths,
   } = useApp();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -34,16 +34,6 @@ export const TransactionListView: React.FC = () => {
   const [selectedMethod, setSelectedMethod] = useState<string>('ALL');
   const [sortBy, setSortBy] = useState<SortField>('date');
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
-
-  // Month options
-  const availableMonths = useMemo(() => {
-    const set = new Set<string>();
-    expenses.forEach((e) => {
-      if (e.date?.length >= 7) set.add(e.date.substring(0, 7));
-    });
-    set.add(currentMonthKey);
-    return Array.from(set).sort().reverse();
-  }, [expenses, currentMonthKey]);
 
   // Filter & Sort
   const filteredExpenses = useMemo(() => {
