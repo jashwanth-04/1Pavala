@@ -24,7 +24,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Instant theme initialization to prevent flash and lag -->
+    <!-- Instant theme & safe-area initialization to prevent flash and layout shifts -->
     <script>
       (function() {
         try {
@@ -36,6 +36,18 @@
             if (meta) meta.setAttribute('content', '#000000');
           } else {
             document.documentElement.classList.remove('dark');
+          }
+
+          // Pre-populate Android safe-area insets if native bridge is already available
+          if (window.AndroidExportBridge) {
+            if (typeof window.AndroidExportBridge.getSafeAreaTop === 'function') {
+              var top = window.AndroidExportBridge.getSafeAreaTop();
+              if (top > 0) document.documentElement.style.setProperty('--sat', top + 'px');
+            }
+            if (typeof window.AndroidExportBridge.getSafeAreaBottom === 'function') {
+              var bot = window.AndroidExportBridge.getSafeAreaBottom();
+              if (bot > 0) document.documentElement.style.setProperty('--sab', bot + 'px');
+            }
           }
         } catch (e) {}
       })();

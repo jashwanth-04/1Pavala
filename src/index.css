@@ -4,6 +4,14 @@
 
 @layer base {
   :root {
+    /* Dynamic Safe Area Insets (Top status bar & Bottom navigation bar) */
+    --sat: env(safe-area-inset-top, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+    --safe-area-top: max(env(safe-area-inset-top, 0px), var(--sat, 0px));
+    --safe-area-bottom: max(env(safe-area-inset-bottom, 0px), var(--sab, 0px));
+
     --apple-system-background: #F2F2F7;
     --apple-system-grouped-background: #F2F2F7;
     --apple-secondary-grouped-background: #FFFFFF;
@@ -461,4 +469,21 @@
 .apple-toast-slide {
   animation: appleToastSlide 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   will-change: transform, opacity;
+}
+
+/* Safe Area Inset Layout Utilities */
+.pt-safe-top {
+  padding-top: var(--safe-area-top);
+}
+
+.pb-safe-bottom {
+  padding-bottom: var(--safe-area-bottom);
+}
+
+.top-safe {
+  top: var(--safe-area-top);
+}
+
+.bottom-safe {
+  bottom: calc(var(--safe-area-bottom) + 0.75rem);
 }

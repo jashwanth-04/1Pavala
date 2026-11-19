@@ -16,6 +16,7 @@ import { AddEditExpenseModal } from './components/expenses/AddEditExpenseModal';
 import { LandingPageView } from './components/landing/LandingPageView';
 import { TermsModal } from './components/common/TermsModal';
 import { FloatingWindowView } from './components/widgets/FloatingWindowView';
+import { useSafeArea } from './hooks/useSafeArea';
 import { ShieldCheck, Globe } from 'lucide-react';
 
 interface AppContentProps {
@@ -81,7 +82,12 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
   }, [openAddExpenseModal]);
 
   return (
-    <div className="min-h-screen bg-[#F2F2F7] dark:bg-[#000000] text-[#1C1C1E] dark:text-white flex flex-col antialiased selection:bg-[#214B30] selection:text-white dark:selection:bg-[#34C759] dark:selection:text-[#0A170F] pb-24 md:pb-12 overflow-x-hidden">
+    <div
+      className="min-h-screen bg-[#F2F2F7] dark:bg-[#000000] text-[#1C1C1E] dark:text-white flex flex-col antialiased selection:bg-[#214B30] selection:text-white dark:selection:bg-[#34C759] dark:selection:text-[#0A170F] overflow-x-hidden"
+      style={{
+        paddingBottom: 'calc(var(--safe-area-bottom, 0px) + 6rem)',
+      }}
+    >
       {/* Toast Feedback */}
       <ToastContainer />
 
@@ -154,6 +160,9 @@ const AppContent: React.FC<AppContentProps> = ({ onShowLanding }) => {
 };
 
 export function App() {
+  // Synchronize native Android WindowInsets with CSS custom properties
+  useSafeArea();
+
   const [isTermsAccepted, setIsTermsAccepted] = useState<boolean>(() => {
     try {
       return localStorage.getItem('1pavala_terms_accepted_v1') === 'true';

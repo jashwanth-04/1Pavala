@@ -112,9 +112,10 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onShowLanding }) => {
 
   return (
     <nav
-      className={`md:hidden fixed bottom-3 left-0 right-0 z-40 px-3 transition-all duration-300 ease-base pointer-events-none ${
-        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
+      className={`md:hidden fixed left-0 right-0 z-40 px-3 transition-all duration-300 ease-base pointer-events-none ${
+        isVisible ? 'translate-y-0 opacity-100' : 'translate-y-24 opacity-0'
       }`}
+      style={{ bottom: 'calc(var(--safe-area-bottom, 0px) + 0.75rem)' }}
       aria-label="Main Mobile Navigation"
     >
       <div className="pointer-events-auto flex items-center justify-center gap-2 max-w-full mx-auto">

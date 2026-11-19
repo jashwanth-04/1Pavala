@@ -48,12 +48,15 @@ export const Header: React.FC<HeaderProps> = ({ onShowLanding }) => {
   }, [expenses, currentMonthKey]);
 
   return (
-    <header className="sticky top-0 z-40 apple-glass border-b border-black/[0.06] dark:border-white/[0.08] w-full pt-[env(safe-area-inset-top,0px)]">
+    <header
+      className="sticky top-0 z-40 apple-glass border-b border-black/[0.06] dark:border-white/[0.08] w-full"
+      style={{ paddingTop: 'var(--safe-area-top)' }}
+    >
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-14 sm:h-16 gap-1.5 sm:gap-3">
+        <div className="flex items-center justify-between h-14 sm:h-16 gap-2">
 
           {/* LEFT: Hamburger + Logo + Brand Title */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 shrink">
             {/* Hamburger / Menu toggle */}
             <button
               onClick={toggleSidebar}
@@ -66,24 +69,24 @@ export const Header: React.FC<HeaderProps> = ({ onShowLanding }) => {
             {/* Brand logo & title: Tapping redirects to FAQ & Homepage on web/PWA; neutral on APK */}
             <button
               onClick={isNative ? undefined : onShowLanding}
-              className={`flex items-center gap-2 group text-left apple-pressable focus:outline-hidden shrink-0 ${
+              className={`flex items-center gap-1.5 sm:gap-2 group text-left apple-pressable focus:outline-hidden min-w-0 ${
                 isNative ? 'cursor-default' : 'cursor-pointer'
               }`}
               aria-label={isNative ? '1Pavala' : '1Pavala - Go to FAQ & Homepage'}
               title={isNative ? '1Pavala' : 'Go to FAQ & Homepage'}
             >
-              <AppLogo size="sm" showText={false} className={`transition-transform ${!isNative ? 'group-hover:scale-[1.03]' : ''}`} />
-              <span className="text-[15px] sm:text-[17px] font-bold tracking-tight text-[#1C1C1E] dark:text-white">
+              <AppLogo size="sm" showText={false} className={`shrink-0 transition-transform ${!isNative ? 'group-hover:scale-[1.03]' : ''}`} />
+              <span className="text-[15px] sm:text-[17px] font-bold tracking-tight text-[#1C1C1E] dark:text-white truncate">
                 1Pavala
               </span>
             </button>
           </div>
 
           {/* RIGHT: Month picker (on non-dashboard tabs) + Theme toggle + Add Expense button */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 min-w-0 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {/* Sleek Apple-style Month Capsule (Only shown on non-dashboard tabs; dashboard displays it directly inside the Spending card) */}
             {activeTab !== 'dashboard' && (
-              <div className="relative inline-flex items-center">
+              <div className="relative inline-flex items-center shrink-0">
                 <div className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 bg-black/[0.03] dark:bg-white/[0.08] hover:bg-black/[0.06] dark:hover:bg-white/[0.12] border border-black/[0.05] dark:border-white/[0.06] text-[#1C1C1E] dark:text-white rounded-full text-xs font-semibold pointer-events-none shadow-2xs">
                   <Calendar size={12} className="text-[#8E8E93] shrink-0" />
                   {/* On mobile: compact 'Nov 2026' */}
@@ -126,7 +129,7 @@ export const Header: React.FC<HeaderProps> = ({ onShowLanding }) => {
             {/* Add Expense CTA button - 1Pavala Sovereign Green & Silver */}
             <button
               onClick={openAddExpenseModal}
-              className="flex items-center justify-center gap-1 bg-[#214B30] hover:bg-[#1A3B26] active:bg-[#132B1C] text-white text-xs sm:text-sm font-semibold px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-[0_2px_10px_rgba(33,75,48,0.30)] dark:shadow-[0_2px_12px_rgba(33,75,48,0.40)] border border-white/10 apple-pressable shrink-0"
+              className="flex items-center justify-center gap-1 bg-[#214B30] hover:bg-[#1A3B26] active:bg-[#132B1C] text-white text-xs sm:text-sm font-semibold px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-[0_2px_10px_rgba(33,75,48,0.30)] dark:shadow-[0_2px_12px_rgba(33,75,48,0.40)] border border-white/10 apple-pressable shrink-0 whitespace-nowrap"
               aria-label="Add new expense"
             >
               <Plus size={14} strokeWidth={2.4} className="shrink-0" />
